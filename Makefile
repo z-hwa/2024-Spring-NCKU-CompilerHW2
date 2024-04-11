@@ -45,5 +45,8 @@ ${COMPILER}: create_build_folder lex.yy.c y.tab.c main.c
 run:
 	@./${COMPILER_OUT}
 
+judge:
+	@/home/share/hw2/judge.sh
+
 clean:
 	rm -rf ${BUILD}
