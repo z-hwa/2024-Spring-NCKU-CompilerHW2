@@ -24,7 +24,8 @@
 %token SHR SHL BAN BOR BNT BXO ADD SUB MUL DIV REM NOT GTR LES GEQ LEQ EQL NEQ LAN LOR
 %token VAL_ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN BAN_ASSIGN BOR_ASSIGN BXO_ASSIGN SHR_ASSIGN SHL_ASSIGN INC_ASSIGN DEC_ASSIGN
 %token IF ELSE FOR WHILE RETURN BREAK CONTINUE
-%token ')' ';' ENDL
+%token ')' ';' '{' '}'
+%token ENDL
 
 /* Token with return, which need to sepcify type */
 %token <var_type> VARIABLE_T
@@ -114,6 +115,7 @@ Factor
 /* Function */
 FunctionDefStmt
     : VARIABLE_T IDENT '(' FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' '}' { dumpScope(); }
+    | VARIABLE_T IDENT '(' FunctionParameterStmtList ')' '{' GlobalStmtList '}' { createFunction($<var_type>1, $<s_var>2); } '{' '}' { dumpScope(); }
 ;
 
 FunctionParameterStmtList 
