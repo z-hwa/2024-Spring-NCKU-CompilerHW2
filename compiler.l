@@ -34,11 +34,11 @@ fnumber ({digit}*\.{digit}+)
 "//".*              {;}
 
 \"                  { BEGIN(DSTR_CON); yylval.s_var = ""; }
-<DSTR_CON>\"        { BEGIN(INITIAL); Return(STR_LIT); }
+<DSTR_CON>\"        { BEGIN(INITIAL); return STRING_LIT; }
 <DSTR_CON>(\\\"|[^\"])* { yylval.s_var = strdup(yytext); }
 
 '                   { BEGIN(STR_CON); yylval.s_var = ""; }
-<STR_CON>'          { BEGIN(INITIAL); Return(STR_LIT); }
+<STR_CON>'          { BEGIN(INITIAL); return STRING_LIT; }
 <STR_CON>(\\'|[^'\n])* { yylval.s_var = strdup(yytext); }
 
 ">>"        { Return(SHR); }
@@ -112,7 +112,7 @@ fnumber ({digit}*\.{digit}+)
 "true"      { yylval.b_var = true; Return(BOOL_LIT); }
 "false"     { yylval.b_var = false; Return(BOOL_LIT); }
 {inumber}   { yylval.i_var = atoi(yytext); Return(INT_LIT); }
-{fnumber}   { yylval.f_var = atof(yytext); Return(FLOAT_LIT); }
+{fnumber}   { yylval.f_var = atof(yytext); Return(FLAOT_LIT); }
 {variable}  { yylval.s_var = strdup(yytext); Return(IDENT); }
 
 [ \t]+      { yycolumn += yyleng; }
