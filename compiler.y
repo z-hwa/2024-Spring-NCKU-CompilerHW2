@@ -67,7 +67,7 @@ DefineVariableStmt
 ;
 
 Expression
-    :
+    : ';'
 ;
 
 /* Function */
