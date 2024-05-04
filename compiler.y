@@ -67,7 +67,7 @@ DefineVariableStmt
 ;
 
 Expression
-    : ';'
+    : INT_LIT '+' INT_LIT
 ;
 
 /* Function */
