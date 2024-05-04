@@ -32,8 +32,8 @@
 //有value的token 需要特別讓他帶著屬性
 %token <b_var> BOOL_LIT
 %token <i_var> INT_LIT
-%token <f_var> FLAOT_LIT
-%token <s_var> STRING_LIT
+%token <f_var> FLOAT_LIT
+%token <s_var> STR_LIT
 
 /* Nonterminal with return, which need to sepcify type */
 %type <object_val> Expression
