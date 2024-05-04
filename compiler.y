@@ -24,7 +24,7 @@
 %token SHR SHL BAN BOR BNT BXO ADD SUB MUL DIV REM NOT GTR LES GEQ LEQ EQL NEQ LAN LOR
 %token VAL_ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN BAN_ASSIGN BOR_ASSIGN BXO_ASSIGN SHR_ASSIGN SHL_ASSIGN INC_ASSIGN DEC_ASSIGN
 %token IF ELSE FOR WHILE RETURN BREAK CONTINUE
-%token ')' ';'
+%token ')' ';' ENDL
 
 /* Token with return, which need to sepcify type */
 %token <var_type> VARIABLE_T
@@ -74,7 +74,19 @@ DefineVariableStmt
 
 /*cin cout*/
 CoutStmt
-	: COUT
+	: COUT SHL PrintableList ';'
+;
+
+//可印出的列表
+PrintableList
+    : Printable
+    | PrintableList SHL Printable
+;
+
+//可印出的token
+Printable
+    : STR_LIT
+    | ENDL
 ;
 
 /* expression */
