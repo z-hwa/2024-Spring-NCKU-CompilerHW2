@@ -1,6 +1,7 @@
 CFLAGS := -Wall -O0 -ggdb
 YFLAG := -d -v
 MAIN_SRC := ./main.c
+STACK_SRC := ./stack.c
 LEX_SRC := ./compiler.l
 YAC_SRC := ./compiler.y
 COMMON := ./compiler_common.h
@@ -14,6 +15,7 @@ COMPILER_OUT := ${BUILD}/${BUILD_OUT}/${COMPILER}
 LEX_OUT := ${BUILD}/lex.yy.c
 YAC_OUT := ${BUILD}/y.tab.c
 MAIN_OUT := ${BUILD}/main.o
+STACK_OUT := ${BUILD}/stack.o
 JAVA_ASM_OUT := ${BUILD}/Main.j
 
 all: build run
@@ -38,9 +40,13 @@ main.c:
 	$(info ---------- Compile ${MAIN_SRC} ----------)
 	gcc -g -c ${MAIN_SRC} -o ${MAIN_OUT}
 
-${COMPILER}: create_build_folder lex.yy.c y.tab.c main.c
+stack.o: ${STACK_SRC}
+	$(info ---------- Compile ${STACK_SRC} ----------)
+	gcc -g -c ${STACK_SRC} -o ${STACK_OUT}
+
+${COMPILER}: create_build_folder lex.yy.c y.tab.c stack.o main.c
 	$(info ---------- Create compiler ----------)
-	gcc ${CFLAGS} -o ${COMPILER_OUT} -iquote ./ -iquote ../ ${LEX_OUT} ${YAC_OUT} ${MAIN_OUT}
+	gcc ${CFLAGS} -o ${COMPILER_OUT} -iquote ./ -iquote ../ ${LEX_OUT} ${YAC_OUT} ${STACK_OUT} ${MAIN_OUT} 
 
 run:
 	@./${COMPILER_OUT}

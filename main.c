@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "main.h"
+#include "stack.h"
 
 #define debug printf("%s:%d: ############### debug\n", __FILE__, __LINE__)
 
