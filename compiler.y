@@ -67,11 +67,18 @@ GlobalStmt
     : DefineVariableStmt
     | FunctionDefStmt
 	| CoutStmt
+    | ReturnStmt
 	| /* Empty Stmt */ 
 ;
 
+/* define variable */
 DefineVariableStmt
     : VARIABLE_T IDENT VAL_ASSIGN Expression ';'
+;
+
+/* Return */
+ReturnStmt
+    : RETURN Expression ';'
 ;
 
 /*cin cout*/
