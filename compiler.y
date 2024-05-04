@@ -83,19 +83,19 @@ ReturnStmt
 
 /*cin cout*/
 CoutStmt
-	: COUT SHL PrintableList ';'
+	: COUT SHL PrintableList ';' { printf("string\n"); }
 ;
 
 //可印出的列表
 PrintableList
-    : Printable
-    | PrintableList SHL Printable
+    : Printable {printf("cout ");}
+    | PrintableList SHL Printable { printf("cout string ");} 
 ;
 
 //可印出的token
 Printable
-    : STR_LIT
-    | ENDL
+    : STR_LIT { printf("STR_LIT \"%s\"\n", $<s_var>1); }
+    | ENDL { printf("ID_ENT (name=endl, address=-1)\n"); }
 ;
 
 /* expression */
