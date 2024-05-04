@@ -114,22 +114,3 @@ character ['].[']
 int yywrap(void) {
     return 1;
 }
-
-int main(int argc, char* argv[]) {
-    char *inputFileName = NULL;
-    if (argc == 2) {
-        yyin = fopen(inputFileName = argv[1], "r");
-    } else {
-        yyin = stdin;
-    }
-    if (!yyin) {
-        printf("file `%s` doesn't exists or cannot be opened\n", inputFileName);
-        exit(1);
-    }
-
-    yylex();
-    printf("\nTotal line: %d\n", yylineno);
-
-    fclose(yyin);
-    return 0;
-}
