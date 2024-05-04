@@ -66,8 +66,24 @@ DefineVariableStmt
     : VARIABLE_T IDENT VAL_ASSIGN Expression ';'
 ;
 
+//運算式-加減規則
 Expression
-    : INT_LIT '+' INT_LIT
+    | Term
+    | Expression ADD Term
+    | Expression SUB Term 
+;
+
+//乘除規則
+Term
+    : Factor
+    | Term MUL Factor
+    | Term DIV Factor
+;
+
+//數字或括弧
+Factor
+    : INT_LIT
+    | '(' Expression ')'
 ;
 
 /* Function */
