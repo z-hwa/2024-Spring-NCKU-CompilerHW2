@@ -73,7 +73,7 @@ GlobalStmt
 
 /* define variable */
 DefineVariableStmt
-    : VARIABLE_T IDENT { insert(&$<s_var>2); } VAL_ASSIGN Expression ';' 
+    : VARIABLE_T IDENT { insert($<s_var>2); } VAL_ASSIGN Expression ';' 
 ;
 
 /* Return */
@@ -122,7 +122,7 @@ Factor
 
 /* Function */
 FunctionDefStmt
-    : VARIABLE_T IDENT { insert($<s_var>2); } '(' { pushScope(); } FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' GlobalStmtList '}' { dumpScope(); }
+    : VARIABLE_T IDENT { createFunction($<var_type>1, $<s_var>2); } '(' { pushScope(); } FunctionParameterStmtList ')' '{' GlobalStmtList '}' { dumpScope(); }
 
 FunctionParameterStmtList 
     : FunctionParameterStmtList ',' FunctionParameterStmt

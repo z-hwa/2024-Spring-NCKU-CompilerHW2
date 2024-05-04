@@ -52,6 +52,24 @@ void pushFunParm(ObjectType variableType, char* variableName, int variableFlag) 
 }
 
 void createFunction(ObjectType variableType, char* funcName) {
+	/*Object func;	//宣告物件
+	func.type = variableType;	//設置類別
+	
+	//setting symbol
+	func.symbol->name = funcName;	//設置名稱
+	func.symbol->index;// = index[scopeLevel];	//從記錄各個scope index 的 linked list中拿出目前該scope已經用幾個變數了
+	func.symbol->lineno = yylineno;	//設置該函數在第幾行
+
+	//把該物件放進推疊
+	//fun.push(func)
+	*/
+	
+	//output func msg
+	printf("func: %s\n", funcName);	
+	
+	//insert variable
+	insert(funcName);
+
 }
 
 void debugPrintInst(char instc, Object* a, Object* b, Object* out) {

@@ -179,11 +179,10 @@ enum yysymbol_kind_t
   YYSYMBOL_FunctionDefStmt = 73,           /* FunctionDefStmt  */
   YYSYMBOL_74_3 = 74,                      /* $@3  */
   YYSYMBOL_75_4 = 75,                      /* $@4  */
-  YYSYMBOL_76_5 = 76,                      /* $@5  */
-  YYSYMBOL_FunctionParameterStmtList = 77, /* FunctionParameterStmtList  */
-  YYSYMBOL_FunctionParameterStmt = 78,     /* FunctionParameterStmt  */
-  YYSYMBOL_79_6 = 79,                      /* $@6  */
-  YYSYMBOL_80_7 = 80                       /* $@7  */
+  YYSYMBOL_FunctionParameterStmtList = 76, /* FunctionParameterStmtList  */
+  YYSYMBOL_FunctionParameterStmt = 77,     /* FunctionParameterStmt  */
+  YYSYMBOL_78_5 = 78,                      /* $@5  */
+  YYSYMBOL_79_6 = 79                       /* $@6  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -511,16 +510,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   53
+#define YYLAST   51
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  59
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  22
+#define YYNNTS  21
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  39
+#define YYNRULES  38
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  62
+#define YYNSTATES  61
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   305
@@ -577,7 +576,7 @@ static const yytype_uint8 yyrline[] =
        0,    57,    57,    57,    58,    62,    63,    67,    68,    69,
       70,    71,    76,    76,    81,    86,    91,    92,    97,    98,
      104,   105,   106,   111,   112,   113,   118,   119,   120,   125,
-     125,   125,   125,   128,   129,   130,   134,   134,   135,   135
+     125,   125,   128,   129,   130,   134,   134,   135,   135
 };
 #endif
 
@@ -604,8 +603,8 @@ static const char *const yytname[] =
   "'['", "']'", "$accept", "Program", "$@1", "GlobalStmtList",
   "GlobalStmt", "DefineVariableStmt", "$@2", "ReturnStmt", "CoutStmt",
   "PrintableList", "Printable", "Expression", "Term", "Factor",
-  "FunctionDefStmt", "$@3", "$@4", "$@5", "FunctionParameterStmtList",
-  "FunctionParameterStmt", "$@6", "$@7", YY_NULLPTR
+  "FunctionDefStmt", "$@3", "$@4", "FunctionParameterStmtList",
+  "FunctionParameterStmt", "$@5", "$@6", YY_NULLPTR
 };
 
 static const char *
@@ -620,7 +619,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-39)
+#define YYTABLE_NINF (-38)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -634,8 +633,8 @@ static const yytype_int8 yypact[] =
      -28,   -39,   -39,   -39,     1,   -39,    -6,   -33,   -33,   -39,
      -33,   -33,     5,   -25,   -38,   -39,   -39,     0,     0,   -39,
      -39,   -33,   -39,   -39,     4,   -18,   -39,   -17,   -35,   -39,
-     -23,   -39,   -18,   -39,   -22,   -14,   -39,   -21,    -1,   -39,
-      -2,   -39
+     -23,   -14,   -18,   -39,   -22,    -1,   -39,   -21,    -2,   -39,
+     -39
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -647,25 +646,25 @@ static const yytype_int8 yydefact[] =
       10,     9,     8,     0,    26,    27,     0,     0,    20,    23,
       12,     5,    19,    18,     0,    16,     0,     0,     0,    14,
        0,     0,     0,     0,     0,    15,    28,    21,    22,    24,
-      25,     0,    30,    17,     0,    35,    13,     0,     0,    34,
-      36,    31,     0,    37,     0,     0,    33,     0,    11,    39,
-       0,    32
+      25,     0,    30,    17,     0,    34,    13,     0,     0,    33,
+      35,     0,     0,    36,     0,    11,    32,     0,     0,    38,
+      31
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -39,   -39,   -39,   -15,    -7,   -39,   -39,   -39,   -39,   -39,
-       2,   -13,   -10,    -5,   -39,   -39,   -39,   -39,   -39,   -11,
-     -39,   -39
+     -39,   -39,   -39,   -19,    -7,   -39,   -39,   -39,   -39,   -39,
+       7,   -13,   -10,    -5,   -39,   -39,   -39,   -39,    -9,   -39,
+     -39
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
        0,     1,     2,     7,     8,     9,    32,    10,    11,    24,
-      25,    17,    18,    19,    12,    33,    45,    55,    48,    49,
-      53,    54
+      25,    17,    18,    19,    12,    33,    45,    48,    49,    53,
+      54
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -676,9 +675,9 @@ static const yytype_int8 yytable[] =
       21,     4,     4,    26,    27,    28,    34,    27,    28,    51,
       22,     3,    30,    31,    27,    28,    23,    37,    38,    14,
       15,    52,    16,    13,    20,    39,    40,   -29,    44,    41,
-      42,    47,    58,    50,   -38,    57,    43,    59,    36,     5,
-       5,    56,    29,    60,     0,    61,    35,     6,     6,    46,
-       0,     0,     0,    21
+      42,    47,    55,    50,   -37,    57,    58,    59,    36,     5,
+       5,    43,    29,    56,     0,    60,    35,     6,     6,    46,
+       0,    21
 };
 
 static const yytype_int8 yycheck[] =
@@ -686,9 +685,9 @@ static const yytype_int8 yycheck[] =
        7,     3,     3,    16,    10,    11,     5,    10,    11,    44,
       48,     0,    12,    13,    10,    11,    54,    27,    28,    52,
       53,    56,    55,     5,    50,    30,    31,    55,    41,    24,
-      55,    49,    46,    50,    57,    57,    34,    58,    44,    41,
-      41,    52,    45,    58,    -1,    47,    45,    49,    49,    45,
-      -1,    -1,    -1,    60
+      55,    49,    46,    50,    57,    57,    55,    58,    44,    41,
+      41,    34,    45,    52,    -1,    47,    45,    49,    49,    45,
+      -1,    58
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -699,9 +698,9 @@ static const yytype_int8 yystos[] =
       66,    67,    73,     5,    52,    53,    55,    70,    71,    72,
       50,    63,    48,    54,    68,    69,    70,    10,    11,    45,
       12,    13,    65,    74,     5,    45,    44,    71,    71,    72,
-      72,    24,    55,    69,    70,    75,    45,    49,    77,    78,
-      50,    44,    56,    79,    80,    76,    78,    57,    46,    58,
-      62,    47
+      72,    24,    55,    69,    70,    75,    45,    49,    76,    77,
+      50,    44,    56,    78,    79,    46,    77,    57,    62,    58,
+      47
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -710,7 +709,7 @@ static const yytype_int8 yyr1[] =
        0,    59,    61,    60,    60,    62,    62,    63,    63,    63,
       63,    63,    65,    64,    66,    67,    68,    68,    69,    69,
       70,    70,    70,    71,    71,    71,    72,    72,    72,    74,
-      75,    76,    73,    77,    77,    77,    79,    78,    80,    78
+      75,    73,    76,    76,    76,    78,    77,    79,    77
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -719,7 +718,7 @@ static const yytype_int8 yyr2[] =
        0,     2,     0,     2,     0,     2,     1,     1,     1,     1,
        1,     0,     0,     6,     3,     4,     1,     3,     1,     1,
        1,     3,     3,     1,     3,     3,     1,     1,     3,     0,
-       0,     0,    11,     3,     1,     0,     0,     3,     0,     5
+       0,    10,     3,     1,     0,     0,     3,     0,     5
 };
 
 
@@ -1185,71 +1184,65 @@ yyreduce:
   case 2: /* $@1: %empty  */
 #line 57 "./compiler.y"
       { pushScope(); }
-#line 1189 "./build/y.tab.c"
+#line 1188 "./build/y.tab.c"
     break;
 
   case 3: /* Program: $@1 GlobalStmtList  */
 #line 57 "./compiler.y"
                                       { dumpScope(); }
-#line 1195 "./build/y.tab.c"
+#line 1194 "./build/y.tab.c"
     break;
 
   case 12: /* $@2: %empty  */
 #line 76 "./compiler.y"
-                       { insert(&(yyvsp[0].s_var)); }
-#line 1201 "./build/y.tab.c"
+                       { insert((yyvsp[0].s_var)); }
+#line 1200 "./build/y.tab.c"
     break;
 
   case 29: /* $@3: %empty  */
 #line 125 "./compiler.y"
-                       { insert((yyvsp[0].s_var)); }
-#line 1207 "./build/y.tab.c"
+                       { createFunction((yyvsp[-1].var_type), (yyvsp[0].s_var)); }
+#line 1206 "./build/y.tab.c"
     break;
 
   case 30: /* $@4: %empty  */
 #line 125 "./compiler.y"
-                                                  { pushScope(); }
-#line 1213 "./build/y.tab.c"
+                                                                        { pushScope(); }
+#line 1212 "./build/y.tab.c"
     break;
 
-  case 31: /* $@5: %empty  */
+  case 31: /* FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}'  */
 #line 125 "./compiler.y"
-                                                                                                 { createFunction((yyvsp[-6].var_type), (yyvsp[-5].s_var)); }
-#line 1219 "./build/y.tab.c"
+                                                                                                                                              { dumpScope(); }
+#line 1218 "./build/y.tab.c"
     break;
 
-  case 32: /* FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}'  */
-#line 125 "./compiler.y"
-                                                                                                                                                                     { dumpScope(); }
-#line 1225 "./build/y.tab.c"
-    break;
-
-  case 36: /* $@6: %empty  */
+  case 35: /* $@5: %empty  */
 #line 134 "./compiler.y"
                        { insert((yyvsp[0].s_var)); }
-#line 1231 "./build/y.tab.c"
+#line 1224 "./build/y.tab.c"
     break;
 
-  case 37: /* FunctionParameterStmt: VARIABLE_T IDENT $@6  */
+  case 36: /* FunctionParameterStmt: VARIABLE_T IDENT $@5  */
 #line 134 "./compiler.y"
                                               { pushFunParm((yyvsp[-2].var_type), (yyvsp[-1].s_var), VAR_FLAG_DEFAULT); }
-#line 1237 "./build/y.tab.c"
+#line 1230 "./build/y.tab.c"
     break;
 
-  case 38: /* $@7: %empty  */
+  case 37: /* $@6: %empty  */
 #line 135 "./compiler.y"
                        { insert((yyvsp[0].s_var)); }
-#line 1243 "./build/y.tab.c"
+#line 1236 "./build/y.tab.c"
     break;
 
-  case 39: /* FunctionParameterStmt: VARIABLE_T IDENT $@7 '[' ']'  */
+  case 38: /* FunctionParameterStmt: VARIABLE_T IDENT $@6 '[' ']'  */
 #line 135 "./compiler.y"
                                                       { pushFunParm((yyvsp[-4].var_type), (yyvsp[-3].s_var), VAR_FLAG_DEFAULT); }
-#line 1249 "./build/y.tab.c"
+#line 1242 "./build/y.tab.c"
     break;
 
 
-#line 1253 "./build/y.tab.c"
+#line 1246 "./build/y.tab.c"
 
       default: break;
     }
