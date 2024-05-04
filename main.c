@@ -28,6 +28,8 @@ int variableAddress = 0;
 ObjectType variableIdentType;
 
 void pushScope() {
+    scopeLevel++;   //增加scope level
+    printf("> Create symbol table (scope level {%d})", scopeLevel);
 }
 
 void dumpScope() {
