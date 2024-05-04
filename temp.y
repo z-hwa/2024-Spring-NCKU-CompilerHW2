@@ -24,7 +24,6 @@
 %token SHR SHL BAN BOR BNT BXO ADD SUB MUL DIV REM NOT GTR LES GEQ LEQ EQL NEQ LAN LOR
 %token VAL_ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN BAN_ASSIGN BOR_ASSIGN BXO_ASSIGN SHR_ASSIGN SHL_ASSIGN INC_ASSIGN DEC_ASSIGN
 %token IF ELSE FOR WHILE RETURN BREAK CONTINUE
-%token ')' ';'
 
 /* Token with return, which need to sepcify type */
 %token <var_type> VARIABLE_T
@@ -36,12 +35,10 @@
 %token <f_var> FLOAT_LIT
 %token <s_var> STR_LIT
 
-%token <object_val> '('
-
 /* Nonterminal with return, which need to sepcify type */
 %type <object_val> Expression
 %type <object_val> Term
-%type <object_val> Factor
+
 
 %left ADD SUB
 %left MUL DIV REM
@@ -65,19 +62,12 @@ GlobalStmtList
 GlobalStmt
     : DefineVariableStmt
     | FunctionDefStmt
-	| CoutStmt
 ;
 
 DefineVariableStmt
     : VARIABLE_T IDENT VAL_ASSIGN Expression ';'
 ;
 
-/*cin cout*/
-CoutStmt
-	: COUT
-;
-
-/* expression */
 //運算式-加減規則
 Expression
     : Term
@@ -95,7 +85,6 @@ Term
 //數字或括弧
 Factor
     : INT_LIT
-	| FLOAT_LIT
     | '(' Expression ')'
 ;
 
@@ -103,16 +92,13 @@ Factor
 FunctionDefStmt
     : VARIABLE_T IDENT '(' FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' '}' { dumpScope(); }
 ;
-
 FunctionParameterStmtList 
     : FunctionParameterStmtList ',' FunctionParameterStmt
     | FunctionParameterStmt
     | /* Empty function parameter */
 ;
-
 FunctionParameterStmt
     : VARIABLE_T IDENT { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
-    | VARIABLE_T IDENT '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
 ;
 
 /* Scope */
@@ -120,15 +106,15 @@ StmtList
     : StmtList Stmt
     | Stmt
 ;
-
 Stmt
-    : COUT CoutParmListStmt ';' { stdoutPrint(); }
+    : ';'
+    | COUT CoutParmListStmt ';' { stdoutPrint(); }
     | RETURN Expression ';' { printf("RETURN\n"); }
 ;
 
 CoutParmListStmt
     : CoutParmListStmt SHL Expression { pushFunInParm(&$<object_val>3); }
-    | SHL Expression { pushFunInParm(&$<object_val>2); } 
+    | SHL Expression { pushFunInParm(&$<object_val>2); }
 ;
 
 %%

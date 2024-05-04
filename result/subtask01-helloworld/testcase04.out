@@ -1,0 +1,4 @@
+/home/share/hw2/input/subtask01-helloworld/testcase04.cpp:1:21: error:  syntax error
+     1 |int main(string argv[ ) {
+       |                    ^
+Total lines: 1

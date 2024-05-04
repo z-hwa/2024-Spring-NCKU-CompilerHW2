@@ -1,0 +1,4 @@
+/home/share/hw2/input/subtask02-comment/testcase03.cpp:11:21: error:  syntax error
+    11 |int main(string argv[ ) {
+       |                    ^
+Total lines: 11
