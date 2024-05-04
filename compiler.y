@@ -29,6 +29,12 @@
 %token <var_type> VARIABLE_T
 %token <s_var> IDENT
 
+//有value的token 需要特別讓他帶著屬性
+%token <b_var> BOOL_LIT
+%token <i_var> INT_LIT
+%token <f_var> FLAOT_LIT
+%token <s_var> STRING_LIT
+
 /* Nonterminal with return, which need to sepcify type */
 %type <object_val> Expression
 
@@ -58,6 +64,10 @@ GlobalStmt
 
 DefineVariableStmt
     : VARIABLE_T IDENT VAL_ASSIGN Expression ';'
+;
+
+Expression
+    :
 ;
 
 /* Function */
