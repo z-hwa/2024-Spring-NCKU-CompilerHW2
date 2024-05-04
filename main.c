@@ -30,7 +30,7 @@ ObjectType variableIdentType;
 //當遇到變數時，將變數插入到stack之中
 //但目前只實現了輸出顯示的功能
 void insert(char* variableName) {
-	printf("insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress, scopeLevel);
+	printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress, scopeLevel);
 	variableAddress++;
 }
 

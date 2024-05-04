@@ -78,7 +78,7 @@ DefineVariableStmt
 
 /* Return */
 ReturnStmt
-    : RETURN Expression ';'
+    : RETURN Expression ';' {printf("RETURN\n");}
 ;
 
 /*cin cout*/
