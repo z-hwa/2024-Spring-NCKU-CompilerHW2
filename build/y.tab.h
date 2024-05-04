@@ -95,12 +95,13 @@ extern int yydebug;
     RETURN = 296,                  /* RETURN  */
     BREAK = 297,                   /* BREAK  */
     CONTINUE = 298,                /* CONTINUE  */
-    VARIABLE_T = 299,              /* VARIABLE_T  */
-    IDENT = 300,                   /* IDENT  */
-    BOOL_LIT = 301,                /* BOOL_LIT  */
-    INT_LIT = 302,                 /* INT_LIT  */
-    FLOAT_LIT = 303,               /* FLOAT_LIT  */
-    STR_LIT = 304                  /* STR_LIT  */
+    ENDL = 299,                    /* ENDL  */
+    VARIABLE_T = 300,              /* VARIABLE_T  */
+    IDENT = 301,                   /* IDENT  */
+    BOOL_LIT = 302,                /* BOOL_LIT  */
+    INT_LIT = 303,                 /* INT_LIT  */
+    FLOAT_LIT = 304,               /* FLOAT_LIT  */
+    STR_LIT = 305                  /* STR_LIT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -150,12 +151,13 @@ extern int yydebug;
 #define RETURN 296
 #define BREAK 297
 #define CONTINUE 298
-#define VARIABLE_T 299
-#define IDENT 300
-#define BOOL_LIT 301
-#define INT_LIT 302
-#define FLOAT_LIT 303
-#define STR_LIT 304
+#define ENDL 299
+#define VARIABLE_T 300
+#define IDENT 301
+#define BOOL_LIT 302
+#define INT_LIT 303
+#define FLOAT_LIT 304
+#define STR_LIT 305
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -172,7 +174,7 @@ union YYSTYPE
 
     Object object_val;
 
-#line 176 "./build/y.tab.h"
+#line 178 "./build/y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

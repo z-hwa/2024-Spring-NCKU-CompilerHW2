@@ -67,6 +67,7 @@ GlobalStmt
     : DefineVariableStmt
     | FunctionDefStmt
 	| CoutStmt
+	| /* Empty Stmt */ 
 ;
 
 DefineVariableStmt
@@ -114,9 +115,7 @@ Factor
 
 /* Function */
 FunctionDefStmt
-    : VARIABLE_T IDENT '(' FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' '}' { dumpScope(); }
-    | VARIABLE_T IDENT '(' FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' GlobalStmtList '}' { dumpScope(); }
-;
+    : VARIABLE_T IDENT '(' FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' GlobalStmtList '}' { dumpScope(); }
 
 FunctionParameterStmtList 
     : FunctionParameterStmtList ',' FunctionParameterStmt
