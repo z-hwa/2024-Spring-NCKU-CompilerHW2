@@ -88,7 +88,7 @@ CoutStmt
 
 //可印出的列表
 PrintableList
-    : Printable {printf("cout ");}
+    : Printable 
     | PrintableList SHL Printable { printf("cout string ");} 
 ;
 
