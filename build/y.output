@@ -38,7 +38,6 @@
     ELSE
     FOR
     WHILE
-    RETURN
     BREAK
     CONTINUE
     BOOL_LIT
@@ -46,14 +45,14 @@
 
 規則在文法中無用
 
-   32 StmtList: StmtList Stmt
-   33         | Stmt
+   39 StmtList: StmtList Stmt
+   40         | Stmt
 
-   34 Stmt: COUT CoutParmListStmt ';'
-   35     | RETURN Expression ';'
+   41 Stmt: COUT CoutParmListStmt ';'
+   42     | RETURN Expression ';'
 
-   36 CoutParmListStmt: CoutParmListStmt SHL Expression
-   37                 | SHL Expression
+   43 CoutParmListStmt: CoutParmListStmt SHL Expression
+   44                 | SHL Expression
 
 
 規則由於衝突而在剖析器中無用
@@ -62,10 +61,10 @@
 
 
 狀態 0 衝突：1 項縮減/縮減
-狀態 2 衝突：2 項偏移/縮減
-狀態 6 衝突：2 項偏移/縮減，1 項縮減/縮減
-狀態 50 衝突：2 項偏移/縮減
-狀態 51 衝突：3 項偏移/縮減
+狀態 2 衝突：3 項偏移/縮減
+狀態 7 衝突：3 項偏移/縮減，1 項縮減/縮減
+狀態 58 衝突：3 項偏移/縮減
+狀態 60 衝突：4 項偏移/縮減
 
 
 文法
@@ -83,65 +82,79 @@
     6 GlobalStmt: DefineVariableStmt
     7           | FunctionDefStmt
     8           | CoutStmt
-    9           | ε
+    9           | ReturnStmt
+   10           | ε
 
-   10 DefineVariableStmt: VARIABLE_T IDENT VAL_ASSIGN Expression ';'
+   11 $@2: ε
 
-   11 CoutStmt: COUT SHL PrintableList ';'
+   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN Expression ';'
 
-   12 PrintableList: Printable
-   13              | PrintableList SHL Printable
+   13 ReturnStmt: RETURN Expression ';'
 
-   14 Printable: STR_LIT
-   15          | ENDL
+   14 CoutStmt: COUT SHL PrintableList ';'
 
-   16 Expression: Term
-   17           | Expression ADD Term
-   18           | Expression SUB Term
+   15 PrintableList: Printable
+   16              | PrintableList SHL Printable
 
-   19 Term: Factor
-   20     | Term MUL Factor
-   21     | Term DIV Factor
+   17 Printable: STR_LIT
+   18          | ENDL
 
-   22 Factor: INT_LIT
-   23       | FLOAT_LIT
-   24       | '(' Expression ')'
+   19 Expression: Term
+   20           | Expression ADD Term
+   21           | Expression SUB Term
 
-   25 $@2: ε
+   22 Term: Factor
+   23     | Term MUL Factor
+   24     | Term DIV Factor
 
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' FunctionParameterStmtList ')' $@2 '{' GlobalStmtList '}'
+   25 Factor: INT_LIT
+   26       | FLOAT_LIT
+   27       | '(' Expression ')'
 
-   27 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
-   28                          | FunctionParameterStmt
-   29                          | ε
+   28 $@3: ε
 
-   30 FunctionParameterStmt: VARIABLE_T IDENT
-   31                      | VARIABLE_T IDENT '[' ']'
+   29 $@4: ε
+
+   30 $@5: ε
+
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}'
+
+   32 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
+   33                          | FunctionParameterStmt
+   34                          | ε
+
+   35 $@6: ε
+
+   36 FunctionParameterStmt: VARIABLE_T IDENT $@6
+
+   37 $@7: ε
+
+   38 FunctionParameterStmt: VARIABLE_T IDENT $@7 '[' ']'
 
 
 終結語詞，附有它們出現處的規則
 
     $end (0) 0
-    '(' <object_val> (40) 24 26
-    ')' (41) 24 26
-    ',' (44) 27
-    ';' (59) 10 11
-    '[' (91) 31
-    ']' (93) 31
-    '{' (123) 26
-    '}' (125) 26
+    '(' <object_val> (40) 27 31
+    ')' (41) 27 31
+    ',' (44) 32
+    ';' (59) 12 13 14
+    '[' (91) 38
+    ']' (93) 38
+    '{' (123) 31
+    '}' (125) 31
     error (256)
-    COUT (258) 11
+    COUT (258) 14
     SHR (259)
-    SHL (260) 11 13
+    SHL (260) 14 16
     BAN (261)
     BOR (262)
     BNT (263)
     BXO (264)
-    ADD (265) 17
-    SUB (266) 18
-    MUL (267) 20
-    DIV (268) 21
+    ADD (265) 20
+    SUB (266) 21
+    MUL (267) 23
+    DIV (268) 24
     REM (269)
     NOT (270)
     GTR (271)
@@ -152,7 +165,7 @@
     NEQ (276)
     LAN (277)
     LOR (278)
-    VAL_ASSIGN (279) 10
+    VAL_ASSIGN (279) 12
     ADD_ASSIGN (280)
     SUB_ASSIGN (281)
     MUL_ASSIGN (282)
@@ -169,16 +182,16 @@
     ELSE (293)
     FOR (294)
     WHILE (295)
-    RETURN (296)
+    RETURN (296) 13
     BREAK (297)
     CONTINUE (298)
-    ENDL (299) 15
-    VARIABLE_T <var_type> (300) 10 26 30 31
-    IDENT <s_var> (301) 10 26 30 31
+    ENDL (299) 18
+    VARIABLE_T <var_type> (300) 12 31 36 38
+    IDENT <s_var> (301) 12 31 36 38
     BOOL_LIT <b_var> (302)
-    INT_LIT <i_var> (303) 22
-    FLOAT_LIT <f_var> (304) 23
-    STR_LIT <s_var> (305) 14
+    INT_LIT <i_var> (303) 25
+    FLOAT_LIT <f_var> (304) 26
+    STR_LIT <s_var> (305) 17
 
 
 非終結語詞，附有它們出現處的規則
@@ -193,43 +206,61 @@
         於右側： 2
     GlobalStmtList (62)
         於左側： 4 5
-        於右側： 2 4 26
+        於右側： 2 4 31
     GlobalStmt (63)
-        於左側： 6 7 8 9
+        於左側： 6 7 8 9 10
         於右側： 4 5
     DefineVariableStmt (64)
-        於左側： 10
+        於左側： 12
         於右側： 6
-    CoutStmt (65)
+    $@2 (65)
         於左側： 11
+        於右側： 12
+    ReturnStmt (66)
+        於左側： 13
+        於右側： 9
+    CoutStmt (67)
+        於左側： 14
         於右側： 8
-    PrintableList (66)
-        於左側： 12 13
-        於右側： 11 13
-    Printable (67)
-        於左側： 14 15
-        於右側： 12 13
-    Expression <object_val> (68)
-        於左側： 16 17 18
-        於右側： 10 17 18 24
-    Term <object_val> (69)
+    PrintableList (68)
+        於左側： 15 16
+        於右側： 14 16
+    Printable (69)
+        於左側： 17 18
+        於右側： 15 16
+    Expression <object_val> (70)
         於左側： 19 20 21
-        於右側： 16 17 18 20 21
-    Factor <object_val> (70)
+        於右側： 12 13 20 21 27
+    Term <object_val> (71)
         於左側： 22 23 24
-        於右側： 19 20 21
-    FunctionDefStmt (71)
-        於左側： 26
+        於右側： 19 20 21 23 24
+    Factor <object_val> (72)
+        於左側： 25 26 27
+        於右側： 22 23 24
+    FunctionDefStmt (73)
+        於左側： 31
         於右側： 7
-    $@2 (72)
-        於左側： 25
-        於右側： 26
-    FunctionParameterStmtList (73)
-        於左側： 27 28 29
-        於右側： 26 27
-    FunctionParameterStmt (74)
-        於左側： 30 31
-        於右側： 27 28
+    $@3 (74)
+        於左側： 28
+        於右側： 31
+    $@4 (75)
+        於左側： 29
+        於右側： 31
+    $@5 (76)
+        於左側： 30
+        於右側： 31
+    FunctionParameterStmtList (77)
+        於左側： 32 33 34
+        於右側： 31 32
+    FunctionParameterStmt (78)
+        於左側： 36 38
+        於右側： 32 33
+    $@6 (79)
+        於左側： 35
+        於右側： 36
+    $@7 (80)
+        於左側： 37
+        於右側： 38
 
 
 狀態 0
@@ -256,17 +287,20 @@
     2 Program: $@1 • GlobalStmtList
 
     COUT        偏移，並進入狀態 4
-    VARIABLE_T  偏移，並進入狀態 5
+    RETURN      偏移，並進入狀態 5
+    VARIABLE_T  偏移，並進入狀態 6
 
-    COUT        [使用規則 9 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 9 以縮減 (GlobalStmt)]
-    $default    使用規則 9 以縮減 (GlobalStmt)
+    COUT        [使用規則 10 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
+    $default    使用規則 10 以縮減 (GlobalStmt)
 
-    GlobalStmtList      進入狀態 6
-    GlobalStmt          進入狀態 7
-    DefineVariableStmt  進入狀態 8
-    CoutStmt            進入狀態 9
-    FunctionDefStmt     進入狀態 10
+    GlobalStmtList      進入狀態 7
+    GlobalStmt          進入狀態 8
+    DefineVariableStmt  進入狀態 9
+    ReturnStmt          進入狀態 10
+    CoutStmt            進入狀態 11
+    FunctionDefStmt     進入狀態 12
 
 
 狀態 3
@@ -278,458 +312,547 @@
 
 狀態 4
 
-   11 CoutStmt: COUT • SHL PrintableList ';'
+   14 CoutStmt: COUT • SHL PrintableList ';'
 
-    SHL  偏移，並進入狀態 11
+    SHL  偏移，並進入狀態 13
 
 
 狀態 5
 
-   10 DefineVariableStmt: VARIABLE_T • IDENT VAL_ASSIGN Expression ';'
-   26 FunctionDefStmt: VARIABLE_T • IDENT '(' FunctionParameterStmtList ')' $@2 '{' GlobalStmtList '}'
+   13 ReturnStmt: RETURN • Expression ';'
 
-    IDENT  偏移，並進入狀態 12
+    INT_LIT    偏移，並進入狀態 14
+    FLOAT_LIT  偏移，並進入狀態 15
+    '('        偏移，並進入狀態 16
+
+    Expression  進入狀態 17
+    Term        進入狀態 18
+    Factor      進入狀態 19
 
 
 狀態 6
+
+   12 DefineVariableStmt: VARIABLE_T • IDENT $@2 VAL_ASSIGN Expression ';'
+   31 FunctionDefStmt: VARIABLE_T • IDENT $@3 '(' $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}'
+
+    IDENT  偏移，並進入狀態 20
+
+
+狀態 7
 
     2 Program: $@1 GlobalStmtList •
     4 GlobalStmtList: GlobalStmtList • GlobalStmt
 
     COUT        偏移，並進入狀態 4
-    VARIABLE_T  偏移，並進入狀態 5
+    RETURN      偏移，並進入狀態 5
+    VARIABLE_T  偏移，並進入狀態 6
 
     $end        使用規則 2 以縮減 (Program)
-    $end        [使用規則 9 以縮減 (GlobalStmt)]
-    COUT        [使用規則 9 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 9 以縮減 (GlobalStmt)]
+    $end        [使用規則 10 以縮減 (GlobalStmt)]
+    COUT        [使用規則 10 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
     $default    使用規則 2 以縮減 (Program)
 
-    GlobalStmt          進入狀態 13
-    DefineVariableStmt  進入狀態 8
-    CoutStmt            進入狀態 9
-    FunctionDefStmt     進入狀態 10
+    GlobalStmt          進入狀態 21
+    DefineVariableStmt  進入狀態 9
+    ReturnStmt          進入狀態 10
+    CoutStmt            進入狀態 11
+    FunctionDefStmt     進入狀態 12
 
 
-狀態 7
+狀態 8
 
     5 GlobalStmtList: GlobalStmt •
 
     $default  使用規則 5 以縮減 (GlobalStmtList)
 
 
-狀態 8
+狀態 9
 
     6 GlobalStmt: DefineVariableStmt •
 
     $default  使用規則 6 以縮減 (GlobalStmt)
 
 
-狀態 9
+狀態 10
+
+    9 GlobalStmt: ReturnStmt •
+
+    $default  使用規則 9 以縮減 (GlobalStmt)
+
+
+狀態 11
 
     8 GlobalStmt: CoutStmt •
 
     $default  使用規則 8 以縮減 (GlobalStmt)
 
 
-狀態 10
+狀態 12
 
     7 GlobalStmt: FunctionDefStmt •
 
     $default  使用規則 7 以縮減 (GlobalStmt)
 
 
-狀態 11
-
-   11 CoutStmt: COUT SHL • PrintableList ';'
-
-    ENDL     偏移，並進入狀態 14
-    STR_LIT  偏移，並進入狀態 15
-
-    PrintableList  進入狀態 16
-    Printable      進入狀態 17
-
-
-狀態 12
-
-   10 DefineVariableStmt: VARIABLE_T IDENT • VAL_ASSIGN Expression ';'
-   26 FunctionDefStmt: VARIABLE_T IDENT • '(' FunctionParameterStmtList ')' $@2 '{' GlobalStmtList '}'
-
-    VAL_ASSIGN  偏移，並進入狀態 18
-    '('         偏移，並進入狀態 19
-
-
 狀態 13
+
+   14 CoutStmt: COUT SHL • PrintableList ';'
+
+    ENDL     偏移，並進入狀態 22
+    STR_LIT  偏移，並進入狀態 23
+
+    PrintableList  進入狀態 24
+    Printable      進入狀態 25
+
+
+狀態 14
+
+   25 Factor: INT_LIT •
+
+    $default  使用規則 25 以縮減 (Factor)
+
+
+狀態 15
+
+   26 Factor: FLOAT_LIT •
+
+    $default  使用規則 26 以縮減 (Factor)
+
+
+狀態 16
+
+   27 Factor: '(' • Expression ')'
+
+    INT_LIT    偏移，並進入狀態 14
+    FLOAT_LIT  偏移，並進入狀態 15
+    '('        偏移，並進入狀態 16
+
+    Expression  進入狀態 26
+    Term        進入狀態 18
+    Factor      進入狀態 19
+
+
+狀態 17
+
+   13 ReturnStmt: RETURN Expression • ';'
+   20 Expression: Expression • ADD Term
+   21           | Expression • SUB Term
+
+    ADD  偏移，並進入狀態 27
+    SUB  偏移，並進入狀態 28
+    ';'  偏移，並進入狀態 29
+
+
+狀態 18
+
+   19 Expression: Term •
+   23 Term: Term • MUL Factor
+   24     | Term • DIV Factor
+
+    MUL  偏移，並進入狀態 30
+    DIV  偏移，並進入狀態 31
+
+    $default  使用規則 19 以縮減 (Expression)
+
+
+狀態 19
+
+   22 Term: Factor •
+
+    $default  使用規則 22 以縮減 (Term)
+
+
+狀態 20
+
+   12 DefineVariableStmt: VARIABLE_T IDENT • $@2 VAL_ASSIGN Expression ';'
+   31 FunctionDefStmt: VARIABLE_T IDENT • $@3 '(' $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}'
+
+    '('       使用規則 28 以縮減 ($@3)
+    $default  使用規則 11 以縮減 ($@2)
+
+    $@2  進入狀態 32
+    $@3  進入狀態 33
+
+
+狀態 21
 
     4 GlobalStmtList: GlobalStmtList GlobalStmt •
 
     $default  使用規則 4 以縮減 (GlobalStmtList)
 
 
-狀態 14
-
-   15 Printable: ENDL •
-
-    $default  使用規則 15 以縮減 (Printable)
-
-
-狀態 15
-
-   14 Printable: STR_LIT •
-
-    $default  使用規則 14 以縮減 (Printable)
-
-
-狀態 16
-
-   11 CoutStmt: COUT SHL PrintableList • ';'
-   13 PrintableList: PrintableList • SHL Printable
-
-    SHL  偏移，並進入狀態 20
-    ';'  偏移，並進入狀態 21
-
-
-狀態 17
-
-   12 PrintableList: Printable •
-
-    $default  使用規則 12 以縮減 (PrintableList)
-
-
-狀態 18
-
-   10 DefineVariableStmt: VARIABLE_T IDENT VAL_ASSIGN • Expression ';'
-
-    INT_LIT    偏移，並進入狀態 22
-    FLOAT_LIT  偏移，並進入狀態 23
-    '('        偏移，並進入狀態 24
-
-    Expression  進入狀態 25
-    Term        進入狀態 26
-    Factor      進入狀態 27
-
-
-狀態 19
-
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' • FunctionParameterStmtList ')' $@2 '{' GlobalStmtList '}'
-
-    VARIABLE_T  偏移，並進入狀態 28
-
-    $default  使用規則 29 以縮減 (FunctionParameterStmtList)
-
-    FunctionParameterStmtList  進入狀態 29
-    FunctionParameterStmt      進入狀態 30
-
-
-狀態 20
-
-   13 PrintableList: PrintableList SHL • Printable
-
-    ENDL     偏移，並進入狀態 14
-    STR_LIT  偏移，並進入狀態 15
-
-    Printable  進入狀態 31
-
-
-狀態 21
-
-   11 CoutStmt: COUT SHL PrintableList ';' •
-
-    $default  使用規則 11 以縮減 (CoutStmt)
-
-
 狀態 22
 
-   22 Factor: INT_LIT •
+   18 Printable: ENDL •
 
-    $default  使用規則 22 以縮減 (Factor)
+    $default  使用規則 18 以縮減 (Printable)
 
 
 狀態 23
 
-   23 Factor: FLOAT_LIT •
+   17 Printable: STR_LIT •
 
-    $default  使用規則 23 以縮減 (Factor)
+    $default  使用規則 17 以縮減 (Printable)
 
 
 狀態 24
 
-   24 Factor: '(' • Expression ')'
+   14 CoutStmt: COUT SHL PrintableList • ';'
+   16 PrintableList: PrintableList • SHL Printable
 
-    INT_LIT    偏移，並進入狀態 22
-    FLOAT_LIT  偏移，並進入狀態 23
-    '('        偏移，並進入狀態 24
-
-    Expression  進入狀態 32
-    Term        進入狀態 26
-    Factor      進入狀態 27
+    SHL  偏移，並進入狀態 34
+    ';'  偏移，並進入狀態 35
 
 
 狀態 25
 
-   10 DefineVariableStmt: VARIABLE_T IDENT VAL_ASSIGN Expression • ';'
-   17 Expression: Expression • ADD Term
-   18           | Expression • SUB Term
+   15 PrintableList: Printable •
 
-    ADD  偏移，並進入狀態 33
-    SUB  偏移，並進入狀態 34
-    ';'  偏移，並進入狀態 35
+    $default  使用規則 15 以縮減 (PrintableList)
 
 
 狀態 26
 
-   16 Expression: Term •
-   20 Term: Term • MUL Factor
-   21     | Term • DIV Factor
+   20 Expression: Expression • ADD Term
+   21           | Expression • SUB Term
+   27 Factor: '(' Expression • ')'
 
-    MUL  偏移，並進入狀態 36
-    DIV  偏移，並進入狀態 37
-
-    $default  使用規則 16 以縮減 (Expression)
+    ADD  偏移，並進入狀態 27
+    SUB  偏移，並進入狀態 28
+    ')'  偏移，並進入狀態 36
 
 
 狀態 27
 
-   19 Term: Factor •
+   20 Expression: Expression ADD • Term
 
-    $default  使用規則 19 以縮減 (Term)
+    INT_LIT    偏移，並進入狀態 14
+    FLOAT_LIT  偏移，並進入狀態 15
+    '('        偏移，並進入狀態 16
+
+    Term    進入狀態 37
+    Factor  進入狀態 19
 
 
 狀態 28
 
-   30 FunctionParameterStmt: VARIABLE_T • IDENT
-   31                      | VARIABLE_T • IDENT '[' ']'
+   21 Expression: Expression SUB • Term
 
-    IDENT  偏移，並進入狀態 38
+    INT_LIT    偏移，並進入狀態 14
+    FLOAT_LIT  偏移，並進入狀態 15
+    '('        偏移，並進入狀態 16
+
+    Term    進入狀態 38
+    Factor  進入狀態 19
 
 
 狀態 29
 
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' FunctionParameterStmtList • ')' $@2 '{' GlobalStmtList '}'
-   27 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
+   13 ReturnStmt: RETURN Expression ';' •
 
-    ')'  偏移，並進入狀態 39
-    ','  偏移，並進入狀態 40
+    $default  使用規則 13 以縮減 (ReturnStmt)
 
 
 狀態 30
 
-   28 FunctionParameterStmtList: FunctionParameterStmt •
+   23 Term: Term MUL • Factor
 
-    $default  使用規則 28 以縮減 (FunctionParameterStmtList)
+    INT_LIT    偏移，並進入狀態 14
+    FLOAT_LIT  偏移，並進入狀態 15
+    '('        偏移，並進入狀態 16
+
+    Factor  進入狀態 39
 
 
 狀態 31
 
-   13 PrintableList: PrintableList SHL Printable •
+   24 Term: Term DIV • Factor
 
-    $default  使用規則 13 以縮減 (PrintableList)
+    INT_LIT    偏移，並進入狀態 14
+    FLOAT_LIT  偏移，並進入狀態 15
+    '('        偏移，並進入狀態 16
+
+    Factor  進入狀態 40
 
 
 狀態 32
 
-   17 Expression: Expression • ADD Term
-   18           | Expression • SUB Term
-   24 Factor: '(' Expression • ')'
+   12 DefineVariableStmt: VARIABLE_T IDENT $@2 • VAL_ASSIGN Expression ';'
 
-    ADD  偏移，並進入狀態 33
-    SUB  偏移，並進入狀態 34
-    ')'  偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 41
 
 
 狀態 33
 
-   17 Expression: Expression ADD • Term
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 • '(' $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}'
 
-    INT_LIT    偏移，並進入狀態 22
-    FLOAT_LIT  偏移，並進入狀態 23
-    '('        偏移，並進入狀態 24
-
-    Term    進入狀態 42
-    Factor  進入狀態 27
+    '('  偏移，並進入狀態 42
 
 
 狀態 34
 
-   18 Expression: Expression SUB • Term
+   16 PrintableList: PrintableList SHL • Printable
 
-    INT_LIT    偏移，並進入狀態 22
-    FLOAT_LIT  偏移，並進入狀態 23
-    '('        偏移，並進入狀態 24
+    ENDL     偏移，並進入狀態 22
+    STR_LIT  偏移，並進入狀態 23
 
-    Term    進入狀態 43
-    Factor  進入狀態 27
+    Printable  進入狀態 43
 
 
 狀態 35
 
-   10 DefineVariableStmt: VARIABLE_T IDENT VAL_ASSIGN Expression ';' •
+   14 CoutStmt: COUT SHL PrintableList ';' •
 
-    $default  使用規則 10 以縮減 (DefineVariableStmt)
+    $default  使用規則 14 以縮減 (CoutStmt)
 
 
 狀態 36
 
-   20 Term: Term MUL • Factor
+   27 Factor: '(' Expression ')' •
 
-    INT_LIT    偏移，並進入狀態 22
-    FLOAT_LIT  偏移，並進入狀態 23
-    '('        偏移，並進入狀態 24
-
-    Factor  進入狀態 44
+    $default  使用規則 27 以縮減 (Factor)
 
 
 狀態 37
 
-   21 Term: Term DIV • Factor
+   20 Expression: Expression ADD Term •
+   23 Term: Term • MUL Factor
+   24     | Term • DIV Factor
 
-    INT_LIT    偏移，並進入狀態 22
-    FLOAT_LIT  偏移，並進入狀態 23
-    '('        偏移，並進入狀態 24
+    MUL  偏移，並進入狀態 30
+    DIV  偏移，並進入狀態 31
 
-    Factor  進入狀態 45
+    $default  使用規則 20 以縮減 (Expression)
 
 
 狀態 38
 
-   30 FunctionParameterStmt: VARIABLE_T IDENT •
-   31                      | VARIABLE_T IDENT • '[' ']'
+   21 Expression: Expression SUB Term •
+   23 Term: Term • MUL Factor
+   24     | Term • DIV Factor
 
-    '['  偏移，並進入狀態 46
+    MUL  偏移，並進入狀態 30
+    DIV  偏移，並進入狀態 31
 
-    $default  使用規則 30 以縮減 (FunctionParameterStmt)
+    $default  使用規則 21 以縮減 (Expression)
 
 
 狀態 39
 
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' FunctionParameterStmtList ')' • $@2 '{' GlobalStmtList '}'
+   23 Term: Term MUL Factor •
 
-    $default  使用規則 25 以縮減 ($@2)
-
-    $@2  進入狀態 47
+    $default  使用規則 23 以縮減 (Term)
 
 
 狀態 40
 
-   27 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
+   24 Term: Term DIV Factor •
 
-    VARIABLE_T  偏移，並進入狀態 28
-
-    FunctionParameterStmt  進入狀態 48
+    $default  使用規則 24 以縮減 (Term)
 
 
 狀態 41
 
-   24 Factor: '(' Expression ')' •
+   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN • Expression ';'
 
-    $default  使用規則 24 以縮減 (Factor)
+    INT_LIT    偏移，並進入狀態 14
+    FLOAT_LIT  偏移，並進入狀態 15
+    '('        偏移，並進入狀態 16
+
+    Expression  進入狀態 44
+    Term        進入狀態 18
+    Factor      進入狀態 19
 
 
 狀態 42
 
-   17 Expression: Expression ADD Term •
-   20 Term: Term • MUL Factor
-   21     | Term • DIV Factor
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' • $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}'
 
-    MUL  偏移，並進入狀態 36
-    DIV  偏移，並進入狀態 37
+    $default  使用規則 29 以縮減 ($@4)
 
-    $default  使用規則 17 以縮減 (Expression)
+    $@4  進入狀態 45
 
 
 狀態 43
 
-   18 Expression: Expression SUB Term •
-   20 Term: Term • MUL Factor
-   21     | Term • DIV Factor
+   16 PrintableList: PrintableList SHL Printable •
 
-    MUL  偏移，並進入狀態 36
-    DIV  偏移，並進入狀態 37
-
-    $default  使用規則 18 以縮減 (Expression)
+    $default  使用規則 16 以縮減 (PrintableList)
 
 
 狀態 44
 
-   20 Term: Term MUL Factor •
+   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN Expression • ';'
+   20 Expression: Expression • ADD Term
+   21           | Expression • SUB Term
 
-    $default  使用規則 20 以縮減 (Term)
+    ADD  偏移，並進入狀態 27
+    SUB  偏移，並進入狀態 28
+    ';'  偏移，並進入狀態 46
 
 
 狀態 45
 
-   21 Term: Term DIV Factor •
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 • FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}'
 
-    $default  使用規則 21 以縮減 (Term)
+    VARIABLE_T  偏移，並進入狀態 47
+
+    $default  使用規則 34 以縮減 (FunctionParameterStmtList)
+
+    FunctionParameterStmtList  進入狀態 48
+    FunctionParameterStmt      進入狀態 49
 
 
 狀態 46
 
-   31 FunctionParameterStmt: VARIABLE_T IDENT '[' • ']'
+   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN Expression ';' •
 
-    ']'  偏移，並進入狀態 49
+    $default  使用規則 12 以縮減 (DefineVariableStmt)
 
 
 狀態 47
 
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' FunctionParameterStmtList ')' $@2 • '{' GlobalStmtList '}'
+   36 FunctionParameterStmt: VARIABLE_T • IDENT $@6
+   38                      | VARIABLE_T • IDENT $@7 '[' ']'
 
-    '{'  偏移，並進入狀態 50
+    IDENT  偏移，並進入狀態 50
 
 
 狀態 48
 
-   27 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList • ')' $@5 '{' GlobalStmtList '}'
+   32 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
 
-    $default  使用規則 27 以縮減 (FunctionParameterStmtList)
+    ')'  偏移，並進入狀態 51
+    ','  偏移，並進入狀態 52
 
 
 狀態 49
 
-   31 FunctionParameterStmt: VARIABLE_T IDENT '[' ']' •
+   33 FunctionParameterStmtList: FunctionParameterStmt •
 
-    $default  使用規則 31 以縮減 (FunctionParameterStmt)
+    $default  使用規則 33 以縮減 (FunctionParameterStmtList)
 
 
 狀態 50
 
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' FunctionParameterStmtList ')' $@2 '{' • GlobalStmtList '}'
+   36 FunctionParameterStmt: VARIABLE_T IDENT • $@6
+   38                      | VARIABLE_T IDENT • $@7 '[' ']'
 
-    COUT        偏移，並進入狀態 4
-    VARIABLE_T  偏移，並進入狀態 5
+    '['       使用規則 37 以縮減 ($@7)
+    $default  使用規則 35 以縮減 ($@6)
 
-    COUT        [使用規則 9 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 9 以縮減 (GlobalStmt)]
-    $default    使用規則 9 以縮減 (GlobalStmt)
-
-    GlobalStmtList      進入狀態 51
-    GlobalStmt          進入狀態 7
-    DefineVariableStmt  進入狀態 8
-    CoutStmt            進入狀態 9
-    FunctionDefStmt     進入狀態 10
+    $@6  進入狀態 53
+    $@7  進入狀態 54
 
 
 狀態 51
 
-    4 GlobalStmtList: GlobalStmtList • GlobalStmt
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' FunctionParameterStmtList ')' $@2 '{' GlobalStmtList • '}'
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' • $@5 '{' GlobalStmtList '}'
 
-    COUT        偏移，並進入狀態 4
-    '}'         偏移，並進入狀態 52
-    VARIABLE_T  偏移，並進入狀態 5
+    $default  使用規則 30 以縮減 ($@5)
 
-    COUT        [使用規則 9 以縮減 (GlobalStmt)]
-    '}'         [使用規則 9 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 9 以縮減 (GlobalStmt)]
-
-    GlobalStmt          進入狀態 13
-    DefineVariableStmt  進入狀態 8
-    CoutStmt            進入狀態 9
-    FunctionDefStmt     進入狀態 10
+    $@5  進入狀態 55
 
 
 狀態 52
 
-   26 FunctionDefStmt: VARIABLE_T IDENT '(' FunctionParameterStmtList ')' $@2 '{' GlobalStmtList '}' •
+   32 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
 
-    $default  使用規則 26 以縮減 (FunctionDefStmt)
+    VARIABLE_T  偏移，並進入狀態 47
+
+    FunctionParameterStmt  進入狀態 56
+
+
+狀態 53
+
+   36 FunctionParameterStmt: VARIABLE_T IDENT $@6 •
+
+    $default  使用規則 36 以縮減 (FunctionParameterStmt)
+
+
+狀態 54
+
+   38 FunctionParameterStmt: VARIABLE_T IDENT $@7 • '[' ']'
+
+    '['  偏移，並進入狀態 57
+
+
+狀態 55
+
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' $@5 • '{' GlobalStmtList '}'
+
+    '{'  偏移，並進入狀態 58
+
+
+狀態 56
+
+   32 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
+
+    $default  使用規則 32 以縮減 (FunctionParameterStmtList)
+
+
+狀態 57
+
+   38 FunctionParameterStmt: VARIABLE_T IDENT $@7 '[' • ']'
+
+    ']'  偏移，並進入狀態 59
+
+
+狀態 58
+
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' $@5 '{' • GlobalStmtList '}'
+
+    COUT        偏移，並進入狀態 4
+    RETURN      偏移，並進入狀態 5
+    VARIABLE_T  偏移，並進入狀態 6
+
+    COUT        [使用規則 10 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
+    $default    使用規則 10 以縮減 (GlobalStmt)
+
+    GlobalStmtList      進入狀態 60
+    GlobalStmt          進入狀態 8
+    DefineVariableStmt  進入狀態 9
+    ReturnStmt          進入狀態 10
+    CoutStmt            進入狀態 11
+    FunctionDefStmt     進入狀態 12
+
+
+狀態 59
+
+   38 FunctionParameterStmt: VARIABLE_T IDENT $@7 '[' ']' •
+
+    $default  使用規則 38 以縮減 (FunctionParameterStmt)
+
+
+狀態 60
+
+    4 GlobalStmtList: GlobalStmtList • GlobalStmt
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList • '}'
+
+    COUT        偏移，並進入狀態 4
+    RETURN      偏移，並進入狀態 5
+    '}'         偏移，並進入狀態 61
+    VARIABLE_T  偏移，並進入狀態 6
+
+    COUT        [使用規則 10 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
+    '}'         [使用規則 10 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
+
+    GlobalStmt          進入狀態 21
+    DefineVariableStmt  進入狀態 9
+    ReturnStmt          進入狀態 10
+    CoutStmt            進入狀態 11
+    FunctionDefStmt     進入狀態 12
+
+
+狀態 61
+
+   31 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' $@5 '{' GlobalStmtList '}' •
+
+    $default  使用規則 31 以縮減 (FunctionDefStmt)

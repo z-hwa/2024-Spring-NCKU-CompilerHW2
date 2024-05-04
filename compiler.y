@@ -73,7 +73,7 @@ GlobalStmt
 
 /* define variable */
 DefineVariableStmt
-    : VARIABLE_T IDENT VAL_ASSIGN Expression ';'
+    : VARIABLE_T IDENT { insert(&$<s_var>2); } VAL_ASSIGN Expression ';' 
 ;
 
 /* Return */
@@ -122,7 +122,7 @@ Factor
 
 /* Function */
 FunctionDefStmt
-    : VARIABLE_T IDENT '(' FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' GlobalStmtList '}' { dumpScope(); }
+    : VARIABLE_T IDENT { insert($<s_var>2); } '(' { pushScope(); } FunctionParameterStmtList ')' { createFunction($<var_type>1, $<s_var>2); } '{' GlobalStmtList '}' { dumpScope(); }
 
 FunctionParameterStmtList 
     : FunctionParameterStmtList ',' FunctionParameterStmt
@@ -131,8 +131,8 @@ FunctionParameterStmtList
 ;
 
 FunctionParameterStmt
-    : VARIABLE_T IDENT { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
-    | VARIABLE_T IDENT '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
+    : VARIABLE_T IDENT { insert($<s_var>2); } { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
+    | VARIABLE_T IDENT { insert($<s_var>2); } '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
 ;
 
 /* Scope */

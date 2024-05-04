@@ -24,15 +24,24 @@ bool compileError;
 int indent = 0;
 int scopeLevel = -1;
 int funcLineNo = 0;
-int variableAddress = 0;
+int variableAddress = -1;
 ObjectType variableIdentType;
 
+//當遇到變數時，將變數插入到stack之中
+//但目前只實現了輸出顯示的功能
+void insert(char* variableName) {
+	printf("insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress, scopeLevel);
+	variableAddress++;
+}
+
+//如果進到下一個scope 會呼叫該函數並輸出進入下一個scope的訊息
 void pushScope() {
     scopeLevel++;   //增加scope level
-    printf("> Create symbol table (scope level {%d})", scopeLevel);
+    printf("> Create symbol table (scope level {%d})\n", scopeLevel);
 }
 
 void dumpScope() {
+	scopeLevel--;
 }
 
 Object* createVariable(ObjectType variableType, char* variableName, int variableFlag) {
