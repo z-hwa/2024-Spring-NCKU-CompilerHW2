@@ -68,7 +68,7 @@ DefineVariableStmt
 
 //運算式-加減規則
 Expression
-    | Term
+    : Term
     | Expression ADD Term
     | Expression SUB Term 
 ;
