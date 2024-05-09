@@ -73,7 +73,7 @@ GlobalStmt
 
 /* define variable */
 DefineVariableStmt
-    : VARIABLE_T IDENT { insert($<s_var>2); } VAL_ASSIGN Expression ';' 
+    : VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1); } VAL_ASSIGN Expression ';' 
 ;
 
 /* Return */
@@ -115,7 +115,7 @@ Term
 
 //數字或括弧
 Factor
-    : INT_LIT
+    : INT_LIT {printf("INT_LIT %d\n", $<i_var>1);}
 	| FLOAT_LIT
     | '(' Expression ')'
 ;
@@ -131,8 +131,8 @@ FunctionParameterStmtList
 ;
 
 FunctionParameterStmt
-    : VARIABLE_T IDENT { insert($<s_var>2); } { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
-    | VARIABLE_T IDENT { insert($<s_var>2); } '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
+    : VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1); } { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
+    | VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1); } '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
 ;
 
 /* Scope */

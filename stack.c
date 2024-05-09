@@ -9,22 +9,35 @@
     struct node *next;
 } node;*/
 
-bool push(Stack **head, Object value){
-    Stack *newnode = malloc(sizeof(Stack));
-    newnode->value = value;
+Stack* top(Stack **head) {
+	if(*head == NULL) {
+		printf("this stack is empty\n");
+		return NULL;
+	}
+
+	return *head;
+}
+
+bool push(Stack **head, Stack nodeData){
+	Stack *newnode = (Stack *)malloc(sizeof(Stack));
+    //newnode->value = nodeData.value;
+	newnode->scopeLevel = nodeData.scopeLevel;
+
     newnode->next = (*head);
     (*head) = newnode;
     return true;
 }
 
-Object pop(Stack **head){
+Stack pop(Stack **head){
     if((*head) == NULL) {
-		Object empty;
-		empty.type = OBJECT_TYPE_VOID;
+		Stack empty;
         return empty;
 	}
 
-    Object result = (*head)->value;
+	Stack result;
+	//result.value = (*head)->value;
+	result.scopeLevel = (*head)->scopeLevel;
+
     Stack *temp = (*head);
     (*head) = (*head)->next;
     free(temp);

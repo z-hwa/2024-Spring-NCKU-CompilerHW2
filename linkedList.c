@@ -5,10 +5,15 @@
 
 void insertToList(LinkedList **list, LinkedList nodeData) {
 	// 建立新節點
-    LinkedList *newNode = (LinkedList *)malloc(sizeof(LinkedList *));
+    LinkedList *newNode = (LinkedList *)malloc(sizeof(LinkedList));
 	
-    newNode->stack = nodeData.stack;
-    newNode->index = nodeData.index;
+    newNode->scopeLevel = nodeData.scopeLevel;
+	newNode->list = nodeData.list;
+	newNode->listSize = nodeData.listSize;
+	
+	//newNode->index = nodeData.index;
+	newNode->var = nodeData.var;
+	
 	newNode->next = NULL;
 
     // 如果連結串列是空的，則將新節點設置為頭部
@@ -26,7 +31,7 @@ void insertToList(LinkedList **list, LinkedList nodeData) {
     lastNode->next = newNode;	
 }
 
-LinkedList* getByIndex(LinkedList **list, int index) {
+LinkedList* getByKey(LinkedList **list, int _key, char type) {
 	if(*list == NULL) {
 		printf("this is a empty list");
 		return NULL;
@@ -34,17 +39,18 @@ LinkedList* getByIndex(LinkedList **list, int index) {
 
 	//using pointer to find the stack
 	LinkedList *pointer = *list;
-	int counter = 0;
 	bool find = false;
+	//int key = pointer->scopeLevel;
 
-	while(pointer->next != NULL) {
-		if(counter == index) {
+	while(pointer != NULL) {
+		//if(type == 'v') key = pointer->index;
+		//else if (type == 's') key = pointer->scopeLevel;
+		if(pointer->scopeLevel == _key) {
 			find = true;
 			break;
 		}	
 
 		pointer = pointer->next;
-		counter++;
 	}
 
 	if(find == true) return pointer;

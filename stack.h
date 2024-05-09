@@ -4,11 +4,14 @@
 #include "compiler_common.h"
 
 typedef struct stackNode{
-	Object value;
+	//Object value;
+	int scopeLevel;
+
 	struct stackNode *next;
 }Stack;
 
-bool push(Stack **head, Object value);
-Object pop(Stack **head);
+Stack* top(Stack **);
+bool push(Stack **, Stack);
+Stack pop(Stack **);
 
 #endif

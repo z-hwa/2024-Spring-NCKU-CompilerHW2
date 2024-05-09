@@ -15,7 +15,7 @@ int yylex_destroy();
 void pushScope();
 void dumpScope();
 
-void insert(char* variableName);
+void insert(char* variableName, ObjectType type);
 
 void pushFunParm(ObjectType variableType, char* variableName, int parmFlag);
 void createFunction(ObjectType variableType, char* funcName);

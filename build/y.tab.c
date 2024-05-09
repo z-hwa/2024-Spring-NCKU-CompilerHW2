@@ -1195,7 +1195,7 @@ yyreduce:
 
   case 12: /* $@2: %empty  */
 #line 76 "./compiler.y"
-                       { insert((yyvsp[0].s_var)); }
+                       { insert((yyvsp[0].s_var), (yyvsp[-1].var_type)); }
 #line 1200 "./build/y.tab.c"
     break;
 
@@ -1229,50 +1229,56 @@ yyreduce:
 #line 1230 "./build/y.tab.c"
     break;
 
+  case 26: /* Factor: INT_LIT  */
+#line 118 "./compiler.y"
+              {printf("INT_LIT %d\n", (yyvsp[0].i_var));}
+#line 1236 "./build/y.tab.c"
+    break;
+
   case 29: /* $@3: %empty  */
 #line 125 "./compiler.y"
                        { createFunction((yyvsp[-1].var_type), (yyvsp[0].s_var)); }
-#line 1236 "./build/y.tab.c"
+#line 1242 "./build/y.tab.c"
     break;
 
   case 30: /* $@4: %empty  */
 #line 125 "./compiler.y"
                                                                         { pushScope(); }
-#line 1242 "./build/y.tab.c"
+#line 1248 "./build/y.tab.c"
     break;
 
   case 31: /* FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}'  */
 #line 125 "./compiler.y"
                                                                                                                                               { dumpScope(); }
-#line 1248 "./build/y.tab.c"
+#line 1254 "./build/y.tab.c"
     break;
 
   case 35: /* $@5: %empty  */
 #line 134 "./compiler.y"
-                       { insert((yyvsp[0].s_var)); }
-#line 1254 "./build/y.tab.c"
+                       { insert((yyvsp[0].s_var), (yyvsp[-1].var_type)); }
+#line 1260 "./build/y.tab.c"
     break;
 
   case 36: /* FunctionParameterStmt: VARIABLE_T IDENT $@5  */
 #line 134 "./compiler.y"
-                                              { pushFunParm((yyvsp[-2].var_type), (yyvsp[-1].s_var), VAR_FLAG_DEFAULT); }
-#line 1260 "./build/y.tab.c"
+                                                            { pushFunParm((yyvsp[-2].var_type), (yyvsp[-1].s_var), VAR_FLAG_DEFAULT); }
+#line 1266 "./build/y.tab.c"
     break;
 
   case 37: /* $@6: %empty  */
 #line 135 "./compiler.y"
-                       { insert((yyvsp[0].s_var)); }
-#line 1266 "./build/y.tab.c"
+                       { insert((yyvsp[0].s_var), (yyvsp[-1].var_type)); }
+#line 1272 "./build/y.tab.c"
     break;
 
   case 38: /* FunctionParameterStmt: VARIABLE_T IDENT $@6 '[' ']'  */
 #line 135 "./compiler.y"
-                                                      { pushFunParm((yyvsp[-4].var_type), (yyvsp[-3].s_var), VAR_FLAG_DEFAULT); }
-#line 1272 "./build/y.tab.c"
+                                                                    { pushFunParm((yyvsp[-4].var_type), (yyvsp[-3].s_var), VAR_FLAG_DEFAULT); }
+#line 1278 "./build/y.tab.c"
     break;
 
 
-#line 1276 "./build/y.tab.c"
+#line 1282 "./build/y.tab.c"
 
       default: break;
     }
