@@ -3,9 +3,9 @@
 
 #include "compiler_common.h"
 
-typedef struct node{
+typedef struct stackNode{
 	Object value;
-	struct node *next;
+	struct stackNode *next;
 }Stack;
 
 bool push(Stack **head, Object value);

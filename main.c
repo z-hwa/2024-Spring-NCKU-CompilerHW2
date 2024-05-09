@@ -4,6 +4,7 @@
 
 #include "main.h"
 #include "stack.h"
+#include "linkedList.h"
 
 #define debug printf("%s:%d: ############### debug\n", __FILE__, __LINE__)
 
@@ -28,9 +29,28 @@ int funcLineNo = 0;
 int variableAddress = -1;
 ObjectType variableIdentType;
 
+LinkedList *list;
+//當前作用域儲存變數的stack
+Stack *nowStack;
+
 //當遇到變數時，將變數插入到stack之中
 //但目前只實現了輸出顯示的功能
 void insert(char* variableName) {
+	Object var;	//變數物件 用於symbol table
+	SymbolData sym;	//symbol data
+
+	//set symbol data
+	sym.name = variableName; 
+	//sym.index = index[scopeLevel++];
+	sym.lineno = yylineno;	
+	sym.addr = variableAddress;
+
+	var.symbol = &sym;
+	var.type = OBJECT_TYPE_STR;
+
+	//把該變數放進stack中
+	//push(&nowStack, var);
+
 	printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress, scopeLevel);
 	variableAddress++;
 }
@@ -38,7 +58,7 @@ void insert(char* variableName) {
 //如果進到下一個scope 會呼叫該函數並輸出進入下一個scope的訊息
 void pushScope() {
     scopeLevel++;   //增加scope level
-    printf("> Create symbol table (scope level {%d})\n", scopeLevel);
+    printf("> Create symbol table (scope level %d)\n", scopeLevel);
 }
 
 void dumpScope() {
