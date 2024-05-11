@@ -6,12 +6,13 @@
 typedef struct stackNode{
 	//Object value;
 	int scopeLevel;
+	const char *msg;
 
 	struct stackNode *next;
 }Stack;
 
-Stack* top(Stack **);
-bool push(Stack **, Stack);
-Stack pop(Stack **);
+Stack* top(Stack **stack);
+bool push(Stack **stack, Stack data);
+Stack pop(Stack **stack);
 
 #endif

@@ -22,6 +22,7 @@ bool push(Stack **head, Stack nodeData){
 	Stack *newnode = (Stack *)malloc(sizeof(Stack));
     //newnode->value = nodeData.value;
 	newnode->scopeLevel = nodeData.scopeLevel;
+	newnode->msg = nodeData.msg;
 
     newnode->next = (*head);
     (*head) = newnode;
@@ -37,6 +38,7 @@ Stack pop(Stack **head){
 	Stack result;
 	//result.value = (*head)->value;
 	result.scopeLevel = (*head)->scopeLevel;
+	result.msg = (*head)->msg;
 
     Stack *temp = (*head);
     (*head) = (*head)->next;

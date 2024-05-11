@@ -8,20 +8,6 @@
 未在文法中使用終結語詞
 
     SHR
-    BAN
-    BOR
-    BNT
-    BXO
-    REM
-    NOT
-    GTR
-    LES
-    GEQ
-    LEQ
-    EQL
-    NEQ
-    LAN
-    LOR
     ADD_ASSIGN
     SUB_ASSIGN
     MUL_ASSIGN
@@ -40,31 +26,30 @@
     WHILE
     BREAK
     CONTINUE
-    BOOL_LIT
 
 
 規則在文法中無用
 
-   38 StmtList: StmtList Stmt
-   39         | Stmt
+   73 StmtList: StmtList Stmt
+   74         | Stmt
 
-   40 Stmt: COUT CoutParmListStmt ';'
-   41     | RETURN Expression ';'
+   75 Stmt: COUT CoutParmListStmt ';'
+   76     | RETURN Expression ';'
 
-   42 CoutParmListStmt: CoutParmListStmt SHL Expression
-   43                 | SHL Expression
+   77 CoutParmListStmt: CoutParmListStmt SHL Expression
+   78                 | SHL Expression
 
 
 規則由於衝突而在剖析器中無用
 
-    3 Program: ε
+    4 Program: ε
 
 
 狀態 0 衝突：1 項縮減/縮減
 狀態 2 衝突：3 項偏移/縮減
 狀態 7 衝突：3 項偏移/縮減，1 項縮減/縮減
-狀態 55 衝突：3 項偏移/縮減
-狀態 58 衝突：4 項偏移/縮減
+狀態 106 衝突：3 項偏移/縮減
+狀態 109 衝突：4 項偏移/縮減
 
 
 文法
@@ -73,123 +58,180 @@
 
     1 $@1: ε
 
-    2 Program: $@1 GlobalStmtList
-    3        | ε
+    2 $@2: ε
 
-    4 GlobalStmtList: GlobalStmtList GlobalStmt
-    5               | GlobalStmt
+    3 Program: $@1 GlobalStmtList $@2
+    4        | ε
 
-    6 GlobalStmt: DefineVariableStmt
-    7           | FunctionDefStmt
-    8           | CoutStmt
-    9           | ReturnStmt
-   10           | ε
+    5 GlobalStmtList: GlobalStmtList GlobalStmt
+    6               | GlobalStmt
 
-   11 $@2: ε
+    7 GlobalStmt: DefineVariableStmt
+    8           | FunctionDefStmt
+    9           | CoutStmt
+   10           | ReturnStmt
+   11           | ε
 
-   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN Expression ';'
+   12 $@3: ε
 
-   13 ReturnStmt: RETURN Expression ';'
+   13 DefineVariableStmt: VARIABLE_T IDENT $@3 VAL_ASSIGN Expression ';'
 
-   14 CoutStmt: COUT SHL PrintableList ';'
+   14 ReturnStmt: RETURN Expression ';'
 
-   15 PrintableList: Printable
-   16              | PrintableList SHL Printable
+   15 $@4: ε
 
-   17 Printable: STR_LIT
-   18          | ENDL
+   16 CoutStmt: COUT $@4 SHL PrintableList ';'
 
-   19 Expression: Term
-   20           | Expression ADD Term
-   21           | Expression SUB Term
+   17 PrintableList: Printable
+   18              | PrintableList SHL Printable
 
-   22 Term: Factor
-   23     | Term MUL Factor
-   24     | Term DIV Factor
+   19 Printable: STR_LIT
+   20          | ENDL
+   21          | Expression
 
-   25 Factor: INT_LIT
-   26       | FLOAT_LIT
-   27       | '(' Expression ')'
+   22 Expression: Or
 
-   28 $@3: ε
+   23 Or: And
 
-   29 $@4: ε
+   24 $@5: ε
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+   25 Or: Or LOR $@5 And
 
-   31 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
-   32                          | FunctionParameterStmt
-   33                          | ε
+   26 And: BitwiseOr
 
-   34 $@5: ε
+   27 $@6: ε
 
-   35 FunctionParameterStmt: VARIABLE_T IDENT $@5
+   28 And: And LAN $@6 BitwiseOr
 
-   36 $@6: ε
+   29 BitwiseOr: BitwiseXor
 
-   37 FunctionParameterStmt: VARIABLE_T IDENT $@6 '[' ']'
+   30 $@7: ε
+
+   31 BitwiseOr: BitwiseOr BOR $@7 BitwiseXor
+
+   32 BitwiseXor: BitwiseAnd
+
+   33 $@8: ε
+
+   34 BitwiseXor: BitwiseXor BXO $@8 BitwiseAnd
+
+   35 BitwiseAnd: Equality
+
+   36 $@9: ε
+
+   37 BitwiseAnd: BitwiseAnd BAN $@9 Equality
+
+   38 Equality: Relational
+   39         | Equality EQL Relational
+   40         | Equality NEQ Relational
+
+   41 Relational: Shift
+   42           | Relational LES Shift
+   43           | Relational GTR Shift
+   44           | Relational LEQ Shift
+   45           | Relational GEQ Shift
+
+   46 Shift: Additive
+
+   47 Additive: Multiplicative
+   48         | Additive ADD Multiplicative
+   49         | Additive SUB Multiplicative
+
+   50 Multiplicative: Unary
+   51               | Multiplicative MUL Unary
+   52               | Multiplicative DIV Unary
+   53               | Multiplicative REM Unary
+
+   54 Unary: BNT Unary
+   55      | ADD Unary
+   56      | SUB Unary
+   57      | NOT Unary
+   58      | Primary
+
+   59 Primary: INT_LIT
+   60        | FLOAT_LIT
+   61        | '(' Expression ')'
+   62        | BOOL_LIT
+
+   63 $@10: ε
+
+   64 $@11: ε
+
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' $@11 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+
+   66 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
+   67                          | FunctionParameterStmt
+   68                          | ε
+
+   69 $@12: ε
+
+   70 FunctionParameterStmt: VARIABLE_T IDENT $@12
+
+   71 $@13: ε
+
+   72 FunctionParameterStmt: VARIABLE_T IDENT $@13 '[' ']'
 
 
 終結語詞，附有它們出現處的規則
 
     $end (0) 0
-    '(' <object_val> (40) 27 30
-    ')' (41) 27 30
-    ',' (44) 31
-    ';' (59) 12 13 14
-    '[' (91) 37
-    ']' (93) 37
-    '{' (123) 30
-    '}' (125) 30
+    '(' <object_val> (40) 61 65
+    ')' (41) 61 65
+    ',' (44) 66
+    ';' (59) 13 14 16
+    '[' (91) 72
+    ']' (93) 72
+    '{' (123) 65
+    '}' (125) 65
     error (256)
-    COUT (258) 14
+    COUT (258) 16
     SHR (259)
-    SHL (260) 14 16
-    BAN (261)
-    BOR (262)
-    BNT (263)
-    BXO (264)
-    ADD (265) 20
-    SUB (266) 21
-    MUL (267) 23
-    DIV (268) 24
-    REM (269)
-    NOT (270)
-    GTR (271)
-    LES (272)
-    GEQ (273)
-    LEQ (274)
-    EQL (275)
-    NEQ (276)
-    LAN (277)
-    LOR (278)
-    VAL_ASSIGN (279) 12
-    ADD_ASSIGN (280)
-    SUB_ASSIGN (281)
-    MUL_ASSIGN (282)
-    DIV_ASSIGN (283)
-    REM_ASSIGN (284)
-    BAN_ASSIGN (285)
-    BOR_ASSIGN (286)
-    BXO_ASSIGN (287)
-    SHR_ASSIGN (288)
-    SHL_ASSIGN (289)
-    INC_ASSIGN (290)
-    DEC_ASSIGN (291)
-    IF (292)
-    ELSE (293)
-    FOR (294)
-    WHILE (295)
-    RETURN (296) 13
-    BREAK (297)
-    CONTINUE (298)
-    ENDL (299) 18
-    VARIABLE_T <var_type> (300) 12 30 35 37
-    IDENT <s_var> (301) 12 30 35 37
-    BOOL_LIT <b_var> (302)
-    INT_LIT <i_var> (303) 25
-    FLOAT_LIT <f_var> (304) 26
-    STR_LIT <s_var> (305) 17
+    SHL (260) 16 18
+    BAN (261) 37
+    BOR (262) 31
+    BXO (263) 34
+    MUL (264) 51
+    DIV (265) 52
+    REM (266) 53
+    GTR (267) 43
+    LES (268) 42
+    GEQ (269) 45
+    LEQ (270) 44
+    EQL (271) 39
+    NEQ (272) 40
+    LAN (273) 28
+    LOR (274) 25
+    VAL_ASSIGN (275) 13
+    ADD_ASSIGN (276)
+    SUB_ASSIGN (277)
+    MUL_ASSIGN (278)
+    DIV_ASSIGN (279)
+    REM_ASSIGN (280)
+    BAN_ASSIGN (281)
+    BOR_ASSIGN (282)
+    BXO_ASSIGN (283)
+    SHR_ASSIGN (284)
+    SHL_ASSIGN (285)
+    INC_ASSIGN (286)
+    DEC_ASSIGN (287)
+    IF (288)
+    ELSE (289)
+    FOR (290)
+    WHILE (291)
+    RETURN (292) 14
+    BREAK (293)
+    CONTINUE (294)
+    ENDL (295) 20
+    VARIABLE_T <var_type> (296) 13 65 70 72
+    IDENT <s_var> (297) 13 65 70 72
+    BOOL_LIT <b_var> (298) 62
+    INT_LIT <i_var> (299) 59
+    FLOAT_LIT <f_var> (300) 60
+    STR_LIT <s_var> (301) 19
+    SUB <object_val> (302) 49 56
+    NOT <object_val> (303) 57
+    BNT <object_val> (304) 54
+    ADD <object_val> (305) 48 55
 
 
 非終結語詞，附有它們出現處的規則
@@ -197,65 +239,116 @@
     $accept (59)
         於左側： 0
     Program (60)
-        於左側： 2 3
+        於左側： 3 4
         於右側： 0
     $@1 (61)
         於左側： 1
-        於右側： 2
-    GlobalStmtList (62)
-        於左側： 4 5
-        於右側： 2 4 30
-    GlobalStmt (63)
-        於左側： 6 7 8 9 10
-        於右側： 4 5
-    DefineVariableStmt (64)
-        於左側： 12
-        於右側： 6
-    $@2 (65)
-        於左側： 11
-        於右側： 12
-    ReturnStmt (66)
+        於右側： 3
+    $@2 (62)
+        於左側： 2
+        於右側： 3
+    GlobalStmtList (63)
+        於左側： 5 6
+        於右側： 3 5 65
+    GlobalStmt (64)
+        於左側： 7 8 9 10 11
+        於右側： 5 6
+    DefineVariableStmt (65)
         於左側： 13
-        於右側： 9
-    CoutStmt (67)
-        於左側： 14
-        於右側： 8
-    PrintableList (68)
-        於左側： 15 16
-        於右側： 14 16
-    Printable (69)
-        於左側： 17 18
-        於右側： 15 16
-    Expression <object_val> (70)
-        於左側： 19 20 21
-        於右側： 12 13 20 21 27
-    Term <object_val> (71)
-        於左側： 22 23 24
-        於右側： 19 20 21 23 24
-    Factor <object_val> (72)
-        於左側： 25 26 27
-        於右側： 22 23 24
-    FunctionDefStmt (73)
-        於左側： 30
         於右側： 7
-    $@3 (74)
-        於左側： 28
-        於右側： 30
-    $@4 (75)
-        於左側： 29
-        於右側： 30
-    FunctionParameterStmtList (76)
-        於左側： 31 32 33
-        於右側： 30 31
-    FunctionParameterStmt (77)
+    $@3 (66)
+        於左側： 12
+        於右側： 13
+    ReturnStmt (67)
+        於左側： 14
+        於右側： 10
+    CoutStmt (68)
+        於左側： 16
+        於右側： 9
+    $@4 (69)
+        於左側： 15
+        於右側： 16
+    PrintableList (70)
+        於左側： 17 18
+        於右側： 16 18
+    Printable (71)
+        於左側： 19 20 21
+        於右側： 17 18
+    Expression <object_val> (72)
+        於左側： 22
+        於右側： 13 14 21 61
+    Or <object_val> (73)
+        於左側： 23 25
+        於右側： 22 25
+    $@5 (74)
+        於左側： 24
+        於右側： 25
+    And <object_val> (75)
+        於左側： 26 28
+        於右側： 23 25 28
+    $@6 (76)
+        於左側： 27
+        於右側： 28
+    BitwiseOr <object_val> (77)
+        於左側： 29 31
+        於右側： 26 28 31
+    $@7 (78)
+        於左側： 30
+        於右側： 31
+    BitwiseXor <object_val> (79)
+        於左側： 32 34
+        於右側： 29 31 34
+    $@8 (80)
+        於左側： 33
+        於右側： 34
+    BitwiseAnd <object_val> (81)
         於左側： 35 37
-        於右側： 31 32
-    $@5 (78)
-        於左側： 34
-        於右側： 35
-    $@6 (79)
+        於右側： 32 34 37
+    $@9 (82)
         於左側： 36
         於右側： 37
+    Equality <object_val> (83)
+        於左側： 38 39 40
+        於右側： 35 37 39 40
+    Relational <object_val> (84)
+        於左側： 41 42 43 44 45
+        於右側： 38 39 40 42 43 44 45
+    Shift <object_val> (85)
+        於左側： 46
+        於右側： 41 42 43 44 45
+    Additive <object_val> (86)
+        於左側： 47 48 49
+        於右側： 46 48 49
+    Multiplicative <object_val> (87)
+        於左側： 50 51 52 53
+        於右側： 47 48 49 51 52 53
+    Unary <object_val> (88)
+        於左側： 54 55 56 57 58
+        於右側： 50 51 52 53 54 55 56 57
+    Primary <object_val> (89)
+        於左側： 59 60 61 62
+        於右側： 58
+    FunctionDefStmt (90)
+        於左側： 65
+        於右側： 8
+    $@10 (91)
+        於左側： 63
+        於右側： 65
+    $@11 (92)
+        於左側： 64
+        於右側： 65
+    FunctionParameterStmtList (93)
+        於左側： 66 67 68
+        於右側： 65 66
+    FunctionParameterStmt (94)
+        於左側： 70 72
+        於右側： 66 67
+    $@12 (95)
+        於左側： 69
+        於右側： 70
+    $@13 (96)
+        於左側： 71
+        於右側： 72
 
 
 狀態 0
@@ -263,7 +356,7 @@
     0 $accept: • Program $end
 
     $end      使用規則 1 以縮減 ($@1)
-    $end      [使用規則 3 以縮減 (Program)]
+    $end      [使用規則 4 以縮減 (Program)]
     $default  使用規則 1 以縮減 ($@1)
 
     Program  進入狀態 1
@@ -279,16 +372,16 @@
 
 狀態 2
 
-    2 Program: $@1 • GlobalStmtList
+    3 Program: $@1 • GlobalStmtList $@2
 
     COUT        偏移，並進入狀態 4
     RETURN      偏移，並進入狀態 5
     VARIABLE_T  偏移，並進入狀態 6
 
-    COUT        [使用規則 10 以縮減 (GlobalStmt)]
-    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
-    $default    使用規則 10 以縮減 (GlobalStmt)
+    COUT        [使用規則 11 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 11 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 11 以縮減 (GlobalStmt)]
+    $default    使用規則 11 以縮減 (GlobalStmt)
 
     GlobalStmtList      進入狀態 7
     GlobalStmt          進入狀態 8
@@ -307,49 +400,67 @@
 
 狀態 4
 
-   14 CoutStmt: COUT • SHL PrintableList ';'
+   16 CoutStmt: COUT • $@4 SHL PrintableList ';'
 
-    SHL  偏移，並進入狀態 13
+    $default  使用規則 15 以縮減 ($@4)
+
+    $@4  進入狀態 13
 
 
 狀態 5
 
-   13 ReturnStmt: RETURN • Expression ';'
+   14 ReturnStmt: RETURN • Expression ';'
 
-    INT_LIT    偏移，並進入狀態 14
-    FLOAT_LIT  偏移，並進入狀態 15
-    '('        偏移，並進入狀態 16
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
 
-    Expression  進入狀態 17
-    Term        進入狀態 18
-    Factor      進入狀態 19
+    Expression      進入狀態 22
+    Or              進入狀態 23
+    And             進入狀態 24
+    BitwiseOr       進入狀態 25
+    BitwiseXor      進入狀態 26
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 6
 
-   12 DefineVariableStmt: VARIABLE_T • IDENT $@2 VAL_ASSIGN Expression ';'
-   30 FunctionDefStmt: VARIABLE_T • IDENT $@3 '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+   13 DefineVariableStmt: VARIABLE_T • IDENT $@3 VAL_ASSIGN Expression ';'
+   65 FunctionDefStmt: VARIABLE_T • IDENT $@10 '(' $@11 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
 
-    IDENT  偏移，並進入狀態 20
+    IDENT  偏移，並進入狀態 35
 
 
 狀態 7
 
-    2 Program: $@1 GlobalStmtList •
-    4 GlobalStmtList: GlobalStmtList • GlobalStmt
+    3 Program: $@1 GlobalStmtList • $@2
+    5 GlobalStmtList: GlobalStmtList • GlobalStmt
 
     COUT        偏移，並進入狀態 4
     RETURN      偏移，並進入狀態 5
     VARIABLE_T  偏移，並進入狀態 6
 
-    $end        使用規則 2 以縮減 (Program)
-    $end        [使用規則 10 以縮減 (GlobalStmt)]
-    COUT        [使用規則 10 以縮減 (GlobalStmt)]
-    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
-    $default    使用規則 2 以縮減 (Program)
+    $end        使用規則 2 以縮減 ($@2)
+    $end        [使用規則 11 以縮減 (GlobalStmt)]
+    COUT        [使用規則 11 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 11 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 11 以縮減 (GlobalStmt)]
+    $default    使用規則 2 以縮減 ($@2)
 
-    GlobalStmt          進入狀態 21
+    $@2                 進入狀態 36
+    GlobalStmt          進入狀態 37
     DefineVariableStmt  進入狀態 9
     ReturnStmt          進入狀態 10
     CoutStmt            進入狀態 11
@@ -358,435 +469,1176 @@
 
 狀態 8
 
-    5 GlobalStmtList: GlobalStmt •
+    6 GlobalStmtList: GlobalStmt •
 
-    $default  使用規則 5 以縮減 (GlobalStmtList)
+    $default  使用規則 6 以縮減 (GlobalStmtList)
 
 
 狀態 9
 
-    6 GlobalStmt: DefineVariableStmt •
-
-    $default  使用規則 6 以縮減 (GlobalStmt)
-
-
-狀態 10
-
-    9 GlobalStmt: ReturnStmt •
-
-    $default  使用規則 9 以縮減 (GlobalStmt)
-
-
-狀態 11
-
-    8 GlobalStmt: CoutStmt •
-
-    $default  使用規則 8 以縮減 (GlobalStmt)
-
-
-狀態 12
-
-    7 GlobalStmt: FunctionDefStmt •
+    7 GlobalStmt: DefineVariableStmt •
 
     $default  使用規則 7 以縮減 (GlobalStmt)
 
 
+狀態 10
+
+   10 GlobalStmt: ReturnStmt •
+
+    $default  使用規則 10 以縮減 (GlobalStmt)
+
+
+狀態 11
+
+    9 GlobalStmt: CoutStmt •
+
+    $default  使用規則 9 以縮減 (GlobalStmt)
+
+
+狀態 12
+
+    8 GlobalStmt: FunctionDefStmt •
+
+    $default  使用規則 8 以縮減 (GlobalStmt)
+
+
 狀態 13
 
-   14 CoutStmt: COUT SHL • PrintableList ';'
+   16 CoutStmt: COUT $@4 • SHL PrintableList ';'
 
-    ENDL     偏移，並進入狀態 22
-    STR_LIT  偏移，並進入狀態 23
-
-    PrintableList  進入狀態 24
-    Printable      進入狀態 25
+    SHL  偏移，並進入狀態 38
 
 
 狀態 14
 
-   25 Factor: INT_LIT •
+   62 Primary: BOOL_LIT •
 
-    $default  使用規則 25 以縮減 (Factor)
+    $default  使用規則 62 以縮減 (Primary)
 
 
 狀態 15
 
-   26 Factor: FLOAT_LIT •
+   59 Primary: INT_LIT •
 
-    $default  使用規則 26 以縮減 (Factor)
+    $default  使用規則 59 以縮減 (Primary)
 
 
 狀態 16
 
-   27 Factor: '(' • Expression ')'
+   60 Primary: FLOAT_LIT •
 
-    INT_LIT    偏移，並進入狀態 14
-    FLOAT_LIT  偏移，並進入狀態 15
-    '('        偏移，並進入狀態 16
-
-    Expression  進入狀態 26
-    Term        進入狀態 18
-    Factor      進入狀態 19
+    $default  使用規則 60 以縮減 (Primary)
 
 
 狀態 17
 
-   13 ReturnStmt: RETURN Expression • ';'
-   20 Expression: Expression • ADD Term
-   21           | Expression • SUB Term
+   61 Primary: '(' • Expression ')'
 
-    ADD  偏移，並進入狀態 27
-    SUB  偏移，並進入狀態 28
-    ';'  偏移，並進入狀態 29
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Expression      進入狀態 39
+    Or              進入狀態 23
+    And             進入狀態 24
+    BitwiseOr       進入狀態 25
+    BitwiseXor      進入狀態 26
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 18
 
-   19 Expression: Term •
-   23 Term: Term • MUL Factor
-   24     | Term • DIV Factor
+   56 Unary: SUB • Unary
 
-    MUL  偏移，並進入狀態 30
-    DIV  偏移，並進入狀態 31
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
 
-    $default  使用規則 19 以縮減 (Expression)
+    Unary    進入狀態 40
+    Primary  進入狀態 34
 
 
 狀態 19
 
-   22 Term: Factor •
+   57 Unary: NOT • Unary
 
-    $default  使用規則 22 以縮減 (Term)
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Unary    進入狀態 41
+    Primary  進入狀態 34
 
 
 狀態 20
 
-   12 DefineVariableStmt: VARIABLE_T IDENT • $@2 VAL_ASSIGN Expression ';'
-   30 FunctionDefStmt: VARIABLE_T IDENT • $@3 '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+   54 Unary: BNT • Unary
 
-    '('       使用規則 28 以縮減 ($@3)
-    $default  使用規則 11 以縮減 ($@2)
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
 
-    $@2  進入狀態 32
-    $@3  進入狀態 33
+    Unary    進入狀態 42
+    Primary  進入狀態 34
 
 
 狀態 21
 
-    4 GlobalStmtList: GlobalStmtList GlobalStmt •
+   55 Unary: ADD • Unary
 
-    $default  使用規則 4 以縮減 (GlobalStmtList)
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Unary    進入狀態 43
+    Primary  進入狀態 34
 
 
 狀態 22
 
-   18 Printable: ENDL •
+   14 ReturnStmt: RETURN Expression • ';'
 
-    $default  使用規則 18 以縮減 (Printable)
+    ';'  偏移，並進入狀態 44
 
 
 狀態 23
 
-   17 Printable: STR_LIT •
+   22 Expression: Or •
+   25 Or: Or • LOR $@5 And
 
-    $default  使用規則 17 以縮減 (Printable)
+    LOR  偏移，並進入狀態 45
+
+    $default  使用規則 22 以縮減 (Expression)
 
 
 狀態 24
 
-   14 CoutStmt: COUT SHL PrintableList • ';'
-   16 PrintableList: PrintableList • SHL Printable
+   23 Or: And •
+   28 And: And • LAN $@6 BitwiseOr
 
-    SHL  偏移，並進入狀態 34
-    ';'  偏移，並進入狀態 35
+    LAN  偏移，並進入狀態 46
+
+    $default  使用規則 23 以縮減 (Or)
 
 
 狀態 25
 
-   15 PrintableList: Printable •
+   26 And: BitwiseOr •
+   31 BitwiseOr: BitwiseOr • BOR $@7 BitwiseXor
 
-    $default  使用規則 15 以縮減 (PrintableList)
+    BOR  偏移，並進入狀態 47
+
+    $default  使用規則 26 以縮減 (And)
 
 
 狀態 26
 
-   20 Expression: Expression • ADD Term
-   21           | Expression • SUB Term
-   27 Factor: '(' Expression • ')'
+   29 BitwiseOr: BitwiseXor •
+   34 BitwiseXor: BitwiseXor • BXO $@8 BitwiseAnd
 
-    ADD  偏移，並進入狀態 27
-    SUB  偏移，並進入狀態 28
-    ')'  偏移，並進入狀態 36
+    BXO  偏移，並進入狀態 48
+
+    $default  使用規則 29 以縮減 (BitwiseOr)
 
 
 狀態 27
 
-   20 Expression: Expression ADD • Term
+   32 BitwiseXor: BitwiseAnd •
+   37 BitwiseAnd: BitwiseAnd • BAN $@9 Equality
 
-    INT_LIT    偏移，並進入狀態 14
-    FLOAT_LIT  偏移，並進入狀態 15
-    '('        偏移，並進入狀態 16
+    BAN  偏移，並進入狀態 49
 
-    Term    進入狀態 37
-    Factor  進入狀態 19
+    $default  使用規則 32 以縮減 (BitwiseXor)
 
 
 狀態 28
 
-   21 Expression: Expression SUB • Term
+   35 BitwiseAnd: Equality •
+   39 Equality: Equality • EQL Relational
+   40         | Equality • NEQ Relational
 
-    INT_LIT    偏移，並進入狀態 14
-    FLOAT_LIT  偏移，並進入狀態 15
-    '('        偏移，並進入狀態 16
+    EQL  偏移，並進入狀態 50
+    NEQ  偏移，並進入狀態 51
 
-    Term    進入狀態 38
-    Factor  進入狀態 19
+    $default  使用規則 35 以縮減 (BitwiseAnd)
 
 
 狀態 29
 
-   13 ReturnStmt: RETURN Expression ';' •
+   38 Equality: Relational •
+   42 Relational: Relational • LES Shift
+   43           | Relational • GTR Shift
+   44           | Relational • LEQ Shift
+   45           | Relational • GEQ Shift
 
-    $default  使用規則 13 以縮減 (ReturnStmt)
+    GTR  偏移，並進入狀態 52
+    LES  偏移，並進入狀態 53
+    GEQ  偏移，並進入狀態 54
+    LEQ  偏移，並進入狀態 55
+
+    $default  使用規則 38 以縮減 (Equality)
 
 
 狀態 30
 
-   23 Term: Term MUL • Factor
+   41 Relational: Shift •
 
-    INT_LIT    偏移，並進入狀態 14
-    FLOAT_LIT  偏移，並進入狀態 15
-    '('        偏移，並進入狀態 16
-
-    Factor  進入狀態 39
+    $default  使用規則 41 以縮減 (Relational)
 
 
 狀態 31
 
-   24 Term: Term DIV • Factor
+   46 Shift: Additive •
+   48 Additive: Additive • ADD Multiplicative
+   49         | Additive • SUB Multiplicative
 
-    INT_LIT    偏移，並進入狀態 14
-    FLOAT_LIT  偏移，並進入狀態 15
-    '('        偏移，並進入狀態 16
+    SUB  偏移，並進入狀態 56
+    ADD  偏移，並進入狀態 57
 
-    Factor  進入狀態 40
+    $default  使用規則 46 以縮減 (Shift)
 
 
 狀態 32
 
-   12 DefineVariableStmt: VARIABLE_T IDENT $@2 • VAL_ASSIGN Expression ';'
+   47 Additive: Multiplicative •
+   51 Multiplicative: Multiplicative • MUL Unary
+   52               | Multiplicative • DIV Unary
+   53               | Multiplicative • REM Unary
 
-    VAL_ASSIGN  偏移，並進入狀態 41
+    MUL  偏移，並進入狀態 58
+    DIV  偏移，並進入狀態 59
+    REM  偏移，並進入狀態 60
+
+    $default  使用規則 47 以縮減 (Additive)
 
 
 狀態 33
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 • '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+   50 Multiplicative: Unary •
 
-    '('  偏移，並進入狀態 42
+    $default  使用規則 50 以縮減 (Multiplicative)
 
 
 狀態 34
 
-   16 PrintableList: PrintableList SHL • Printable
+   58 Unary: Primary •
 
-    ENDL     偏移，並進入狀態 22
-    STR_LIT  偏移，並進入狀態 23
-
-    Printable  進入狀態 43
+    $default  使用規則 58 以縮減 (Unary)
 
 
 狀態 35
 
-   14 CoutStmt: COUT SHL PrintableList ';' •
+   13 DefineVariableStmt: VARIABLE_T IDENT • $@3 VAL_ASSIGN Expression ';'
+   65 FunctionDefStmt: VARIABLE_T IDENT • $@10 '(' $@11 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
 
-    $default  使用規則 14 以縮減 (CoutStmt)
+    '('       使用規則 63 以縮減 ($@10)
+    $default  使用規則 12 以縮減 ($@3)
+
+    $@3   進入狀態 61
+    $@10  進入狀態 62
 
 
 狀態 36
 
-   27 Factor: '(' Expression ')' •
+    3 Program: $@1 GlobalStmtList $@2 •
 
-    $default  使用規則 27 以縮減 (Factor)
+    $default  使用規則 3 以縮減 (Program)
 
 
 狀態 37
 
-   20 Expression: Expression ADD Term •
-   23 Term: Term • MUL Factor
-   24     | Term • DIV Factor
+    5 GlobalStmtList: GlobalStmtList GlobalStmt •
 
-    MUL  偏移，並進入狀態 30
-    DIV  偏移，並進入狀態 31
-
-    $default  使用規則 20 以縮減 (Expression)
+    $default  使用規則 5 以縮減 (GlobalStmtList)
 
 
 狀態 38
 
-   21 Expression: Expression SUB Term •
-   23 Term: Term • MUL Factor
-   24     | Term • DIV Factor
+   16 CoutStmt: COUT $@4 SHL • PrintableList ';'
 
-    MUL  偏移，並進入狀態 30
-    DIV  偏移，並進入狀態 31
+    ENDL       偏移，並進入狀態 63
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    STR_LIT    偏移，並進入狀態 64
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
 
-    $default  使用規則 21 以縮減 (Expression)
+    PrintableList   進入狀態 65
+    Printable       進入狀態 66
+    Expression      進入狀態 67
+    Or              進入狀態 23
+    And             進入狀態 24
+    BitwiseOr       進入狀態 25
+    BitwiseXor      進入狀態 26
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 39
 
-   23 Term: Term MUL Factor •
+   61 Primary: '(' Expression • ')'
 
-    $default  使用規則 23 以縮減 (Term)
+    ')'  偏移，並進入狀態 68
 
 
 狀態 40
 
-   24 Term: Term DIV Factor •
+   56 Unary: SUB Unary •
 
-    $default  使用規則 24 以縮減 (Term)
+    $default  使用規則 56 以縮減 (Unary)
 
 
 狀態 41
 
-   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN • Expression ';'
+   57 Unary: NOT Unary •
 
-    INT_LIT    偏移，並進入狀態 14
-    FLOAT_LIT  偏移，並進入狀態 15
-    '('        偏移，並進入狀態 16
-
-    Expression  進入狀態 44
-    Term        進入狀態 18
-    Factor      進入狀態 19
+    $default  使用規則 57 以縮減 (Unary)
 
 
 狀態 42
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' • $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+   54 Unary: BNT Unary •
 
-    $default  使用規則 29 以縮減 ($@4)
-
-    $@4  進入狀態 45
+    $default  使用規則 54 以縮減 (Unary)
 
 
 狀態 43
 
-   16 PrintableList: PrintableList SHL Printable •
+   55 Unary: ADD Unary •
 
-    $default  使用規則 16 以縮減 (PrintableList)
+    $default  使用規則 55 以縮減 (Unary)
 
 
 狀態 44
 
-   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN Expression • ';'
-   20 Expression: Expression • ADD Term
-   21           | Expression • SUB Term
+   14 ReturnStmt: RETURN Expression ';' •
 
-    ADD  偏移，並進入狀態 27
-    SUB  偏移，並進入狀態 28
-    ';'  偏移，並進入狀態 46
+    $default  使用規則 14 以縮減 (ReturnStmt)
 
 
 狀態 45
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 • FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+   25 Or: Or LOR • $@5 And
 
-    VARIABLE_T  偏移，並進入狀態 47
+    $default  使用規則 24 以縮減 ($@5)
 
-    $default  使用規則 33 以縮減 (FunctionParameterStmtList)
-
-    FunctionParameterStmtList  進入狀態 48
-    FunctionParameterStmt      進入狀態 49
+    $@5  進入狀態 69
 
 
 狀態 46
 
-   12 DefineVariableStmt: VARIABLE_T IDENT $@2 VAL_ASSIGN Expression ';' •
+   28 And: And LAN • $@6 BitwiseOr
 
-    $default  使用規則 12 以縮減 (DefineVariableStmt)
+    $default  使用規則 27 以縮減 ($@6)
+
+    $@6  進入狀態 70
 
 
 狀態 47
 
-   35 FunctionParameterStmt: VARIABLE_T • IDENT $@5
-   37                      | VARIABLE_T • IDENT $@6 '[' ']'
+   31 BitwiseOr: BitwiseOr BOR • $@7 BitwiseXor
 
-    IDENT  偏移，並進入狀態 50
+    $default  使用規則 30 以縮減 ($@7)
+
+    $@7  進入狀態 71
 
 
 狀態 48
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList • ')' '{' GlobalStmtList '}'
-   31 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
+   34 BitwiseXor: BitwiseXor BXO • $@8 BitwiseAnd
 
-    ')'  偏移，並進入狀態 51
-    ','  偏移，並進入狀態 52
+    $default  使用規則 33 以縮減 ($@8)
+
+    $@8  進入狀態 72
 
 
 狀態 49
 
-   32 FunctionParameterStmtList: FunctionParameterStmt •
+   37 BitwiseAnd: BitwiseAnd BAN • $@9 Equality
 
-    $default  使用規則 32 以縮減 (FunctionParameterStmtList)
+    $default  使用規則 36 以縮減 ($@9)
+
+    $@9  進入狀態 73
 
 
 狀態 50
 
-   35 FunctionParameterStmt: VARIABLE_T IDENT • $@5
-   37                      | VARIABLE_T IDENT • $@6 '[' ']'
+   39 Equality: Equality EQL • Relational
 
-    '['       使用規則 36 以縮減 ($@6)
-    $default  使用規則 34 以縮減 ($@5)
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
 
-    $@5  進入狀態 53
-    $@6  進入狀態 54
+    Relational      進入狀態 74
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 51
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' • '{' GlobalStmtList '}'
+   40 Equality: Equality NEQ • Relational
 
-    '{'  偏移，並進入狀態 55
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Relational      進入狀態 75
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 52
 
-   31 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
+   43 Relational: Relational GTR • Shift
 
-    VARIABLE_T  偏移，並進入狀態 47
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
 
-    FunctionParameterStmt  進入狀態 56
+    Shift           進入狀態 76
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 53
 
-   35 FunctionParameterStmt: VARIABLE_T IDENT $@5 •
+   42 Relational: Relational LES • Shift
 
-    $default  使用規則 35 以縮減 (FunctionParameterStmt)
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Shift           進入狀態 77
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 54
 
-   37 FunctionParameterStmt: VARIABLE_T IDENT $@6 • '[' ']'
+   45 Relational: Relational GEQ • Shift
 
-    '['  偏移，並進入狀態 57
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Shift           進入狀態 78
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
 
 
 狀態 55
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' '{' • GlobalStmtList '}'
+   44 Relational: Relational LEQ • Shift
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Shift           進入狀態 79
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 56
+
+   49 Additive: Additive SUB • Multiplicative
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Multiplicative  進入狀態 80
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 57
+
+   48 Additive: Additive ADD • Multiplicative
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Multiplicative  進入狀態 81
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 58
+
+   51 Multiplicative: Multiplicative MUL • Unary
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Unary    進入狀態 82
+    Primary  進入狀態 34
+
+
+狀態 59
+
+   52 Multiplicative: Multiplicative DIV • Unary
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Unary    進入狀態 83
+    Primary  進入狀態 34
+
+
+狀態 60
+
+   53 Multiplicative: Multiplicative REM • Unary
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Unary    進入狀態 84
+    Primary  進入狀態 34
+
+
+狀態 61
+
+   13 DefineVariableStmt: VARIABLE_T IDENT $@3 • VAL_ASSIGN Expression ';'
+
+    VAL_ASSIGN  偏移，並進入狀態 85
+
+
+狀態 62
+
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 • '(' $@11 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+
+    '('  偏移，並進入狀態 86
+
+
+狀態 63
+
+   20 Printable: ENDL •
+
+    $default  使用規則 20 以縮減 (Printable)
+
+
+狀態 64
+
+   19 Printable: STR_LIT •
+
+    $default  使用規則 19 以縮減 (Printable)
+
+
+狀態 65
+
+   16 CoutStmt: COUT $@4 SHL PrintableList • ';'
+   18 PrintableList: PrintableList • SHL Printable
+
+    SHL  偏移，並進入狀態 87
+    ';'  偏移，並進入狀態 88
+
+
+狀態 66
+
+   17 PrintableList: Printable •
+
+    $default  使用規則 17 以縮減 (PrintableList)
+
+
+狀態 67
+
+   21 Printable: Expression •
+
+    $default  使用規則 21 以縮減 (Printable)
+
+
+狀態 68
+
+   61 Primary: '(' Expression ')' •
+
+    $default  使用規則 61 以縮減 (Primary)
+
+
+狀態 69
+
+   25 Or: Or LOR $@5 • And
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    And             進入狀態 89
+    BitwiseOr       進入狀態 25
+    BitwiseXor      進入狀態 26
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 70
+
+   28 And: And LAN $@6 • BitwiseOr
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    BitwiseOr       進入狀態 90
+    BitwiseXor      進入狀態 26
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 71
+
+   31 BitwiseOr: BitwiseOr BOR $@7 • BitwiseXor
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    BitwiseXor      進入狀態 91
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 72
+
+   34 BitwiseXor: BitwiseXor BXO $@8 • BitwiseAnd
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    BitwiseAnd      進入狀態 92
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 73
+
+   37 BitwiseAnd: BitwiseAnd BAN $@9 • Equality
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Equality        進入狀態 93
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 74
+
+   39 Equality: Equality EQL Relational •
+   42 Relational: Relational • LES Shift
+   43           | Relational • GTR Shift
+   44           | Relational • LEQ Shift
+   45           | Relational • GEQ Shift
+
+    GTR  偏移，並進入狀態 52
+    LES  偏移，並進入狀態 53
+    GEQ  偏移，並進入狀態 54
+    LEQ  偏移，並進入狀態 55
+
+    $default  使用規則 39 以縮減 (Equality)
+
+
+狀態 75
+
+   40 Equality: Equality NEQ Relational •
+   42 Relational: Relational • LES Shift
+   43           | Relational • GTR Shift
+   44           | Relational • LEQ Shift
+   45           | Relational • GEQ Shift
+
+    GTR  偏移，並進入狀態 52
+    LES  偏移，並進入狀態 53
+    GEQ  偏移，並進入狀態 54
+    LEQ  偏移，並進入狀態 55
+
+    $default  使用規則 40 以縮減 (Equality)
+
+
+狀態 76
+
+   43 Relational: Relational GTR Shift •
+
+    $default  使用規則 43 以縮減 (Relational)
+
+
+狀態 77
+
+   42 Relational: Relational LES Shift •
+
+    $default  使用規則 42 以縮減 (Relational)
+
+
+狀態 78
+
+   45 Relational: Relational GEQ Shift •
+
+    $default  使用規則 45 以縮減 (Relational)
+
+
+狀態 79
+
+   44 Relational: Relational LEQ Shift •
+
+    $default  使用規則 44 以縮減 (Relational)
+
+
+狀態 80
+
+   49 Additive: Additive SUB Multiplicative •
+   51 Multiplicative: Multiplicative • MUL Unary
+   52               | Multiplicative • DIV Unary
+   53               | Multiplicative • REM Unary
+
+    MUL  偏移，並進入狀態 58
+    DIV  偏移，並進入狀態 59
+    REM  偏移，並進入狀態 60
+
+    $default  使用規則 49 以縮減 (Additive)
+
+
+狀態 81
+
+   48 Additive: Additive ADD Multiplicative •
+   51 Multiplicative: Multiplicative • MUL Unary
+   52               | Multiplicative • DIV Unary
+   53               | Multiplicative • REM Unary
+
+    MUL  偏移，並進入狀態 58
+    DIV  偏移，並進入狀態 59
+    REM  偏移，並進入狀態 60
+
+    $default  使用規則 48 以縮減 (Additive)
+
+
+狀態 82
+
+   51 Multiplicative: Multiplicative MUL Unary •
+
+    $default  使用規則 51 以縮減 (Multiplicative)
+
+
+狀態 83
+
+   52 Multiplicative: Multiplicative DIV Unary •
+
+    $default  使用規則 52 以縮減 (Multiplicative)
+
+
+狀態 84
+
+   53 Multiplicative: Multiplicative REM Unary •
+
+    $default  使用規則 53 以縮減 (Multiplicative)
+
+
+狀態 85
+
+   13 DefineVariableStmt: VARIABLE_T IDENT $@3 VAL_ASSIGN • Expression ';'
+
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Expression      進入狀態 94
+    Or              進入狀態 23
+    And             進入狀態 24
+    BitwiseOr       進入狀態 25
+    BitwiseXor      進入狀態 26
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 86
+
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' • $@11 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+
+    $default  使用規則 64 以縮減 ($@11)
+
+    $@11  進入狀態 95
+
+
+狀態 87
+
+   18 PrintableList: PrintableList SHL • Printable
+
+    ENDL       偏移，並進入狀態 63
+    BOOL_LIT   偏移，並進入狀態 14
+    INT_LIT    偏移，並進入狀態 15
+    FLOAT_LIT  偏移，並進入狀態 16
+    STR_LIT    偏移，並進入狀態 64
+    '('        偏移，並進入狀態 17
+    SUB        偏移，並進入狀態 18
+    NOT        偏移，並進入狀態 19
+    BNT        偏移，並進入狀態 20
+    ADD        偏移，並進入狀態 21
+
+    Printable       進入狀態 96
+    Expression      進入狀態 67
+    Or              進入狀態 23
+    And             進入狀態 24
+    BitwiseOr       進入狀態 25
+    BitwiseXor      進入狀態 26
+    BitwiseAnd      進入狀態 27
+    Equality        進入狀態 28
+    Relational      進入狀態 29
+    Shift           進入狀態 30
+    Additive        進入狀態 31
+    Multiplicative  進入狀態 32
+    Unary           進入狀態 33
+    Primary         進入狀態 34
+
+
+狀態 88
+
+   16 CoutStmt: COUT $@4 SHL PrintableList ';' •
+
+    $default  使用規則 16 以縮減 (CoutStmt)
+
+
+狀態 89
+
+   25 Or: Or LOR $@5 And •
+   28 And: And • LAN $@6 BitwiseOr
+
+    LAN  偏移，並進入狀態 46
+
+    $default  使用規則 25 以縮減 (Or)
+
+
+狀態 90
+
+   28 And: And LAN $@6 BitwiseOr •
+   31 BitwiseOr: BitwiseOr • BOR $@7 BitwiseXor
+
+    BOR  偏移，並進入狀態 47
+
+    $default  使用規則 28 以縮減 (And)
+
+
+狀態 91
+
+   31 BitwiseOr: BitwiseOr BOR $@7 BitwiseXor •
+   34 BitwiseXor: BitwiseXor • BXO $@8 BitwiseAnd
+
+    BXO  偏移，並進入狀態 48
+
+    $default  使用規則 31 以縮減 (BitwiseOr)
+
+
+狀態 92
+
+   34 BitwiseXor: BitwiseXor BXO $@8 BitwiseAnd •
+   37 BitwiseAnd: BitwiseAnd • BAN $@9 Equality
+
+    BAN  偏移，並進入狀態 49
+
+    $default  使用規則 34 以縮減 (BitwiseXor)
+
+
+狀態 93
+
+   37 BitwiseAnd: BitwiseAnd BAN $@9 Equality •
+   39 Equality: Equality • EQL Relational
+   40         | Equality • NEQ Relational
+
+    EQL  偏移，並進入狀態 50
+    NEQ  偏移，並進入狀態 51
+
+    $default  使用規則 37 以縮減 (BitwiseAnd)
+
+
+狀態 94
+
+   13 DefineVariableStmt: VARIABLE_T IDENT $@3 VAL_ASSIGN Expression • ';'
+
+    ';'  偏移，並進入狀態 97
+
+
+狀態 95
+
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' $@11 • FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+
+    VARIABLE_T  偏移，並進入狀態 98
+
+    $default  使用規則 68 以縮減 (FunctionParameterStmtList)
+
+    FunctionParameterStmtList  進入狀態 99
+    FunctionParameterStmt      進入狀態 100
+
+
+狀態 96
+
+   18 PrintableList: PrintableList SHL Printable •
+
+    $default  使用規則 18 以縮減 (PrintableList)
+
+
+狀態 97
+
+   13 DefineVariableStmt: VARIABLE_T IDENT $@3 VAL_ASSIGN Expression ';' •
+
+    $default  使用規則 13 以縮減 (DefineVariableStmt)
+
+
+狀態 98
+
+   70 FunctionParameterStmt: VARIABLE_T • IDENT $@12
+   72                      | VARIABLE_T • IDENT $@13 '[' ']'
+
+    IDENT  偏移，並進入狀態 101
+
+
+狀態 99
+
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' $@11 FunctionParameterStmtList • ')' '{' GlobalStmtList '}'
+   66 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
+
+    ')'  偏移，並進入狀態 102
+    ','  偏移，並進入狀態 103
+
+
+狀態 100
+
+   67 FunctionParameterStmtList: FunctionParameterStmt •
+
+    $default  使用規則 67 以縮減 (FunctionParameterStmtList)
+
+
+狀態 101
+
+   70 FunctionParameterStmt: VARIABLE_T IDENT • $@12
+   72                      | VARIABLE_T IDENT • $@13 '[' ']'
+
+    '['       使用規則 71 以縮減 ($@13)
+    $default  使用規則 69 以縮減 ($@12)
+
+    $@12  進入狀態 104
+    $@13  進入狀態 105
+
+
+狀態 102
+
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' $@11 FunctionParameterStmtList ')' • '{' GlobalStmtList '}'
+
+    '{'  偏移，並進入狀態 106
+
+
+狀態 103
+
+   66 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
+
+    VARIABLE_T  偏移，並進入狀態 98
+
+    FunctionParameterStmt  進入狀態 107
+
+
+狀態 104
+
+   70 FunctionParameterStmt: VARIABLE_T IDENT $@12 •
+
+    $default  使用規則 70 以縮減 (FunctionParameterStmt)
+
+
+狀態 105
+
+   72 FunctionParameterStmt: VARIABLE_T IDENT $@13 • '[' ']'
+
+    '['  偏移，並進入狀態 108
+
+
+狀態 106
+
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' $@11 FunctionParameterStmtList ')' '{' • GlobalStmtList '}'
 
     COUT        偏移，並進入狀態 4
     RETURN      偏移，並進入狀態 5
     VARIABLE_T  偏移，並進入狀態 6
 
-    COUT        [使用規則 10 以縮減 (GlobalStmt)]
-    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
-    $default    使用規則 10 以縮減 (GlobalStmt)
+    COUT        [使用規則 11 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 11 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 11 以縮減 (GlobalStmt)]
+    $default    使用規則 11 以縮減 (GlobalStmt)
 
-    GlobalStmtList      進入狀態 58
+    GlobalStmtList      進入狀態 109
     GlobalStmt          進入狀態 8
     DefineVariableStmt  進入狀態 9
     ReturnStmt          進入狀態 10
@@ -794,51 +1646,51 @@
     FunctionDefStmt     進入狀態 12
 
 
-狀態 56
+狀態 107
 
-   31 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
+   66 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
 
-    $default  使用規則 31 以縮減 (FunctionParameterStmtList)
-
-
-狀態 57
-
-   37 FunctionParameterStmt: VARIABLE_T IDENT $@6 '[' • ']'
-
-    ']'  偏移，並進入狀態 59
+    $default  使用規則 66 以縮減 (FunctionParameterStmtList)
 
 
-狀態 58
+狀態 108
 
-    4 GlobalStmtList: GlobalStmtList • GlobalStmt
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList • '}'
+   72 FunctionParameterStmt: VARIABLE_T IDENT $@13 '[' • ']'
+
+    ']'  偏移，並進入狀態 110
+
+
+狀態 109
+
+    5 GlobalStmtList: GlobalStmtList • GlobalStmt
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' $@11 FunctionParameterStmtList ')' '{' GlobalStmtList • '}'
 
     COUT        偏移，並進入狀態 4
     RETURN      偏移，並進入狀態 5
-    '}'         偏移，並進入狀態 60
+    '}'         偏移，並進入狀態 111
     VARIABLE_T  偏移，並進入狀態 6
 
-    COUT        [使用規則 10 以縮減 (GlobalStmt)]
-    RETURN      [使用規則 10 以縮減 (GlobalStmt)]
-    '}'         [使用規則 10 以縮減 (GlobalStmt)]
-    VARIABLE_T  [使用規則 10 以縮減 (GlobalStmt)]
+    COUT        [使用規則 11 以縮減 (GlobalStmt)]
+    RETURN      [使用規則 11 以縮減 (GlobalStmt)]
+    '}'         [使用規則 11 以縮減 (GlobalStmt)]
+    VARIABLE_T  [使用規則 11 以縮減 (GlobalStmt)]
 
-    GlobalStmt          進入狀態 21
+    GlobalStmt          進入狀態 37
     DefineVariableStmt  進入狀態 9
     ReturnStmt          進入狀態 10
     CoutStmt            進入狀態 11
     FunctionDefStmt     進入狀態 12
 
 
-狀態 59
+狀態 110
 
-   37 FunctionParameterStmt: VARIABLE_T IDENT $@6 '[' ']' •
+   72 FunctionParameterStmt: VARIABLE_T IDENT $@13 '[' ']' •
 
-    $default  使用規則 37 以縮減 (FunctionParameterStmt)
+    $default  使用規則 72 以縮減 (FunctionParameterStmt)
 
 
-狀態 60
+狀態 111
 
-   30 FunctionDefStmt: VARIABLE_T IDENT $@3 '(' $@4 FunctionParameterStmtList ')' '{' GlobalStmtList '}' •
+   65 FunctionDefStmt: VARIABLE_T IDENT $@10 '(' $@11 FunctionParameterStmtList ')' '{' GlobalStmtList '}' •
 
-    $default  使用規則 30 以縮減 (FunctionDefStmt)
+    $default  使用規則 65 以縮減 (FunctionDefStmt)

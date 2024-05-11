@@ -1,4 +1,12 @@
-/home/share/hw2/input/subtask09-function/testcase01.cpp:2:5: error:  syntax error
+> Create symbol table (scope level 0)
+func: check
+> Insert `check` (addr: -1) to scope level 0
+> Create symbol table (scope level 1)
+> Insert `a` (addr: 0) to scope level 1
+> Insert `b` (addr: 1) to scope level 1
+> Insert `s` (addr: 2) to scope level 1
+> Insert `c` (addr: 3) to scope level 1
+/home/share/hw2/input/subtask09-function/testcase01.cpp:2:13: error:  syntax error
      2 |    cout << s << endl;
-       |    ^
+       |            ^
 Total lines: 2

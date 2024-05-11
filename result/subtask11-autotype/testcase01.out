@@ -1,4 +1,12 @@
-/home/share/hw2/input/subtask11-autotype/testcase01.cpp:1:21: error:  syntax error
-     1 |int main(string argv[ ) {
-       |                    ^
-Total lines: 1
+> Create symbol table (scope level 0)
+func: main
+> Insert `main` (addr: -1) to scope level 0
+> Create symbol table (scope level 1)
+> Insert `argv` (addr: 0) to scope level 1
+> Insert `x` (addr: 1) to scope level 1
+FLOAT_LIT 1086324736
+> Insert `y` (addr: 2) to scope level 1
+/home/share/hw2/input/subtask11-autotype/testcase01.cpp:3:14: error:  syntax error
+     3 |    auto y = true 
+       |             ^
+Total lines: 3

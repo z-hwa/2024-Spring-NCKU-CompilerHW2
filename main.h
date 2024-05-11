@@ -1,6 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 #include "compiler_common.h"
+#include "linkedList.h"
 
 extern FILE* yyin;
 extern bool compileError;
@@ -15,7 +16,16 @@ int yylex_destroy();
 void pushScope();
 void dumpScope();
 
-void insert(char* variableName, ObjectType type);
+void insert(char* variableName, ObjectType objectType);
+void printScope();
+void printVar(LinkedList *lp);
+
+void addCt();
+void printCout();
+
+void addMsgObj(Object obj);
+void addMsg(char* msg);
+void printMsg();
 
 void pushFunParm(ObjectType variableType, char* variableName, int parmFlag);
 void createFunction(ObjectType variableType, char* funcName);

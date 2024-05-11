@@ -12,13 +12,17 @@ typedef struct node{
 	//int index;	//第二維度中用於標示該元素的位置
 	Object *var;	//第二維度中用於儲存變數
 
+	char* msg;
+
 	struct node *next;
 }LinkedList;
 
 //插入stack的位置，在連結串列的尾巴
-void insertToList(LinkedList **, LinkedList);
+void insertToList(LinkedList **list, LinkedList data);
 
 //回傳指定key的資料
-LinkedList* getByKey(LinkedList **, int, char);
+LinkedList* getByKey(LinkedList **list, int key);
+
+void deleteHead(LinkedList **list);
 
 #endif

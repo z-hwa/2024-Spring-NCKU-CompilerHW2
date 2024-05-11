@@ -32,7 +32,7 @@ typedef struct _object {
     uint64_t value;
     SymbolData* symbol;
 
-	int scopeLevel;
+	//int scopeLevel;
 } Object;
 
 extern int yylineno;

@@ -29,11 +29,17 @@ int funcLineNo = 0;
 int variableAddress = -1;
 ObjectType variableIdentType;
 
-LinkedList *scope_list;
-Stack *scope_stack;
+//累計多少個string
+int string_ct = 0;
 
-//當遇到變數時，將變數插入到stack之中
-//但目前只實現了輸出顯示的功能
+LinkedList *scope_list;	//紀錄scope的linked list
+Stack *scope_stack; //紀錄當前所在scope的stack
+Stack *print_stack; //用於紀錄輸出訊息
+LinkedList *print_list;
+
+//創建變數物件
+//將變數插入到對應scope stack的linked list之中
+//並輸出插入訊息
 void insert(char* variableName, ObjectType type) {
 	
 	Object* var = (Object *)malloc(sizeof(Object));	//變數物件 用於symbol table
@@ -44,8 +50,8 @@ void insert(char* variableName, ObjectType type) {
 
 
 	//獲取儲存對應scope變數的陣列元素
-	LinkedList *lp = getByKey(&scope_list, nowLevel, 's');
-	LinkedList *list = lp->list; //獲取變數陣列
+	LinkedList *lp = getByKey(&scope_list, nowLevel);
+	LinkedList **list = &(lp->list); //獲取變數陣列的位置
 	int index = lp->listSize++;	
 
 	//set symbol data
@@ -61,8 +67,10 @@ void insert(char* variableName, ObjectType type) {
 	//製造變數的資料包
 	LinkedList data;
 	data.var = var;
-	
-	insertToList(&list, data);	
+
+	//將變數插入對應scope的陣列中	
+	insertToList(list, data);	
+	//printf("%d\n",lp->list);
 
 	printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress++, nowLevel);
 }
@@ -180,7 +188,10 @@ bool objectNotBinaryExpression(Object* dest, Object* out) {
 
 //物件 neg exp
 bool objectNegExpression(Object* dest, Object* out) {
-    return false;
+    out->value = -dest->value;
+	out->type = dest->type;
+	
+	return false;
 }
 bool objectNotExpression(Object* dest, Object* out) {
     return false;
@@ -198,6 +209,29 @@ bool objectCast(ObjectType variableType, Object* dest, Object* out) {
     return false;
 }
 
+void addMsgObj(Object obj) {
+	LinkedList data;
+	data.msg = objectTypeName[obj.type];
+
+	insertToList(&print_list, data);
+	
+}
+
+//將訊息放進msg中
+void addMsg(char* msg) {
+	LinkedList data;
+	data.msg = msg;
+
+	insertToList(&print_list, data);
+}
+
+void printMsg() {
+	while(print_list != NULL) {
+		printf("%s", print_list->msg);
+		deleteHead(&print_list);
+	}
+}
+
 //找變數
 Object* findVariable(char* variableName) {
     Object* variable = NULL;
@@ -210,6 +244,55 @@ void pushFunInParm(Object* variable) {
 
 //標準輸出
 void stdoutPrint() {
+}
+
+//由高到低 輸出所有scope
+void printScope() {
+
+	while(scopeLevel != -1) {
+		printf("\n");
+		printf("> Dump symbol table (scope level: %d)\n", scopeLevel);
+		printf("Index     Name                Type      Addr      Lineno    Func_sig  \n");
+	
+		//找到對應的scope
+		LinkedList *lp = getByKey(&scope_list, scopeLevel);	
+		printVar(lp); //輸出該scope底下的var list
+
+		scopeLevel--;
+	}
+}
+
+//印出lp底下的var linked list
+void printVar(LinkedList *lp) {
+	LinkedList *list = lp->list;	//獲取變數陣列
+
+	//變數的屬性
+	int32_t index, lineno;
+	int64_t addr;
+	char *name, *func_sig;
+	const char *type;
+	
+	while(list != NULL) {
+		Object *op = list->var;
+		SymbolData *sp = op->symbol;		
+
+		index = sp->index;
+		addr = sp->addr;		
+		lineno = sp->lineno;
+
+		name = sp->name;
+		type = objectTypeName[op->type];
+
+		if(op->type == OBJECT_TYPE_FUNCTION) {
+			if(strcmp(name, "main") == 0) func_sig = "([Ljava/lang/String;)I";
+			else if(strcmp(name, "check")) func_sig = "(IILjava/lang/String;B)B";
+		}
+		else func_sig = "-";
+
+		printf("%-10d%-20s%-10s%-10ld%-10d%-10s\n", index, name, type, addr, lineno, func_sig);
+
+		list = list->next;	//下一個變數
+	}
 }
 
 int main(int argc, char* argv[]) {

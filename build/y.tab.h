@@ -59,49 +59,49 @@ extern int yydebug;
     SHL = 260,                     /* SHL  */
     BAN = 261,                     /* BAN  */
     BOR = 262,                     /* BOR  */
-    BNT = 263,                     /* BNT  */
-    BXO = 264,                     /* BXO  */
-    ADD = 265,                     /* ADD  */
-    SUB = 266,                     /* SUB  */
-    MUL = 267,                     /* MUL  */
-    DIV = 268,                     /* DIV  */
-    REM = 269,                     /* REM  */
-    NOT = 270,                     /* NOT  */
-    GTR = 271,                     /* GTR  */
-    LES = 272,                     /* LES  */
-    GEQ = 273,                     /* GEQ  */
-    LEQ = 274,                     /* LEQ  */
-    EQL = 275,                     /* EQL  */
-    NEQ = 276,                     /* NEQ  */
-    LAN = 277,                     /* LAN  */
-    LOR = 278,                     /* LOR  */
-    VAL_ASSIGN = 279,              /* VAL_ASSIGN  */
-    ADD_ASSIGN = 280,              /* ADD_ASSIGN  */
-    SUB_ASSIGN = 281,              /* SUB_ASSIGN  */
-    MUL_ASSIGN = 282,              /* MUL_ASSIGN  */
-    DIV_ASSIGN = 283,              /* DIV_ASSIGN  */
-    REM_ASSIGN = 284,              /* REM_ASSIGN  */
-    BAN_ASSIGN = 285,              /* BAN_ASSIGN  */
-    BOR_ASSIGN = 286,              /* BOR_ASSIGN  */
-    BXO_ASSIGN = 287,              /* BXO_ASSIGN  */
-    SHR_ASSIGN = 288,              /* SHR_ASSIGN  */
-    SHL_ASSIGN = 289,              /* SHL_ASSIGN  */
-    INC_ASSIGN = 290,              /* INC_ASSIGN  */
-    DEC_ASSIGN = 291,              /* DEC_ASSIGN  */
-    IF = 292,                      /* IF  */
-    ELSE = 293,                    /* ELSE  */
-    FOR = 294,                     /* FOR  */
-    WHILE = 295,                   /* WHILE  */
-    RETURN = 296,                  /* RETURN  */
-    BREAK = 297,                   /* BREAK  */
-    CONTINUE = 298,                /* CONTINUE  */
-    ENDL = 299,                    /* ENDL  */
-    VARIABLE_T = 300,              /* VARIABLE_T  */
-    IDENT = 301,                   /* IDENT  */
-    BOOL_LIT = 302,                /* BOOL_LIT  */
-    INT_LIT = 303,                 /* INT_LIT  */
-    FLOAT_LIT = 304,               /* FLOAT_LIT  */
-    STR_LIT = 305                  /* STR_LIT  */
+    BXO = 263,                     /* BXO  */
+    MUL = 264,                     /* MUL  */
+    DIV = 265,                     /* DIV  */
+    REM = 266,                     /* REM  */
+    GTR = 267,                     /* GTR  */
+    LES = 268,                     /* LES  */
+    GEQ = 269,                     /* GEQ  */
+    LEQ = 270,                     /* LEQ  */
+    EQL = 271,                     /* EQL  */
+    NEQ = 272,                     /* NEQ  */
+    LAN = 273,                     /* LAN  */
+    LOR = 274,                     /* LOR  */
+    VAL_ASSIGN = 275,              /* VAL_ASSIGN  */
+    ADD_ASSIGN = 276,              /* ADD_ASSIGN  */
+    SUB_ASSIGN = 277,              /* SUB_ASSIGN  */
+    MUL_ASSIGN = 278,              /* MUL_ASSIGN  */
+    DIV_ASSIGN = 279,              /* DIV_ASSIGN  */
+    REM_ASSIGN = 280,              /* REM_ASSIGN  */
+    BAN_ASSIGN = 281,              /* BAN_ASSIGN  */
+    BOR_ASSIGN = 282,              /* BOR_ASSIGN  */
+    BXO_ASSIGN = 283,              /* BXO_ASSIGN  */
+    SHR_ASSIGN = 284,              /* SHR_ASSIGN  */
+    SHL_ASSIGN = 285,              /* SHL_ASSIGN  */
+    INC_ASSIGN = 286,              /* INC_ASSIGN  */
+    DEC_ASSIGN = 287,              /* DEC_ASSIGN  */
+    IF = 288,                      /* IF  */
+    ELSE = 289,                    /* ELSE  */
+    FOR = 290,                     /* FOR  */
+    WHILE = 291,                   /* WHILE  */
+    RETURN = 292,                  /* RETURN  */
+    BREAK = 293,                   /* BREAK  */
+    CONTINUE = 294,                /* CONTINUE  */
+    ENDL = 295,                    /* ENDL  */
+    VARIABLE_T = 296,              /* VARIABLE_T  */
+    IDENT = 297,                   /* IDENT  */
+    BOOL_LIT = 298,                /* BOOL_LIT  */
+    INT_LIT = 299,                 /* INT_LIT  */
+    FLOAT_LIT = 300,               /* FLOAT_LIT  */
+    STR_LIT = 301,                 /* STR_LIT  */
+    SUB = 302,                     /* SUB  */
+    NOT = 303,                     /* NOT  */
+    BNT = 304,                     /* BNT  */
+    ADD = 305                      /* ADD  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -115,58 +115,57 @@ extern int yydebug;
 #define SHL 260
 #define BAN 261
 #define BOR 262
-#define BNT 263
-#define BXO 264
-#define ADD 265
-#define SUB 266
-#define MUL 267
-#define DIV 268
-#define REM 269
-#define NOT 270
-#define GTR 271
-#define LES 272
-#define GEQ 273
-#define LEQ 274
-#define EQL 275
-#define NEQ 276
-#define LAN 277
-#define LOR 278
-#define VAL_ASSIGN 279
-#define ADD_ASSIGN 280
-#define SUB_ASSIGN 281
-#define MUL_ASSIGN 282
-#define DIV_ASSIGN 283
-#define REM_ASSIGN 284
-#define BAN_ASSIGN 285
-#define BOR_ASSIGN 286
-#define BXO_ASSIGN 287
-#define SHR_ASSIGN 288
-#define SHL_ASSIGN 289
-#define INC_ASSIGN 290
-#define DEC_ASSIGN 291
-#define IF 292
-#define ELSE 293
-#define FOR 294
-#define WHILE 295
-#define RETURN 296
-#define BREAK 297
-#define CONTINUE 298
-#define ENDL 299
-#define VARIABLE_T 300
-#define IDENT 301
-#define BOOL_LIT 302
-#define INT_LIT 303
-#define FLOAT_LIT 304
-#define STR_LIT 305
+#define BXO 263
+#define MUL 264
+#define DIV 265
+#define REM 266
+#define GTR 267
+#define LES 268
+#define GEQ 269
+#define LEQ 270
+#define EQL 271
+#define NEQ 272
+#define LAN 273
+#define LOR 274
+#define VAL_ASSIGN 275
+#define ADD_ASSIGN 276
+#define SUB_ASSIGN 277
+#define MUL_ASSIGN 278
+#define DIV_ASSIGN 279
+#define REM_ASSIGN 280
+#define BAN_ASSIGN 281
+#define BOR_ASSIGN 282
+#define BXO_ASSIGN 283
+#define SHR_ASSIGN 284
+#define SHL_ASSIGN 285
+#define INC_ASSIGN 286
+#define DEC_ASSIGN 287
+#define IF 288
+#define ELSE 289
+#define FOR 290
+#define WHILE 291
+#define RETURN 292
+#define BREAK 293
+#define CONTINUE 294
+#define ENDL 295
+#define VARIABLE_T 296
+#define IDENT 297
+#define BOOL_LIT 298
+#define INT_LIT 299
+#define FLOAT_LIT 300
+#define STR_LIT 301
+#define SUB 302
+#define NOT 303
+#define BNT 304
+#define ADD 305
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "./compiler.y"
+#line 12 "./compiler.y"
 
     ObjectType var_type;
-
     bool b_var;
     int i_var;
     float f_var;
@@ -174,7 +173,7 @@ union YYSTYPE
 
     Object object_val;
 
-#line 178 "./build/y.tab.h"
+#line 177 "./build/y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

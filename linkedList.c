@@ -13,6 +13,7 @@ void insertToList(LinkedList **list, LinkedList nodeData) {
 	
 	//newNode->index = nodeData.index;
 	newNode->var = nodeData.var;
+	newNode->msg = nodeData.msg;
 	
 	newNode->next = NULL;
 
@@ -31,7 +32,7 @@ void insertToList(LinkedList **list, LinkedList nodeData) {
     lastNode->next = newNode;	
 }
 
-LinkedList* getByKey(LinkedList **list, int _key, char type) {
+LinkedList* getByKey(LinkedList **list, int _key) {
 	if(*list == NULL) {
 		printf("this is a empty list");
 		return NULL;
@@ -55,4 +56,12 @@ LinkedList* getByKey(LinkedList **list, int _key, char type) {
 
 	if(find == true) return pointer;
 	else return NULL;
+}
+
+void deleteHead(LinkedList **list) {
+	if(*list == NULL) return ;
+	
+	LinkedList *lp = *list;
+	*list = (*list)->next;
+	free(lp);
 }
