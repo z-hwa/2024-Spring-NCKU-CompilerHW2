@@ -11,18 +11,39 @@
 
 Stack* top(Stack **head) {
 	if(*head == NULL) {
-		printf("this stack is empty\n");
+		//printf("this stack is empty\n");
 		return NULL;
 	}
 
 	return *head;
 }
 
+Stack* getByLevel(Stack **stack, int key) {
+	if(*stack == NULL) {
+		printf("empty stack\n");
+		return NULL;
+	}
+
+	Stack *sp = *stack;
+	int nowLevel = sp->scopeLevel;
+
+	while(sp != NULL && nowLevel > key) {
+		sp = sp->next;
+		nowLevel--;
+	}
+
+	if(nowLevel == key) return sp;
+	else return NULL;	
+}
+
 bool push(Stack **head, Stack nodeData){
 	Stack *newnode = (Stack *)malloc(sizeof(Stack));
-    //newnode->value = nodeData.value;
+	
 	newnode->scopeLevel = nodeData.scopeLevel;
 	newnode->msg = nodeData.msg;
+
+	newnode->index = nodeData.index;
+	newnode->indexSt = nodeData.indexSt;
 
     newnode->next = (*head);
     (*head) = newnode;

@@ -56,7 +56,7 @@
 /* Grammar section */
 
 Program
-    : { pushScope(); } GlobalStmtList { dumpScope(); } {printScope();}
+    : { pushScope(); } GlobalStmtList { dumpScope(); }
     //| /* Empty file */
 ;
 

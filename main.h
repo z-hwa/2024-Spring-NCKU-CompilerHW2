@@ -18,7 +18,7 @@ void dumpScope();
 
 void insert(char* variableName, ObjectType objectType, int src);
 void printScope();
-void printVar(LinkedList *lp);
+void printVar();
 
 //void addCt();
 //void printCout();

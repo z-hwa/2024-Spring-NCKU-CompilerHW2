@@ -38,31 +38,7 @@ LinkedList *scope_list;	//紀錄scope的linked list
 Stack *scope_stack; //紀錄當前所在scope的stack
 Stack *print_stack; //用於紀錄輸出訊息
 LinkedList *print_list; //用於記錄順向的輸出訊息
-/*
-LinkedList *var_list;
-int ct = 0;
-
-void addVar(char * name) {
-	LinkedList data;
-	data.msg = name;
-
-	ct++;
-	insertToList(&print_list, data);
-}
-
-void createVar(ObjectType type){
-	while(ct-- && var_list!=NULL) {
-		insert(var_list->msg, type);
-		deleteHead(&var_list);
-	} 
-}*/
-
-/*bool setNowDefType(ObjectType type) {
-	nowDefType = type;
-	dg(type);
-
-	return false;
-}*/
+LinkedList *var_list;	//用於記錄變數的陣列
 
 //設置為還沒開始設定變數
 void typeSet(bool b){
@@ -85,14 +61,18 @@ void insert(char* variableName, ObjectType type, int src) {
 	Object* var = (Object *)malloc(sizeof(Object));	//變數物件 用於symbol table
 	SymbolData* sym = (SymbolData *)malloc(sizeof(SymbolData));	//symbol data
 
+	/*
 	Stack *sp = top(&scope_stack);
 	int nowLevel = sp->scopeLevel;	//獲取當前的scope level
 
-
+*//*
 	//獲取儲存對應scope變數的陣列元素
 	LinkedList *lp = getByKey(&scope_list, nowLevel);
 	LinkedList **list = &(lp->list); //獲取變數陣列的位置
 	int index = lp->listSize++;	
+*/
+	Stack *sp = top(&scope_stack);
+	int index = sp->index++;
 
 	//set symbol data
 	sym->name = variableName; 
@@ -109,27 +89,35 @@ void insert(char* variableName, ObjectType type, int src) {
 	data.var = var;
 
 	//將變數插入對應scope的陣列中	
-	insertToList(list, data);	
+	insertToList(&var_list, data);	
 	//printf("%d\n",lp->list);
 
-	printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress++, nowLevel);
+	printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress++, scopeLevel);
 	lastType = type;
 }
 
 //如果進到下一個scope 會呼叫該函數並輸出進入下一個scope的訊息
 void pushScope() {
 	scopeLevel++;	//scope level加一
- 
+
+	/* 
 	//創建新的scope 並放入linked list
 	LinkedList data;
 	data.scopeLevel = scopeLevel;
 	data.list = NULL;
 	data.listSize = 0;
 	insertToList(&scope_list, data);
-
+	*/
+	
 	//將該scope推入堆疊
 	Stack scope;
+	Stack *sp = top(&scope_stack);
+
 	scope.scopeLevel = scopeLevel;
+	scope.index = 0;
+	if(sp != NULL) scope.indexSt = sp->indexSt + sp->index;
+	else scope.indexSt = 0;
+
 	push(&scope_stack, scope);	
 
 	printf("> Create symbol table (scope level %d)\n", scopeLevel);
@@ -137,10 +125,20 @@ void pushScope() {
 
 //離開當前scope
 void dumpScope() {
+	printScope();
+
+	Stack *sp = top(&scope_stack);
+	int index = sp->index;
+	while(index--) {
+		deleteTail(&var_list);
+	}
+	
+
+	scopeLevel--;
 
 	//將stack最上方的scope推出堆疊	
 	pop(&scope_stack);
-
+	
 	//printScope();
 	
 }
@@ -173,16 +171,19 @@ void createFunction(ObjectType variableType, char* funcName) {
 
 //根據名稱獲取該變數的object
 Object* getObjectByName(char* name) {
+	/*
 	//獲取當前scope
 	Stack *sp = top(&scope_stack);
 	int nowLevel = sp->scopeLevel;
 	//dg(0);
 
 	//獲取變數陣列
-	LinkedList *lp = getByKey(&scope_list, nowLevel);
+	LinkedList *lp = getByLevel(&scope_stack, nowLevel);
 	LinkedList **list = &(lp->list);	
+*/
 
-	lp = getByName(list, name);	
+	LinkedList *lp;
+	lp = getByName(&var_list, name);	
 	Object* var = lp->var;
 
 	return var;	
@@ -372,17 +373,11 @@ void printScope() {
 	scopeLevel--;
 
 	*/
-	while(scopeLevel != -1) {
-		printf("\n");
-		printf("> Dump symbol table (scope level: %d)\n", scopeLevel);
-		printf("Index     Name                Type      Addr      Lineno    Func_sig  \n");
+	printf("\n");
+	printf("> Dump symbol table (scope level: %d)\n", scopeLevel);
+	printf("Index     Name                Type      Addr      Lineno    Func_sig  \n");
 	
-		//找到對應的scope
-		LinkedList *lp = getByKey(&scope_list, scopeLevel);	
-		printVar(lp); //輸出該scope底下的var list
-
-		scopeLevel--;
-	}
+	printVar(); //輸出該scope底下的var list
 }
 
 void dg(int i){
@@ -390,17 +385,19 @@ void dg(int i){
 }
 
 //印出lp底下的var linked list
-void printVar(LinkedList *lp) {
-	LinkedList *list = lp->list;	//獲取變數陣列
-
+void printVar(int num) {
 	//變數的屬性
 	int32_t index, lineno;
 	int64_t addr;
 	char *name, *func_sig;
 	const char *type;
-	
-	while(list != NULL) {
-		Object *op = list->var;
+
+	Stack *sp = top(&scope_stack);
+	int st = sp->indexSt;
+	num = sp->index;	
+
+	while(num--) {
+		Object *op = getByIndex(&var_list, st);
 		SymbolData *sp = op->symbol;		
 
 		index = sp->index;
@@ -418,7 +415,7 @@ void printVar(LinkedList *lp) {
 
 		printf("%-10d%-20s%-10s%-10ld%-10d%-10s\n", index, name, type, addr, lineno, func_sig);
 
-		list = list->next;	//下一個變數
+		st++;
 	}
 }
 

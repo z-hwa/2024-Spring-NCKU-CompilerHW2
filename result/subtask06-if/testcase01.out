@@ -13,25 +13,25 @@ IF
 STR_LIT "Hello"
 IDENT (name=endl, address=-1)
 cout string string
+
+> Dump symbol table (scope level: 2)
+Index     Name                Type      Addr      Lineno    Func_sig  
 IDENT (name=apple, address=1)
 INT_LIT 0
 NEQ
 IF
-> Create symbol table (scope level 3)
+> Create symbol table (scope level 2)
 STR_LIT "Hello"
 IDENT (name=endl, address=-1)
 cout string string
+
+> Dump symbol table (scope level: 2)
+Index     Name                Type      Addr      Lineno    Func_sig  
 ELSE
-> Create symbol table (scope level 4)
+> Create symbol table (scope level 2)
 STR_LIT "Bye"
 IDENT (name=endl, address=-1)
 cout string string
-
-> Dump symbol table (scope level: 4)
-Index     Name                Type      Addr      Lineno    Func_sig  
-
-> Dump symbol table (scope level: 3)
-Index     Name                Type      Addr      Lineno    Func_sig  
 
 > Dump symbol table (scope level: 2)
 Index     Name                Type      Addr      Lineno    Func_sig  

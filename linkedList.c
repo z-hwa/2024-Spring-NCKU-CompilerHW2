@@ -33,6 +33,7 @@ void insertToList(LinkedList **list, LinkedList nodeData) {
     lastNode->next = newNode;	
 }
 
+//根據變數名稱在linkedlist中獲得儲存變數的東東
 LinkedList* getByName(LinkedList **list, char* name) {
 	if(*list == NULL) {
 		printf("this is a empty list");
@@ -61,6 +62,20 @@ LinkedList* getByName(LinkedList **list, char* name) {
 	if(find == true) return pointer;
 	else return NULL;
 	
+}
+
+Object* getByIndex(LinkedList **list, int index) {
+	if(*list == NULL) {
+		printf("empty list\n");
+	}
+
+	LinkedList *lp = *list;
+	while(lp != NULL && index > 0) {
+		lp = lp->next;
+		index--;
+	}
+
+	return lp->var;
 }
 
 LinkedList* getByKey(LinkedList **list, int _key) {
@@ -95,5 +110,18 @@ void deleteHead(LinkedList **list) {
 	
 	LinkedList *lp = *list;
 	*list = (*list)->next;
+	free(lp);
+}
+
+void deleteTail(LinkedList **list) {
+	if(*list == NULL) return;
+
+	LinkedList *lp = *list, *pr = *list;
+	while(lp->next != NULL) {
+		pr = lp;
+		lp = lp->next;
+	}
+
+	pr->next = NULL;
 	free(lp);
 }

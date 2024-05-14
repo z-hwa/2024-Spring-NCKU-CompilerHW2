@@ -22,9 +22,13 @@ LinkedList* getByName(LinkedList **list, char *name);
 //插入stack的位置，在連結串列的尾巴
 void insertToList(LinkedList **list, LinkedList data);
 
+Object* getByIndex(LinkedList **list, int index);
+
 //回傳指定key的資料
 LinkedList* getByKey(LinkedList **list, int key);
 
 void deleteHead(LinkedList **list);
+
+void deleteTail(LinkedList** list);
 
 #endif
