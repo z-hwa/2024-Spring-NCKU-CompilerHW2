@@ -41,7 +41,7 @@
 
 /* Nonterminal with return, which need to sepcify type */
 %type <object_val> Expression Printable PrintableList
-%type <object_val> Or And BitwiseOr BitwiseXor BitwiseAnd Equality Relational Shift Additive Multiplicative Unary Primary TypeCast
+%type <object_val> Or And BitwiseOr BitwiseXor BitwiseAnd Equality Relational Shift Additive Multiplicative Unary Primary TypeCast Post AssignBody
 
 //%type <object_val> Term
 //%type <object_val> Factor
@@ -73,13 +73,29 @@ GlobalStmt
 	| AssignStmt
 	| CompoundStmt
 	| SelectionStmt
+	| IterationStmt
 	| /* Empty Stmt */ 
 ;
 
-CompoundStmt
-	: '{' GlobalStmt '}'
+/*while and for*/
+IterationStmt
+	: WHILE {printf("WHILE\n");} '(' Expression ')' {pushScope();} GlobalStmt {dumpScope();}
+	| FOR {printf("FOR\n"); pushScope();} '(' ExpressionStmt ExpressionStmt Expression ')' GlobalStmt {dumpScope();}
 ;
 
+ExpressionStmt
+	: Expression ';'
+	| DefineVariableStmt
+	| ';'
+;
+
+/*複合敘述*/
+CompoundStmt
+	: '{' GlobalStmtList '}'
+;
+
+
+/*if else*/
 SelectionStmt
 	: IF '(' Expression ')'{ printf("IF\n"); pushScope(); } GlobalStmt {dumpScope();}
 	| SelectionStmt ELSE {printf("ELSE\n"); pushScope();} GlobalStmt {dumpScope();}
@@ -88,7 +104,11 @@ SelectionStmt
 /*define and 設值敘述*/
 
 AssignStmt
-	: IDENT {printIDByName($<s_var>1);} Assign ';'
+	: AssignBody ';'
+;
+
+AssignBody
+	: IDENT { printIDByName($<s_var>1);} Assign
 ;
 
 Assign
@@ -104,8 +124,8 @@ Assign
 	| BXO_ASSIGN Assign{printf("BXO_ASSIGN\n");}
 	| SHR_ASSIGN Assign{printf("SHR_ASSIGN\n");}
 	| SHL_ASSIGN Assign{printf("SHL_ASSIGN\n");}
-	| INC_ASSIGN Assign{printf("INC_ASSIGN\n");}
-	| DEC_ASSIGN Assign{printf("DEC_ASSIGN\n");}
+	//| INC_ASSIGN Assign{printf("INC_ASSIGN\n");}
+	//| DEC_ASSIGN Assign{printf("DEC_ASSIGN\n");} 
 ;
 
 Assignable
@@ -160,6 +180,7 @@ Printable
 
 Expression
 	: Or
+	| AssignBody {$<object_val>0.type = OBJECT_TYPE_BOOL;}
 ;
 
 Or
@@ -250,7 +271,13 @@ Unary
 	| NOT Unary{
 				//$<object_val>0.type = $<object_val>2.type;
 				printf("NOT\n");} 
-	| Primary
+	| Post
+;
+
+Post
+	: Primary
+	| Primary INC_ASSIGN {printf("INC_ASSIGN\n");}
+	| Primary DEC_ASSIGN {printf("DEC_ASSIGN\n");}
 ;
 
 Primary

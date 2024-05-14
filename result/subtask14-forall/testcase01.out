@@ -18,9 +18,9 @@ IDENT (name=mod, address=-1)
 DIV
 INT_LIT 1
 ADD
+ADD
 IDENT (name=mod, address=-1)
 MUL
-ADD
 RETURN
 
 > Dump symbol table (scope level: 2)
@@ -42,7 +42,8 @@ IDENT (name=s, address=3)
 IDENT (name=endl, address=-1)
 cout string string
 IDENT (name=mod, address=-1)
-/home/share/hw2/input/subtask14-forall/testcase01.cpp:7:16: error:  syntax error
-     7 |    cout << mod( 000000007,99824353) << endl; // very big number!
-       |               ^
+INT_LIT 1000000007
+/home/share/hw2/input/subtask14-forall/testcase01.cpp:7:27: error:  syntax error
+     7 |    cout << mod(1000000007, 9824353) << endl; // very big number!
+       |                          ^
 Total lines: 7

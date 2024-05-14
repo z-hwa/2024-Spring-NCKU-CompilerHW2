@@ -32,8 +32,8 @@ func: main
 > Create symbol table (scope level 1)
 > Insert `argv` (addr: 5) to scope level 1
 IDENT (name=check, address=-1)
-> Insert `result` (addr: 6) to scope level 1
-/home/share/hw2/input/subtask09-function/testcase01.cpp:7:24: error:  syntax error
-     7 |    bool result = check( ,2,"apple",true);
-       |                       ^
+INT_LIT 1
+/home/share/hw2/input/subtask09-function/testcase01.cpp:7:26: error:  syntax error
+     7 |    bool result = check(1, ,"apple",true);
+       |                         ^
 Total lines: 7
