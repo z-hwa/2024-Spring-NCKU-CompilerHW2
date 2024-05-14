@@ -3,9 +3,13 @@ func: main
 > Insert `main` (addr: -1) to scope level 0
 > Create symbol table (scope level 1)
 > Insert `argv` (addr: 0) to scope level 1
+INT_LIT 0
 > Insert `a` (addr: 1) to scope level 1
 INT_LIT 0
-/home/share/hw2/input/subtask07-while/testcase01.cpp:2:14: error:  syntax error
-     2 |    int a = 0, b = 0, c = 10;
-       |             ^
-Total lines: 2
+> Insert `b` (addr: 2) to scope level 1
+INT_LIT 10
+> Insert `c` (addr: 3) to scope level 1
+/home/share/hw2/input/subtask07-while/testcase01.cpp:4:5: error:  syntax error
+     4 |    while  c != 0 ) {
+       |    ^
+Total lines: 4

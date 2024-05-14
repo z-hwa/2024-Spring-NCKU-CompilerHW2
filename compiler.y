@@ -29,7 +29,7 @@
 
 /* Token with return, which need to sepcify type */
 %token <var_type> VARIABLE_T
-%token <s_var> IDENT
+%token <s_val> IDENT
 
 //有value的token 需要特別讓他帶著屬性
 %token <b_var> BOOL_LIT
@@ -40,8 +40,8 @@
 %token <object_val> '(' SUB NOT BNT ADD
 
 /* Nonterminal with return, which need to sepcify type */
-%type <object_val> Expression
-%type <object_val> Or And BitwiseOr BitwiseXor BitwiseAnd Equality Relational Shift Additive Multiplicative Unary Primary 
+%type <object_val> Expression Printable PrintableList
+%type <object_val> Or And BitwiseOr BitwiseXor BitwiseAnd Equality Relational Shift Additive Multiplicative Unary Primary TypeCast
 
 //%type <object_val> Term
 //%type <object_val> Factor
@@ -57,7 +57,7 @@
 
 Program
     : { pushScope(); } GlobalStmtList { dumpScope(); } {printScope();}
-    | /* Empty file */
+    //| /* Empty file */
 ;
 
 GlobalStmtList 
@@ -70,12 +70,62 @@ GlobalStmt
     | FunctionDefStmt
 	| CoutStmt
     | ReturnStmt
+	| AssignStmt
+	| CompoundStmt
+	| SelectionStmt
 	| /* Empty Stmt */ 
+;
+
+CompoundStmt
+	: '{' GlobalStmt '}'
+;
+
+SelectionStmt
+	: IF '(' Expression ')'{ printf("IF\n"); pushScope(); } GlobalStmt {dumpScope();}
+	| SelectionStmt ELSE {printf("ELSE\n"); pushScope();} GlobalStmt {dumpScope();}
+;
+
+/*define and 設值敘述*/
+
+AssignStmt
+	: IDENT {printIDByName($<s_var>1);} Assign ';'
+;
+
+Assign
+	: Assignable
+	| VAL_ASSIGN Assign{printf("EQL_ASSIGN\n");}
+	| ADD_ASSIGN Assign{printf("ADD_ASSIGN\n");}
+	| SUB_ASSIGN Assign{printf("SUB_ASSIGN\n");}
+	| MUL_ASSIGN Assign{printf("MUL_ASSIGN\n");}
+	| DIV_ASSIGN Assign{printf("DIV_ASSIGN\n");}
+	| REM_ASSIGN Assign{printf("REM_ASSIGN\n");}
+	| BAN_ASSIGN Assign{printf("BAN_ASSIGN\n");}
+	| BOR_ASSIGN Assign{printf("BOR_ASSIGN\n");}
+	| BXO_ASSIGN Assign{printf("BXO_ASSIGN\n");}
+	| SHR_ASSIGN Assign{printf("SHR_ASSIGN\n");}
+	| SHL_ASSIGN Assign{printf("SHL_ASSIGN\n");}
+	| INC_ASSIGN Assign{printf("INC_ASSIGN\n");}
+	| DEC_ASSIGN Assign{printf("DEC_ASSIGN\n");}
+;
+
+Assignable
+	: STR_LIT  {printf("STR_LIT \"%s\"\n", $<s_var>1); }
+	| Expression
 ;
 
 /* define variable */
 DefineVariableStmt
-    : VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1); } VAL_ASSIGN Expression ';' 
+	: VARIABLE_T  DeclaratorList ';' {typeSet(false);}
+;
+
+DeclaratorList
+	: Declarator
+	| DeclaratorList ',' Declarator
+;
+
+Declarator
+	: IDENT {insert($<s_var>1, $<var_type>0, 0);}
+	| IDENT VAL_ASSIGN Assignable {insert($<s_var>1, $<var_type>0, 0);}
 ;
 
 /* Return */
@@ -85,7 +135,7 @@ ReturnStmt
 
 /*cin cout*/
 CoutStmt
-	: COUT {addMsg("cout");} SHL  PrintableList ';' { addMsg("\n"); printMsg(); }
+	: COUT {addMsg("cout");} SHL PrintableList ';' { addMsg("\n"); printMsg(); }
 ;
 
 //可印出的列表
@@ -96,9 +146,13 @@ PrintableList
 
 //可印出的token
 Printable
-    : STR_LIT { addMsg(" string"); printf("STR_LIT \"%s\"\n", $<s_var>1); }
+    : STR_LIT { addMsg(" string");
+				printf("STR_LIT \"%s\"\n", $<s_var>1); }
     | ENDL { addMsg(" string"); printf("IDENT (name=endl, address=-1)\n"); }
-	| Expression {addMsg(" "); addMsgObj($<object_val>1);}
+	| Expression {
+					addMsg(" ");
+					addMsgObj(&$<object_val>0);
+	}
 ;
 
 
@@ -110,75 +164,116 @@ Expression
 
 Or
 	: And
-	| Or LOR {printf("LOR\n");} And
+	| Or LOR And{
+				// here is correct
+				objectExpBoolean('1', &$<object_val>1, &$<object_val>2, &$<object_val>0);}
 ;
 
 And
-	: BitwiseOr
-	| And LAN {printf("LAN\n");} BitwiseOr
+	: BitwiseOr //{setType(&$<object_val>1, &$<object_val>0);}
+	| And LAN BitwiseOr{objectExpBoolean('2', &$<object_val>1, &$<object_val>2, &$<object_val>0);} 
 ;
 
 BitwiseOr
-	: BitwiseXor
-	| BitwiseOr BOR {printf("BOR\n");} BitwiseXor
+	: BitwiseXor //{setType(&$<object_val>1, &$<object_val>0);}
+	| BitwiseOr BOR BitwiseXor{objectExpBinary('1', &$<object_val>1, &$<object_val>2, &$<object_val>0);} 
 ;
 
 BitwiseXor
-	: BitwiseAnd
-	| BitwiseXor BXO {printf("BXO\n");} BitwiseAnd
+	: BitwiseAnd //{setType(&$<object_val>1, &$<object_val>0);}
+	| BitwiseXor BXO BitwiseAnd{objectExpBinary('2', &$<object_val>1, &$<object_val>2, &$<object_val>0);} 
 ;
 
 BitwiseAnd
-	: Equality
-	| BitwiseAnd BAN {printf("BAN\n");} Equality
+	: Equality //{setType(&$<object_val>1, &$<object_val>0);}
+	| BitwiseAnd BAN Equality{objectExpBinary('3', &$<object_val>1, &$<object_val>2, &$<object_val>0);} 
 ;
 
 Equality
-	: Relational
-	| Equality EQL Relational{printf("EQL\n");}  
-	| Equality NEQ Relational{printf("NEQ\n");} 
+	: Relational //{setType(&$<object_val>1, &$<object_val>0);}
+	| Equality EQL Relational{objectExpBoolean('3', &$<object_val>1, &$<object_val>2, &$<object_val>0);}  
+	| Equality NEQ Relational{objectExpBoolean('4', &$<object_val>1, &$<object_val>2, &$<object_val>0);} 
 ;
 
 Relational
-	: Shift
-	| Relational LES Shift{printf("LES\n");} 
-	| Relational GTR Shift{printf("GTR\n");} 
-	| Relational LEQ Shift{printf("LEQ\n");} 
-	| Relational GEQ Shift{printf("GEQ\n");} 
+	: Shift //{dg(2);}{setType(&$<object_val>1, &$<object_val>0);}
+	| Relational LES Shift{printf("LES\n");} //{setType(&$<object_val>1, &$<object_val>0);}
+
+	| Relational GTR Shift{printf("GTR\n");} //{setType(&$<object_val>1, &$<object_val>0);}
+
+	| Relational LEQ Shift{printf("LEQ\n");} //{setType(&$<object_val>1, &$<object_val>0);}
+
+	| Relational GEQ Shift{printf("GEQ\n");} //{setType(&$<object_val>1, &$<object_val>0);}
+
 ;
 
 Shift
-	: Additive
+	: Additive //{dg(1);}{setType(&$<object_val>1, &$<object_val>0);}
+	| Shift SHR Additive{printf("SHR\n");} 
 	//| Shift SHL {printf("SHL\n");} Additive
-	//| Shift SHR {printf("SHR\n");} Additive
 ;
 
 Additive
-	: Multiplicative
-	| Additive ADD Multiplicative{printf("ADD\n");} 
-	| Additive SUB Multiplicative{printf("SUB\n");} 
+	: Multiplicative //{setType(&$<object_val>1, &$<object_val>0);}
+	| Additive ADD Multiplicative{printf("ADD\n");} //{setType(&$<object_val>1, &$<object_val>0);}
+
+	| Additive SUB Multiplicative{printf("SUB\n");} //{setType(&$<object_val>1, &$<object_val>0);}
+
 ;
 
 Multiplicative
+	: TypeCast
+	| Multiplicative MUL TypeCast{printf("MUL\n");}
+	| Multiplicative DIV TypeCast{printf("DIV\n");}
+	| Multiplicative REM TypeCast{printf("REM\n");}
+
+;
+
+TypeCast
 	: Unary
-	| Multiplicative MUL Unary{printf("MUL\n");} 
-	| Multiplicative DIV Unary{printf("DIV\n");}
-	| Multiplicative REM Unary{printf("REM\n");}
+	| '(' VARIABLE_T ')' Unary {
+		$<object_val>0.type = $<var_type>2;
+		printCastInfo($<var_type>2);
+	}
 ;
 
 Unary
-	: BNT Unary{printf("BNT\n");} 
-	| ADD Unary{printf("ADD\n");} 
-	| SUB Unary{printf("NEG\n");} 
-	| NOT Unary{printf("NOT\n");} 
+	: BNT Unary{
+				//$<object_val>0.type = $<object_val>2.type;
+				printf("BNT\n");} 
+	| ADD Unary{
+				//$<object_val>0.type = $<object_val>2.type;
+				printf("ADD\n");} 
+	| SUB Unary{
+				//$<object_val>0.type = $<object_val>2.type;
+				printf("NEG\n");} 
+	| NOT Unary{
+				//$<object_val>0.type = $<object_val>2.type;
+				printf("NOT\n");} 
 	| Primary
 ;
 
 Primary
-    : INT_LIT {$<object_val>0.type = OBJECT_TYPE_INT; printf("INT_LIT %d\n", $<i_var>1);}
-	| FLOAT_LIT {$<object_val>0.type = OBJECT_TYPE_FLOAT; printf("FLOAT_LIT %f\n", $<f_var>1);}
-    | '(' Expression ')'
-	| BOOL_LIT {$<object_val>0.type = OBJECT_TYPE_BOOL; printf("BOOL_LIT %d\n", $<b_var>1);}
+    : INT_LIT{
+			$<object_val>0.type = OBJECT_TYPE_INT;
+			printf("INT_LIT %d\n", $<i_var>1);
+		}
+	| FLOAT_LIT {
+			$<object_val>0.type = OBJECT_TYPE_FLOAT;
+			printf("FLOAT_LIT %f\n", $<f_var>1);
+		}
+    | '(' Expression ')' {
+			$<object_val>0.type = $<object_val>1.type;
+		}
+	| BOOL_LIT {
+			$<object_val>0.type = OBJECT_TYPE_BOOL; 
+			printBool($<b_var>1);
+		}
+	| IDENT {
+			ObjectType type = getVarTypeByName($<s_var>1);
+			$<object_val>0.type = type;
+			printIDByName($<s_var>1);
+		}
 ;
 
 /*
@@ -216,12 +311,12 @@ FunctionParameterStmtList
 ;
 
 FunctionParameterStmt
-    : VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1); } { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
-    | VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1); } '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
+    : VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1, 1); } { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
+    | VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1, 1); } '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
 ;
 
 /* Scope */
-StmtList 
+/*StmtList 
     : StmtList Stmt
     | Stmt
 ;
@@ -235,6 +330,6 @@ CoutParmListStmt
     : CoutParmListStmt SHL Expression { pushFunInParm(&$<object_val>3); }
     | SHL Expression { pushFunInParm(&$<object_val>2); } 
 ;
-
+*/
 %%
 /* C code section */

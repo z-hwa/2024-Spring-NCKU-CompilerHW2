@@ -3,10 +3,23 @@ func: main
 > Insert `main` (addr: -1) to scope level 0
 > Create symbol table (scope level 1)
 > Insert `argv` (addr: 0) to scope level 1
+FLOAT_LIT 6.000000
 > Insert `x` (addr: 1) to scope level 1
-FLOAT_LIT 1086324736
+BOOL_LIT TRUE
 > Insert `y` (addr: 2) to scope level 1
-/home/share/hw2/input/subtask11-autotype/testcase01.cpp:3:14: error:  syntax error
-     3 |    auto y = true 
-       |             ^
-Total lines: 3
+IDENT (name=x, address=1)
+STR_LIT " "
+IDENT (name=y, address=2)
+IDENT (name=endl, address=-1)
+cout (null) string (null) string
+
+> Dump symbol table (scope level: 1)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         argv                string    0         1         -         
+1         x                   (null)    1         2         -         
+2         y                   (null)    2         3         -         
+
+> Dump symbol table (scope level: 0)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         main                function  -1        1         ([Ljava/lang/String;)I
+Total lines: 6

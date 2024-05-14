@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <string.h>
 #include "linkedList.h"
 
 void insertToList(LinkedList **list, LinkedList nodeData) {
@@ -32,6 +33,36 @@ void insertToList(LinkedList **list, LinkedList nodeData) {
     lastNode->next = newNode;	
 }
 
+LinkedList* getByName(LinkedList **list, char* name) {
+	if(*list == NULL) {
+		printf("this is a empty list");
+		return NULL;
+	}
+
+	//using pointer to find the stack
+	LinkedList *pointer = *list;
+	bool find = false;
+
+	while(pointer != NULL) {
+		Object *var = pointer->var;
+		SymbolData *sym = var->symbol;
+		char *id = sym->name;
+
+		if(strcmp(id, name) == 0){
+			find = true;
+			//printf("%d\n", var->type);
+			//printf("find\n");
+			break;
+		}	
+
+		pointer = pointer->next;
+	}
+
+	if(find == true) return pointer;
+	else return NULL;
+	
+}
+
 LinkedList* getByKey(LinkedList **list, int _key) {
 	if(*list == NULL) {
 		printf("this is a empty list");
@@ -57,6 +88,7 @@ LinkedList* getByKey(LinkedList **list, int _key) {
 	if(find == true) return pointer;
 	else return NULL;
 }
+
 
 void deleteHead(LinkedList **list) {
 	if(*list == NULL) return ;

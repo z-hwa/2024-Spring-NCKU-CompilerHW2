@@ -29,19 +29,59 @@ int funcLineNo = 0;
 int variableAddress = -1;
 ObjectType variableIdentType;
 
+bool set = false;
+ObjectType lastType = OBJECT_TYPE_UNDEFINED;
 //累計多少個string
-int string_ct = 0;
+//int string_ct = 0;
 
 LinkedList *scope_list;	//紀錄scope的linked list
 Stack *scope_stack; //紀錄當前所在scope的stack
 Stack *print_stack; //用於紀錄輸出訊息
-LinkedList *print_list;
+LinkedList *print_list; //用於記錄順向的輸出訊息
+/*
+LinkedList *var_list;
+int ct = 0;
+
+void addVar(char * name) {
+	LinkedList data;
+	data.msg = name;
+
+	ct++;
+	insertToList(&print_list, data);
+}
+
+void createVar(ObjectType type){
+	while(ct-- && var_list!=NULL) {
+		insert(var_list->msg, type);
+		deleteHead(&var_list);
+	} 
+}*/
+
+/*bool setNowDefType(ObjectType type) {
+	nowDefType = type;
+	dg(type);
+
+	return false;
+}*/
+
+//設置為還沒開始設定變數
+void typeSet(bool b){
+	set = b;
+}
 
 //創建變數物件
 //將變數插入到對應scope stack的linked list之中
 //並輸出插入訊息
-void insert(char* variableName, ObjectType type) {
-	
+void insert(char* variableName, ObjectType type, int src) {
+
+	if(src == 0 && set == true) type = lastType;
+	else if(src == 0 && set == false) set = true;
+
+	/*
+	if(type >= 0 && type <=10) ;
+	else type = lastType;
+	*/
+
 	Object* var = (Object *)malloc(sizeof(Object));	//變數物件 用於symbol table
 	SymbolData* sym = (SymbolData *)malloc(sizeof(SymbolData));	//symbol data
 
@@ -73,6 +113,7 @@ void insert(char* variableName, ObjectType type) {
 	//printf("%d\n",lp->list);
 
 	printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress++, nowLevel);
+	lastType = type;
 }
 
 //如果進到下一個scope 會呼叫該函數並輸出進入下一個scope的訊息
@@ -100,31 +141,9 @@ void dumpScope() {
 	//將stack最上方的scope推出堆疊	
 	pop(&scope_stack);
 
-}
-
-//創建變數
-/*Object* createVariable(ObjectType variableType, char* variableName, int variableFlag) {
+	//printScope();
 	
-	Object* var = (Object *)malloc(sizeof(Object *));	//變數物件 用於symbol table
-	SymbolData* sym = (SymbolData *)malloc(sizeof(SymbolData *));	//symbol data
-
-	Stack *sp = top(&scope_stack);
-	int nowLevel = sp->scopeLevel;	//獲取當前的scope level
-
-	LinkedList *lp = getByKey(&scope_list, nowLevel, 's');
-	int index = lp->listSize;	
-
-	//set symbol data
-	sym->name = variableName; 
-	sym->index = index;
-	sym->lineno = yylineno;	
-	sym->addr = variableAddress;
-
-	var->symbol = sym;
-	var->type = OBJECT_TYPE_STR;
-
-    return var;
-}*/
+}
 
 //將函數的參數放入stack
 void pushFunParm(ObjectType variableType, char* variableName, int variableFlag) {
@@ -148,8 +167,40 @@ void createFunction(ObjectType variableType, char* funcName) {
 	printf("func: %s\n", funcName);	
 	
 	//insert variable
-	insert(funcName, OBJECT_TYPE_FUNCTION);
+	insert(funcName, OBJECT_TYPE_FUNCTION, 1);
 
+}
+
+//根據名稱獲取該變數的object
+Object* getObjectByName(char* name) {
+	//獲取當前scope
+	Stack *sp = top(&scope_stack);
+	int nowLevel = sp->scopeLevel;
+	//dg(0);
+
+	//獲取變數陣列
+	LinkedList *lp = getByKey(&scope_list, nowLevel);
+	LinkedList **list = &(lp->list);	
+
+	lp = getByName(list, name);	
+	Object* var = lp->var;
+
+	return var;	
+}
+
+//根據變數名稱輸出name and address
+void printIDByName(char* name) {
+	Object *var = getObjectByName(name);
+	SymbolData *sym = var->symbol;
+
+	printf("IDENT (name=%s, address=%ld)\n", sym->name, sym->addr);
+}
+
+//根據名稱獲取該變數的型別
+ObjectType getVarTypeByName(char* name) {
+	Object* var = getObjectByName(name);
+
+	return var->type;
 }
 
 //debug 輸出指令
@@ -157,18 +208,61 @@ void debugPrintInst(char instc, Object* a, Object* b, Object* out) {
 }
 
 //物件expression
-bool objectExpression(char op, Object* dest, Object* val, Object* out) {
-    return false;
+bool objectExpression(char op, Object* dest, Object* val, Object* out) {    
+
+	return false;
 }
+
+//設置類別
+/*void setType(Object *dest, Object *out) {
+	out->type = dest->type;	
+}*/
 
 //物件 exp binary
 bool objectExpBinary(char op, Object* a, Object* b, Object* out) {
-    return false;
+	if(op == '1') {
+		//BOR
+		out->value = a->value | b->value;
+		printf("BOR\n");
+	}else if(op == '2') {
+		//BXO
+		out->value = a->value ^ b->value;
+		printf("BXO\n");
+	}else if(op == '3') {
+		//BAN
+		out->value = a->value & b->value;
+		printf("BAN\n");
+	}
+
+	out->type = a->type;
+    
+	
+	return false;
 }
 
 //物件 exp 布林值
 bool objectExpBoolean(char op, Object* a, Object* b, Object* out) {
-    return false;
+	if(op == '1') {
+		//LOR
+		out->value = a->value || b->value;
+		printf("LOR\n");
+	}else if(op == '2') {
+		//LAN
+		out->value = a->value && b->value;
+		printf("LAN\n");
+	}else if(op == '3') {
+		//EQL
+		out->value = (a->value == b->value);
+		printf("EQL\n");
+	}else if(op == '4') {
+		//NEQ
+		out->value = (a->value != b->value);
+		printf("NEQ\n");
+	}
+
+	out->type = OBJECT_TYPE_BOOL;
+
+	return false;
 }
 
 //物件 exp assign
@@ -205,14 +299,33 @@ bool objectDecAssign(Object* a, Object* out) {
     return false;
 }
 
-bool objectCast(ObjectType variableType, Object* dest, Object* out) {
-    return false;
+//輸出型別轉換的訊息
+void printCastInfo(ObjectType type) {
+	printf("Cast to %s\n", objectTypeName[type]);
 }
 
-void addMsgObj(Object obj) {
-	LinkedList data;
-	data.msg = objectTypeName[obj.type];
+bool objectCast(ObjectType variableType, Object* dest, Object* out) {
+	out->value = dest->value;
+	out->type = variableType;
 
+	return false;
+}
+
+//遇到布林值用於輸出true or false
+void printBool(bool b){
+	if(b == true) printf("BOOL_LIT TRUE\n");
+	else printf("BOOL_LIT FALSE\n");
+}
+
+//添加obj的type進入stack
+void addMsgObj(Object *obj) {
+	LinkedList data;
+	char* str = malloc(sizeof(objectTypeName[obj->type])+10);
+
+	sprintf(str, "%s", objectTypeName[obj->type]);
+
+	data.msg = str;
+	
 	insertToList(&print_list, data);
 	
 }
@@ -248,7 +361,17 @@ void stdoutPrint() {
 
 //由高到低 輸出所有scope
 void printScope() {
+	/*printf("\n");
+	printf("> Dump symbol table (scope level: %d)\n", scopeLevel);
+	printf("Index     Name                Type      Addr      Lineno    Func_sig  \n");
+	
+	//找到對應的scope
+	LinkedList *lp = getByKey(&scope_list, scopeLevel);	
+	printVar(lp); //輸出該scope底下的var list
 
+	scopeLevel--;
+
+	*/
 	while(scopeLevel != -1) {
 		printf("\n");
 		printf("> Dump symbol table (scope level: %d)\n", scopeLevel);
@@ -260,6 +383,10 @@ void printScope() {
 
 		scopeLevel--;
 	}
+}
+
+void dg(int i){
+	printf("%d\n", i);
 }
 
 //印出lp底下的var linked list

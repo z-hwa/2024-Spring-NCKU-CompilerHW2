@@ -16,16 +16,25 @@ int yylex_destroy();
 void pushScope();
 void dumpScope();
 
-void insert(char* variableName, ObjectType objectType);
+void insert(char* variableName, ObjectType objectType, int src);
 void printScope();
 void printVar(LinkedList *lp);
 
-void addCt();
-void printCout();
+//void addCt();
+//void printCout();
+void printBool(bool b);
+void printCastInfo(ObjectType type);
 
-void addMsgObj(Object obj);
+void addMsgObj(Object* obj);
 void addMsg(char* msg);
 void printMsg();
+void dg(int i);
+void printIDByName(char* name);
+
+bool setNowDefType(ObjectType type);
+void typeSet(bool b);
+
+ObjectType getVarTypeByName(char* name);
 
 void pushFunParm(ObjectType variableType, char* variableName, int parmFlag);
 void createFunction(ObjectType variableType, char* funcName);

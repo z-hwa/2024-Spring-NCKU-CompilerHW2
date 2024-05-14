@@ -3,8 +3,8 @@ func: main
 > Insert `main` (addr: -1) to scope level 0
 > Create symbol table (scope level 1)
 > Insert `argv` (addr: 0) to scope level 1
-> Insert `counter` (addr: 1) to scope level 1
 INT_LIT 0
+> Insert `counter` (addr: 1) to scope level 1
 /home/share/hw2/input/subtask12-loop2/testcase01.cpp:4:5: error:  syntax error
      4 |    while  counter < 100000 ) {
        |    ^
