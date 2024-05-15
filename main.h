@@ -21,10 +21,13 @@ void insert(char* variableName, ObjectType objectType, int src);
 void printScope();
 void printVar();
 
+void printSigByName(char *name);
 void printBool(bool b);
 void printCastInfo(ObjectType type);
 int arrayFun(char op);
 
+void setFuncSig(char *name, ObjectType type);
+Object* getObjectByName(char* name, char op);
 ObjectType getFuncType(char* name);
 
 void addMsgObj(Object* obj);

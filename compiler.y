@@ -81,7 +81,7 @@ GlobalStmt
 ;
 
 FunctionCallStmt
-	: FunctionCall ';'{printf("call: check(IILjava/lang/String;B)B\n");}
+	: FunctionCall ';'
 
 ;
 
@@ -364,7 +364,7 @@ Primary
 			//$<object_val>0.value = 0;
 			printIDByName($<s_var>1, 'v');
 		}
-	| FunctionCall {printf("call: check(IILjava/lang/String;B)B\n");}
+	| FunctionCall //{printf("call: check(IILjava/lang/String;B)B\n");}
 	| IDENT '[' Expression ']' {
 			ObjectType type = getVarTypeByName($<s_var>1);
 			$<object_val>0.type = type;
@@ -385,6 +385,9 @@ FunctionCall
 	: IDENT '(' ArgumentList ')' {
 		$<object_val>0.type = getFuncType($<s_var>1);
 		printIDByName($<s_var>1, 'f');
+		printf("call: %s", $<s_var>1);
+		printSigByName($<s_var>1);
+		printf("\n");
 	}
 ;
 
@@ -400,7 +403,15 @@ ArgumentListNonEmpty
 
 /* Function */
 FunctionDefStmt
-    : VARIABLE_T IDENT { createFunction($<var_type>1, $<s_var>2); } '(' { pushScope(); } FunctionParameterStmtList ')' '{' GlobalStmtList '}' { dumpScope(); }
+    : VARIABLE_T IDENT {
+		createFunction($<var_type>1, $<s_var>2);
+	} '(' {
+		pushScope();
+	} FunctionParameterStmtList ')' {
+		setFuncSig($<s_var>2, $<var_type>1);
+	} '{' GlobalStmtList '}' {
+		dumpScope();
+	}
 
 FunctionParameterStmtList 
     : FunctionParameterStmtList ',' FunctionParameterStmt

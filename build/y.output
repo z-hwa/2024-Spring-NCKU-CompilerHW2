@@ -204,33 +204,35 @@
 
   128 $@12: ε
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+  129 $@13: ε
 
-  130 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
-  131                          | FunctionParameterStmt
-  132                          | ε
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
 
-  133 $@13: ε
+  131 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
+  132                          | FunctionParameterStmt
+  133                          | ε
 
-  134 FunctionParameterStmt: VARIABLE_T IDENT $@13
+  134 $@14: ε
 
-  135 $@14: ε
+  135 FunctionParameterStmt: VARIABLE_T IDENT $@14
 
-  136 FunctionParameterStmt: VARIABLE_T IDENT $@14 '[' ']'
+  136 $@15: ε
+
+  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 '[' ']'
 
 
 終結語詞，附有它們出現處的規則
 
     $end (0) 0
-    '(' <object_val> (40) 20 22 32 106 117 123 129
-    ')' (41) 20 22 32 106 117 123 129
-    ',' (44) 58 65 126 130
+    '(' <object_val> (40) 20 22 32 106 117 123 130
+    ')' (41) 20 22 32 106 117 123 130
+    ',' (44) 58 65 126 131
     ':' (58) 24
     ';' (59) 16 17 25 29 35 56 67 68 70
-    '[' (91) 39 41 61 62 63 121 122 136
-    ']' (93) 39 41 61 62 63 121 122 136
-    '{' (123) 30 63 129
-    '}' (125) 30 63 129
+    '[' (91) 39 41 61 62 63 121 122 137
+    ']' (93) 39 41 61 62 63 121 122 137
+    '{' (123) 30 63 130
+    '}' (125) 30 63 130
     error (256)
     COUT (258) 70
     SHR (259) 97
@@ -270,8 +272,8 @@
     BREAK (293) 17
     CONTINUE (294)
     ENDL (295) 74
-    VARIABLE_T <var_type> (296) 24 56 106 129 134 136
-    IDENT <s_val> (297) 24 37 39 41 59 60 61 62 63 119 121 122 123 129 134 136
+    VARIABLE_T <var_type> (296) 24 56 106 130 135 137
+    IDENT <s_val> (297) 24 37 39 41 59 60 61 62 63 119 121 122 123 130 135 137
     BOOL_LIT <b_var> (298) 118
     INT_LIT <i_var> (299) 115
     FLOAT_LIT <f_var> (300) 116
@@ -294,7 +296,7 @@
         於右側： 2
     GlobalStmtList (63)
         於左側： 4 5
-        於右側： 2 4 30 129
+        於右側： 2 4 30 130
     GlobalStmt (64)
         於左側： 6 7 8 9 10 11 12 13 14 15
         於右側： 4 5 20 22 32 34
@@ -437,26 +439,29 @@
         於左側： 125 126
         於右側： 124 126
     FunctionDefStmt (111)
-        於左側： 129
+        於左側： 130
         於右側： 7
     $@11 (112)
         於左側： 127
-        於右側： 129
+        於右側： 130
     $@12 (113)
         於左側： 128
-        於右側： 129
-    FunctionParameterStmtList (114)
-        於左側： 130 131 132
-        於右側： 129 130
-    FunctionParameterStmt (115)
-        於左側： 134 136
+        於右側： 130
+    $@13 (114)
+        於左側： 129
+        於右側： 130
+    FunctionParameterStmtList (115)
+        於左側： 131 132 133
         於右側： 130 131
-    $@13 (116)
-        於左側： 133
-        於右側： 134
+    FunctionParameterStmt (116)
+        於左側： 135 137
+        於右側： 131 132
     $@14 (117)
-        於左側： 135
-        於右側： 136
+        於左側： 134
+        於右側： 135
+    $@15 (118)
+        於左側： 136
+        於右側： 137
 
 
 狀態 0
@@ -623,7 +628,7 @@
 狀態 11
 
    56 DefineVariableStmt: VARIABLE_T • DeclaratorList ';'
-  129 FunctionDefStmt: VARIABLE_T • IDENT $@11 '(' $@12 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+  130 FunctionDefStmt: VARIABLE_T • IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
 
     IDENT  偏移，並進入狀態 60
 
@@ -1200,7 +1205,7 @@
    61           | IDENT • '[' Expression ']'
    62           | IDENT • '[' Expression ']' '[' Expression ']'
    63           | IDENT • '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
-  129 FunctionDefStmt: VARIABLE_T IDENT • $@11 '(' $@12 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+  130 FunctionDefStmt: VARIABLE_T IDENT • $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
 
     VAL_ASSIGN  偏移，並進入狀態 103
     '['         偏移，並進入狀態 104
@@ -2111,7 +2116,7 @@
 
 狀態 105
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 • '(' $@12 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 • '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
 
     '('  偏移，並進入狀態 165
 
@@ -3202,7 +3207,7 @@
 
 狀態 165
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' • $@12 FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' • $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
 
     $default  使用規則 128 以縮減 ($@12)
 
@@ -3613,11 +3618,11 @@
 
 狀態 196
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 • FunctionParameterStmtList ')' '{' GlobalStmtList '}'
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 • FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
 
     VARIABLE_T  偏移，並進入狀態 210
 
-    $default  使用規則 132 以縮減 (FunctionParameterStmtList)
+    $default  使用規則 133 以縮減 (FunctionParameterStmtList)
 
     FunctionParameterStmtList  進入狀態 211
     FunctionParameterStmt      進入狀態 212
@@ -3858,16 +3863,16 @@
 
 狀態 210
 
-  134 FunctionParameterStmt: VARIABLE_T • IDENT $@13
-  136                      | VARIABLE_T • IDENT $@14 '[' ']'
+  135 FunctionParameterStmt: VARIABLE_T • IDENT $@14
+  137                      | VARIABLE_T • IDENT $@15 '[' ']'
 
     IDENT  偏移，並進入狀態 221
 
 
 狀態 211
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList • ')' '{' GlobalStmtList '}'
-  130 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList • ')' $@13 '{' GlobalStmtList '}'
+  131 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
 
     ')'  偏移，並進入狀態 222
     ','  偏移，並進入狀態 223
@@ -3875,9 +3880,9 @@
 
 狀態 212
 
-  131 FunctionParameterStmtList: FunctionParameterStmt •
+  132 FunctionParameterStmtList: FunctionParameterStmt •
 
-    $default  使用規則 131 以縮減 (FunctionParameterStmtList)
+    $default  使用規則 132 以縮減 (FunctionParameterStmtList)
 
 
 狀態 213
@@ -4015,26 +4020,28 @@
 
 狀態 221
 
-  134 FunctionParameterStmt: VARIABLE_T IDENT • $@13
-  136                      | VARIABLE_T IDENT • $@14 '[' ']'
+  135 FunctionParameterStmt: VARIABLE_T IDENT • $@14
+  137                      | VARIABLE_T IDENT • $@15 '[' ']'
 
-    '['       使用規則 135 以縮減 ($@14)
-    $default  使用規則 133 以縮減 ($@13)
+    '['       使用規則 136 以縮減 ($@15)
+    $default  使用規則 134 以縮減 ($@14)
 
-    $@13  進入狀態 230
-    $@14  進入狀態 231
+    $@14  進入狀態 230
+    $@15  進入狀態 231
 
 
 狀態 222
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' • '{' GlobalStmtList '}'
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' • $@13 '{' GlobalStmtList '}'
 
-    '{'  偏移，並進入狀態 232
+    $default  使用規則 129 以縮減 ($@13)
+
+    $@13  進入狀態 232
 
 
 狀態 223
 
-  130 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
+  131 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
 
     VARIABLE_T  偏移，並進入狀態 210
 
@@ -4116,53 +4123,30 @@
 
 狀態 230
 
-  134 FunctionParameterStmt: VARIABLE_T IDENT $@13 •
+  135 FunctionParameterStmt: VARIABLE_T IDENT $@14 •
 
-    $default  使用規則 134 以縮減 (FunctionParameterStmt)
+    $default  使用規則 135 以縮減 (FunctionParameterStmt)
 
 
 狀態 231
 
-  136 FunctionParameterStmt: VARIABLE_T IDENT $@14 • '[' ']'
+  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 • '[' ']'
 
     '['  偏移，並進入狀態 238
 
 
 狀態 232
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' '{' • GlobalStmtList '}'
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 • '{' GlobalStmtList '}'
 
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
-
-    GlobalStmtList      進入狀態 239
-    GlobalStmt          進入狀態 14
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
+    '{'  偏移，並進入狀態 239
 
 
 狀態 233
 
-  130 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
+  131 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
 
-    $default  使用規則 130 以縮減 (FunctionParameterStmtList)
+    $default  使用規則 131 以縮減 (FunctionParameterStmtList)
 
 
 狀態 234
@@ -4262,15 +4246,14 @@
 
 狀態 238
 
-  136 FunctionParameterStmt: VARIABLE_T IDENT $@14 '[' • ']'
+  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 '[' • ']'
 
     ']'  偏移，並進入狀態 243
 
 
 狀態 239
 
-    4 GlobalStmtList: GlobalStmtList • GlobalStmt
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' '{' GlobalStmtList • '}'
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' • GlobalStmtList '}'
 
     COUT        偏移，並進入狀態 4
     IF          偏移，並進入狀態 5
@@ -4279,11 +4262,11 @@
     RETURN      偏移，並進入狀態 8
     BREAK       偏移，並進入狀態 9
     '{'         偏移，並進入狀態 10
-    '}'         偏移，並進入狀態 244
     VARIABLE_T  偏移，並進入狀態 11
     IDENT       偏移，並進入狀態 12
 
-    GlobalStmt          進入狀態 66
+    GlobalStmtList      進入狀態 244
+    GlobalStmt          進入狀態 14
     FunctionCallStmt    進入狀態 15
     JumpStmt            進入狀態 16
     IterationStmt       進入狀態 17
@@ -4364,13 +4347,44 @@
 
 狀態 243
 
-  136 FunctionParameterStmt: VARIABLE_T IDENT $@14 '[' ']' •
+  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 '[' ']' •
 
-    $default  使用規則 136 以縮減 (FunctionParameterStmt)
+    $default  使用規則 137 以縮減 (FunctionParameterStmt)
 
 
 狀態 244
 
-  129 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' '{' GlobalStmtList '}' •
+    4 GlobalStmtList: GlobalStmtList • GlobalStmt
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList • '}'
 
-    $default  使用規則 129 以縮減 (FunctionDefStmt)
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    '{'         偏移，並進入狀態 10
+    '}'         偏移，並進入狀態 245
+    VARIABLE_T  偏移，並進入狀態 11
+    IDENT       偏移，並進入狀態 12
+
+    GlobalStmt          進入狀態 66
+    FunctionCallStmt    進入狀態 15
+    JumpStmt            進入狀態 16
+    IterationStmt       進入狀態 17
+    CompoundStmt        進入狀態 18
+    SelectionStmt       進入狀態 19
+    AssignStmt          進入狀態 20
+    AssignBody          進入狀態 21
+    DefineVariableStmt  進入狀態 22
+    ReturnStmt          進入狀態 23
+    CoutStmt            進入狀態 24
+    FunctionCall        進入狀態 25
+    FunctionDefStmt     進入狀態 26
+
+
+狀態 245
+
+  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}' •
+
+    $default  使用規則 130 以縮減 (FunctionDefStmt)

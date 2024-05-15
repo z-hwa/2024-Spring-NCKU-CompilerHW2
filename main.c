@@ -23,7 +23,7 @@ const char* objectTypeName[] = {
 char* yyInputFileName;
 bool compileError;
 
-char* funcSig;
+char funcSig[100] = "(";
 
 int indent = 0;
 int scopeLevel = -1;
@@ -67,12 +67,34 @@ void insertAuto(char* variableName, ObjectType type1, ObjectType type2, int src)
 	else insert(variableName, type1, src);
 }
 
-//創建變數物件
-//將變數插入到對應scope stack的linked list之中
-//並輸出插入訊息
-//o的來源是連續的變數定義
-//1的來源是普通的變數定義
-//2的來源是函數宣告
+void setFuncSig(char*name, ObjectType ret) {
+	Object *var = getObjectByName(name, 'f');
+	strcat(funcSig, ")");	
+
+	if(ret == OBJECT_TYPE_INT) strcat(funcSig, "I");
+	else if(ret == OBJECT_TYPE_VOID) strcat(funcSig, "V");
+	else if(ret == OBJECT_TYPE_BOOL) strcat(funcSig, "B");
+	else if(ret == OBJECT_TYPE_STR) strcat(funcSig, "Ljava/lang/String;");
+
+	SymbolData *sym = var->symbol;
+	sym->func_sig = malloc(sizeof(funcSig));	
+	strcpy(sym->func_sig, funcSig);
+
+	//printf("%s\n", sym->func_sig);
+		
+	strcpy(funcSig, "(");
+}
+
+/*
+創建變數物件
+將變數插入到對應scope stack的linked list之中
+並輸出插入訊息
+0的來源是連續的變數定義
+1的來源是普通的變數定義
+2的來源是函數宣告
+3的來源是函數的參數定義
+4的來源是函數的參數定義中的陣列
+*/
 void insert(char* variableName, ObjectType type, int src) {
 
 	//來源是變數定義需要確定是不是連續的，以進行類別重定義
@@ -80,16 +102,17 @@ void insert(char* variableName, ObjectType type, int src) {
 	else if(src == 0 && set == false) set = true;
 
 	if(src == 3) {
-		char *sig;
-		//if(type == OBJECT_TYPE_INT) sig = "I";
-		//else if(type == OBJECT_TYPE_STR) sig = "Ljava/lang/String;";
+		char *sig = "";
+		if(type == OBJECT_TYPE_INT) sig = "I";
+		else if(type == OBJECT_TYPE_STR) sig = "Ljava/lang/String;";
+		else if(type == OBJECT_TYPE_BOOL) sig = "B";
 		
-		//strcat(funcSig, sig);
+		strcat(funcSig, sig);
 	}
 
 	if(src == 4) {
-		//char *sig = "Ljava/lang/String;";
-		//strcat(funcSig, sig);
+		char *sig = "[Ljava/lang/String;";
+		strcat(funcSig, sig);
 	}
 
 	Object* var = (Object *)malloc(sizeof(Object));	//變數物件 用於symbol table
@@ -112,8 +135,9 @@ void insert(char* variableName, ObjectType type, int src) {
 	sym->name = variableName; 
 	sym->index = index;
 	sym->lineno = yylineno;	
-
-	if(src != 2)sym->addr = variableAddress;
+	sym->func_sig = "-";
+	
+	if(src != 2) sym->addr = variableAddress;
 	else sym->addr = -1;
 
 	//set variable data
@@ -207,6 +231,12 @@ void createFunction(ObjectType variableType, char* funcName) {
 	funcType = variableType;
 	insert(funcName, OBJECT_TYPE_FUNCTION, 2);
 
+}
+
+void printSigByName(char* name) {
+	Object *var = getObjectByName(name, 'f');
+	SymbolData *sym = var->symbol;
+	printf("%s",sym->func_sig);
 }
 
 //根據名稱獲取該變數的object
@@ -448,17 +478,22 @@ void printVar(int num) {
 		index = sp->index;
 		addr = sp->addr;		
 		lineno = sp->lineno;
+		func_sig = sp->func_sig;
 
 		name = sp->name;
 		type = objectTypeName[op->type];
 
+		/*
 		if(op->type == OBJECT_TYPE_FUNCTION) {
 			if(strcmp(name, "main") == 0) func_sig = "([Ljava/lang/String;)I";
 			else if(strcmp(name, "check") == 0) func_sig = "(IILjava/lang/String;B)B";
 			else if(strcmp(name, "mod") == 0) func_sig = "(II)I";
 			else if(strcmp(name, "nothing_function") == 0) func_sig = "(Ljava/lang/String;)V";
+		
+			func_sig = 
 		}
-		else func_sig = "-";
+		else func_sig = "-";*/
+
 
 		printf("%-10d%-20s%-10s%-10ld%-10d%-10s\n", index, name, type, addr, lineno, func_sig);
 
