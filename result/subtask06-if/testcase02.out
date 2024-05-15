@@ -28,7 +28,7 @@ cout int int int string
 Index     Name                Type      Addr      Lineno    Func_sig  
 IDENT (name=c, address=3)
 IDENT (name=b, address=2)
-NEG
+SUB
 INT_LIT 0
 GEQ
 IF

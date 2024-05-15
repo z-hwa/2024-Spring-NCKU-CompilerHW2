@@ -26,11 +26,13 @@ bool compileError;
 int indent = 0;
 int scopeLevel = -1;
 int funcLineNo = 0;
-int variableAddress = -1;
+int variableAddress = 0;
 ObjectType variableIdentType;
 
 bool set = false;
 ObjectType lastType = OBJECT_TYPE_UNDEFINED;
+ObjectType funcType = OBJECT_TYPE_UNDEFINED;
+
 //累計多少個string
 //int string_ct = 0;
 
@@ -40,16 +42,37 @@ Stack *print_stack; //用於紀錄輸出訊息
 LinkedList *print_list; //用於記錄順向的輸出訊息
 LinkedList *var_list;	//用於記錄變數的陣列
 
+//現在宣告的array中帶有的元素數量
+int arrayNum = 0;
+
+int arrayFun(char op){
+	if(op == 'c') {
+		//counter
+		arrayNum++;
+	}else if(op == 'r') arrayNum = 0;
+	else if(op == 'g') return arrayNum;
+
+	return 0;
+}
+
 //設置為還沒開始設定變數
 void typeSet(bool b){
 	set = b;
 }
 
+void insertAuto(char* variableName, ObjectType type1, ObjectType type2, int src) {
+	if(type1 == OBJECT_TYPE_AUTO) insert(variableName, type2, src);
+	else insert(variableName, type1, src);
+}
+
 //創建變數物件
 //將變數插入到對應scope stack的linked list之中
 //並輸出插入訊息
+//1的來源是變數定義
+//2的來源是函數宣告
 void insert(char* variableName, ObjectType type, int src) {
 
+	//來源是變數定義需要確定是不是連續的，以進行類別重定義
 	if(src == 0 && set == true) type = lastType;
 	else if(src == 0 && set == false) set = true;
 
@@ -78,11 +101,14 @@ void insert(char* variableName, ObjectType type, int src) {
 	sym->name = variableName; 
 	sym->index = index;
 	sym->lineno = yylineno;	
-	sym->addr = variableAddress;
+
+	if(src != 2)sym->addr = variableAddress;
+	else sym->addr = -1;
 
 	//set variable data
 	var->symbol = sym;
 	var->type = type;
+	if(src == 2) var->funcType = funcType;
 
 	//製造變數的資料包
 	LinkedList data;
@@ -92,7 +118,9 @@ void insert(char* variableName, ObjectType type, int src) {
 	insertToList(&var_list, data);	
 	//printf("%d\n",lp->list);
 
-	printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress++, scopeLevel);
+	if(src != 2) printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, variableAddress++, scopeLevel);
+	else printf("> Insert `%s` (addr: %d) to scope level %d\n", variableName, -1, scopeLevel);
+	
 	lastType = type;
 }
 
@@ -165,7 +193,8 @@ void createFunction(ObjectType variableType, char* funcName) {
 	printf("func: %s\n", funcName);	
 	
 	//insert variable
-	insert(funcName, OBJECT_TYPE_FUNCTION, 1);
+	funcType = variableType;
+	insert(funcName, OBJECT_TYPE_FUNCTION, 2);
 
 }
 
@@ -195,6 +224,11 @@ void printIDByName(char* name) {
 	SymbolData *sym = var->symbol;
 
 	printf("IDENT (name=%s, address=%ld)\n", sym->name, sym->addr);
+}
+
+ObjectType getFuncType(char* name) {
+	Object *var = getObjectByName(name);
+	return var->funcType;	
 }
 
 //根據名稱獲取該變數的型別
@@ -409,7 +443,7 @@ void printVar(int num) {
 
 		if(op->type == OBJECT_TYPE_FUNCTION) {
 			if(strcmp(name, "main") == 0) func_sig = "([Ljava/lang/String;)I";
-			else if(strcmp(name, "check")) func_sig = "(IILjava/lang/String;B)B";
+			else if(strcmp(name, "check") == 0) func_sig = "(IILjava/lang/String;B)B";
 		}
 		else func_sig = "-";
 

@@ -32,6 +32,7 @@ typedef struct _object {
     uint64_t value;
     SymbolData* symbol;
 
+	ObjectType funcType;
 	//int scopeLevel;
 } Object;
 

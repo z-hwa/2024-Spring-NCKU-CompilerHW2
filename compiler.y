@@ -41,7 +41,8 @@
 
 /* Nonterminal with return, which need to sepcify type */
 %type <object_val> Expression Printable PrintableList
-%type <object_val> Or And BitwiseOr BitwiseXor BitwiseAnd Equality Relational Shift Additive Multiplicative Unary Primary TypeCast Post AssignBody
+%type <object_val> Or And BitwiseOr BitwiseXor BitwiseAnd Equality Relational Shift Additive Multiplicative Unary Primary TypeCast Post AssignBody Assignable
+%type <object_val> FunctionCall ArgumentList ArgumentListNonEmpty
 
 //%type <object_val> Term
 //%type <object_val> Factor
@@ -80,12 +81,14 @@ GlobalStmt
 /*while and for*/
 IterationStmt
 	: WHILE {printf("WHILE\n");} '(' Expression ')' {pushScope();} GlobalStmt {dumpScope();}
-	| FOR {printf("FOR\n"); pushScope();} '(' ExpressionStmt ExpressionStmt Expression ')' GlobalStmt {dumpScope();}
+	| FOR {printf("FOR\n"); pushScope();} '(' ExpressionStmt ExpressionStmt ExpressionStmt ')' GlobalStmt {dumpScope();}
 ;
 
 ExpressionStmt
 	: Expression ';'
 	| DefineVariableStmt
+	| AssignBody
+	| Expression
 	| ';'
 ;
 
@@ -108,7 +111,10 @@ AssignStmt
 ;
 
 AssignBody
-	: IDENT { printIDByName($<s_var>1);} Assign
+	: IDENT { printIDByName($<s_var>1);} Assign {$<object_val>0.type = OBJECT_TYPE_BOOL;}
+	| IDENT '[' Expression ']' {
+		printIDByName($<s_var>1);
+	} Assign {$<object_val>0.type = OBJECT_TYPE_BOOL;}
 ;
 
 Assign
@@ -128,9 +134,11 @@ Assign
 	//| DEC_ASSIGN Assign{printf("DEC_ASSIGN\n");} 
 ;
 
-Assignable
-	: STR_LIT  {printf("STR_LIT \"%s\"\n", $<s_var>1); }
-	| Expression
+Assignable	: STR_LIT  {
+		$<object_val>0.type = OBJECT_TYPE_STR;
+		printf("STR_LIT \"%s\"\n", $<s_var>1);
+	}
+	| Expression //{printf("\n%d\n", $<object_val>0.type);}
 ;
 
 /* define variable */
@@ -145,7 +153,25 @@ DeclaratorList
 
 Declarator
 	: IDENT {insert($<s_var>1, $<var_type>0, 0);}
-	| IDENT VAL_ASSIGN Assignable {insert($<s_var>1, $<var_type>0, 0);}
+	| IDENT VAL_ASSIGN Assignable {
+		//printf("\n%d\n", $<object_val>0.type);
+		//printf("\n\n");
+		insertAuto($<s_var>1, $<var_type>0, $<var_type>2, 0);}
+	| IDENT '[' Expression ']' {
+		printf("create array: %d\n", 0);
+		insert($<s_var>1, $<var_type>0, 0);
+	}
+	| IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}' {
+		printf("create array: %d\n", arrayFun('g'));
+		arrayFun('r');
+		insert($<s_var>1, $<var_type>0, 0);
+	}  
+;
+
+ArrayEles
+	: Assignable {arrayFun('c');}
+	| ArrayEles ',' Assignable {arrayFun('c');}
+	| 
 ;
 
 /* Return */
@@ -180,7 +206,8 @@ Printable
 
 Expression
 	: Or
-	| AssignBody {$<object_val>0.type = OBJECT_TYPE_BOOL;}
+	//| AssignBody {$<object_val>0.type = OBJECT_TYPE_BOOL;}
+	| STR_LIT {printf("STR_LIT \"%s\"\n", $<s_var>1);}
 ;
 
 Or
@@ -283,49 +310,56 @@ Post
 Primary
     : INT_LIT{
 			$<object_val>0.type = OBJECT_TYPE_INT;
+			//$<object_val>0.value = $<i_var>1;
 			printf("INT_LIT %d\n", $<i_var>1);
 		}
 	| FLOAT_LIT {
 			$<object_val>0.type = OBJECT_TYPE_FLOAT;
+			//$<object_val>0.value = 0;
 			printf("FLOAT_LIT %f\n", $<f_var>1);
 		}
     | '(' Expression ')' {
 			$<object_val>0.type = $<object_val>1.type;
+			//$<object_val>0.value = $<i_var>1;
 		}
 	| BOOL_LIT {
 			$<object_val>0.type = OBJECT_TYPE_BOOL; 
+			//$<object_val>0.value = (int64_t)$<b_var>1;
 			printBool($<b_var>1);
 		}
 	| IDENT {
 			ObjectType type = getVarTypeByName($<s_var>1);
 			$<object_val>0.type = type;
+			//$<object_val>0.value = 0;
+			printIDByName($<s_var>1);
+		}
+	| FunctionCall {printf("call: check(IILjava/lang/String;B)B\n");}
+	| IDENT '[' Expression ']' {
+			ObjectType type = getVarTypeByName($<s_var>1);
+			$<object_val>0.type = type;
+			//$<object_val>0.value = 0;
 			printIDByName($<s_var>1);
 		}
 ;
 
-/*
-//運算式-加減規則
-Expression
-    : Term
-    | Expression ADD Term
-    | Expression SUB Term 
+/* Function call */
+
+FunctionCall
+	: IDENT '(' ArgumentList ')' {
+		$<object_val>0.type = getFuncType($<s_var>1);
+		printIDByName($<s_var>1);
+	}
 ;
 
-//乘除規則
-Term
-    : Factor
-    | Term MUL Factor
-    | Term DIV Factor
+ArgumentList
+	: ArgumentListNonEmpty
 ;
 
-//數字或括弧
-Factor
-    : INT_LIT {printf("INT_LIT %d\n", $<i_var>1);}
-	| FLOAT_LIT {printf("FLOAT_LIT %d\n", $<i_var>1);}
-    | '(' Expression ')'
-	| SUB INT_LIT {printf("INT_LIT %d\n", -$<i_var>1);}
-	| SUB FLOAT_LIT {printf("FLOAT_LIT %d\n", -$<i_var>1);}
-;*/
+ArgumentListNonEmpty
+	: Expression
+	| ArgumentListNonEmpty ',' Expression
+;
+
 
 /* Function */
 FunctionDefStmt

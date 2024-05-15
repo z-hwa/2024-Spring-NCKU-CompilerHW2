@@ -16,14 +16,16 @@ int yylex_destroy();
 void pushScope();
 void dumpScope();
 
+void insertAuto(char* variableName, ObjectType objectType1, ObjectType objectType2, int src);
 void insert(char* variableName, ObjectType objectType, int src);
 void printScope();
 void printVar();
 
-//void addCt();
-//void printCout();
 void printBool(bool b);
 void printCastInfo(ObjectType type);
+int arrayFun(char op);
+
+ObjectType getFuncType(char* name);
 
 void addMsgObj(Object* obj);
 void addMsg(char* msg);
