@@ -34,7 +34,7 @@ void insertToList(LinkedList **list, LinkedList nodeData) {
 }
 
 //根據變數名稱在linkedlist中獲得儲存變數的東東
-LinkedList* getByName(LinkedList **list, char* name) {
+LinkedList* getByName(LinkedList **list, char* name, char op) {
 	if(*list == NULL) {
 		printf("this is a empty list");
 		return NULL;
@@ -50,10 +50,13 @@ LinkedList* getByName(LinkedList **list, char* name) {
 		char *id = sym->name;
 
 		if(strcmp(id, name) == 0){
-			find = true;
-			//printf("%d\n", var->type);
-			//printf("find\n");
-			break;
+			if(op == 'f' && var->type == OBJECT_TYPE_FUNCTION) {
+				find = true;
+				break;
+			} else if(op == 'v' && var->type != OBJECT_TYPE_FUNCTION) {
+				find = true;
+				break;
+			}
 		}	
 
 		pointer = pointer->next;

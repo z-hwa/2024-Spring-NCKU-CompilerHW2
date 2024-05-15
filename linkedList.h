@@ -17,7 +17,7 @@ typedef struct node{
 	struct node *next;
 }LinkedList;
 
-LinkedList* getByName(LinkedList **list, char *name);
+LinkedList* getByName(LinkedList **list, char *name, char op);
 
 //插入stack的位置，在連結串列的尾巴
 void insertToList(LinkedList **list, LinkedList data);

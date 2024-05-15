@@ -14,7 +14,34 @@ create array: 5
 FOR
 > Create symbol table (scope level 2)
 > Insert `i` (addr: 2) to scope level 2
-/home/share/hw2/input/subtask12-loop2/testcase02.cpp:4:17: error:  syntax error
-     4 |    for( auto i : a ) {
-       |                ^
-Total lines: 4
+IDENT (name=a, address=1)
+IDENT (name=i, address=2)
+IDENT (name=endl, address=-1)
+cout int string
+IDENT (name=i, address=2)
+INT_LIT 2
+REM
+INT_LIT 0
+EQL
+IF
+> Create symbol table (scope level 3)
+STR_LIT "Even"
+IDENT (name=endl, address=-1)
+cout string string
+
+> Dump symbol table (scope level: 3)
+Index     Name                Type      Addr      Lineno    Func_sig  
+
+> Dump symbol table (scope level: 2)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         i                   int       2         4         -         
+
+> Dump symbol table (scope level: 1)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         argv                string    0         1         -         
+1         a                   int       1         2         -         
+
+> Dump symbol table (scope level: 0)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         main                function  -1        1         ([Ljava/lang/String;)I
+Total lines: 11

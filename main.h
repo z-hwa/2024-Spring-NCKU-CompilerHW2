@@ -31,7 +31,7 @@ void addMsgObj(Object* obj);
 void addMsg(char* msg);
 void printMsg();
 void dg(int i);
-void printIDByName(char* name);
+void printIDByName(char* name, char op);
 
 bool setNowDefType(ObjectType type);
 void typeSet(bool b);

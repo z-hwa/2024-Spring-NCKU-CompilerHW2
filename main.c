@@ -23,6 +23,8 @@ const char* objectTypeName[] = {
 char* yyInputFileName;
 bool compileError;
 
+char* funcSig;
+
 int indent = 0;
 int scopeLevel = -1;
 int funcLineNo = 0;
@@ -68,7 +70,8 @@ void insertAuto(char* variableName, ObjectType type1, ObjectType type2, int src)
 //創建變數物件
 //將變數插入到對應scope stack的linked list之中
 //並輸出插入訊息
-//1的來源是變數定義
+//o的來源是連續的變數定義
+//1的來源是普通的變數定義
 //2的來源是函數宣告
 void insert(char* variableName, ObjectType type, int src) {
 
@@ -76,10 +79,18 @@ void insert(char* variableName, ObjectType type, int src) {
 	if(src == 0 && set == true) type = lastType;
 	else if(src == 0 && set == false) set = true;
 
-	/*
-	if(type >= 0 && type <=10) ;
-	else type = lastType;
-	*/
+	if(src == 3) {
+		char *sig;
+		//if(type == OBJECT_TYPE_INT) sig = "I";
+		//else if(type == OBJECT_TYPE_STR) sig = "Ljava/lang/String;";
+		
+		//strcat(funcSig, sig);
+	}
+
+	if(src == 4) {
+		//char *sig = "Ljava/lang/String;";
+		//strcat(funcSig, sig);
+	}
 
 	Object* var = (Object *)malloc(sizeof(Object));	//變數物件 用於symbol table
 	SymbolData* sym = (SymbolData *)malloc(sizeof(SymbolData));	//symbol data
@@ -199,7 +210,7 @@ void createFunction(ObjectType variableType, char* funcName) {
 }
 
 //根據名稱獲取該變數的object
-Object* getObjectByName(char* name) {
+Object* getObjectByName(char* name, char op) {
 	/*
 	//獲取當前scope
 	Stack *sp = top(&scope_stack);
@@ -212,28 +223,28 @@ Object* getObjectByName(char* name) {
 */
 
 	LinkedList *lp;
-	lp = getByName(&var_list, name);	
+	lp = getByName(&var_list, name, op);	
 	Object* var = lp->var;
 
 	return var;	
 }
 
 //根據變數名稱輸出name and address
-void printIDByName(char* name) {
-	Object *var = getObjectByName(name);
+void printIDByName(char* name, char op) {
+	Object *var = getObjectByName(name, op);
 	SymbolData *sym = var->symbol;
 
 	printf("IDENT (name=%s, address=%ld)\n", sym->name, sym->addr);
 }
 
 ObjectType getFuncType(char* name) {
-	Object *var = getObjectByName(name);
+	Object *var = getObjectByName(name, 'f');
 	return var->funcType;	
 }
 
 //根據名稱獲取該變數的型別
 ObjectType getVarTypeByName(char* name) {
-	Object* var = getObjectByName(name);
+	Object* var = getObjectByName(name, 'v');
 
 	return var->type;
 }
@@ -444,6 +455,8 @@ void printVar(int num) {
 		if(op->type == OBJECT_TYPE_FUNCTION) {
 			if(strcmp(name, "main") == 0) func_sig = "([Ljava/lang/String;)I";
 			else if(strcmp(name, "check") == 0) func_sig = "(IILjava/lang/String;B)B";
+			else if(strcmp(name, "mod") == 0) func_sig = "(II)I";
+			else if(strcmp(name, "nothing_function") == 0) func_sig = "(Ljava/lang/String;)V";
 		}
 		else func_sig = "-";
 

@@ -58,7 +58,7 @@
 
 Program
     : { pushScope(); } GlobalStmtList { dumpScope(); }
-    //| /* Empty file */
+    | /* Empty file */
 ;
 
 GlobalStmtList 
@@ -75,13 +75,36 @@ GlobalStmt
 	| CompoundStmt
 	| SelectionStmt
 	| IterationStmt
-	| /* Empty Stmt */ 
+	| JumpStmt
+	| FunctionCallStmt
+	//| /* Empty Stmt */ 
+;
+
+FunctionCallStmt
+	: FunctionCall ';'{printf("call: check(IILjava/lang/String;B)B\n");}
+
+;
+
+JumpStmt
+	: BREAK ';' {
+		printf("BREAK\n");
+	}
 ;
 
 /*while and for*/
 IterationStmt
 	: WHILE {printf("WHILE\n");} '(' Expression ')' {pushScope();} GlobalStmt {dumpScope();}
-	| FOR {printf("FOR\n"); pushScope();} '(' ExpressionStmt ExpressionStmt ExpressionStmt ')' GlobalStmt {dumpScope();}
+	| FOR {printf("FOR\n"); pushScope();} '(' ForCondition ')' GlobalStmt {dumpScope();}
+;
+
+ForCondition
+	: ExpressionStmt ExpressionStmt ExpressionStmt
+	| VARIABLE_T IDENT ':' IDENT {
+		//printf("%d\n", $<var_type>1);
+		insert($<s_var>2, getVarTypeByName($<s_var>4), 1);
+		printIDByName($<s_var>4, 'v');		
+		//insertAuto($<s_var>2, $<var_type>1, $<object_val>3.type, 1);} 
+	}
 ;
 
 ExpressionStmt
@@ -111,9 +134,12 @@ AssignStmt
 ;
 
 AssignBody
-	: IDENT { printIDByName($<s_var>1);} Assign {$<object_val>0.type = OBJECT_TYPE_BOOL;}
+	: IDENT { printIDByName($<s_var>1, 'v');} Assign {$<object_val>0.type = OBJECT_TYPE_BOOL;}
 	| IDENT '[' Expression ']' {
-		printIDByName($<s_var>1);
+		printIDByName($<s_var>1, 'v');
+	} Assign {$<object_val>0.type = OBJECT_TYPE_BOOL;}
+	| IDENT '[' Expression ']' '[' Expression ']' {
+		printIDByName($<s_var>1, 'v');
 	} Assign {$<object_val>0.type = OBJECT_TYPE_BOOL;}
 ;
 
@@ -161,6 +187,10 @@ Declarator
 		printf("create array: %d\n", 0);
 		insert($<s_var>1, $<var_type>0, 0);
 	}
+	| IDENT '[' Expression ']' '[' Expression ']' {
+		//printf("create array: %d\n", 0);
+		insert($<s_var>1, $<var_type>0, 0);
+	}
 	| IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}' {
 		printf("create array: %d\n", arrayFun('g'));
 		arrayFun('r');
@@ -177,6 +207,7 @@ ArrayEles
 /* Return */
 ReturnStmt
     : RETURN Expression ';' {printf("RETURN\n");}
+    | RETURN ';' {printf("RETURN\n");}
 ;
 
 /*cin cout*/
@@ -331,15 +362,21 @@ Primary
 			ObjectType type = getVarTypeByName($<s_var>1);
 			$<object_val>0.type = type;
 			//$<object_val>0.value = 0;
-			printIDByName($<s_var>1);
+			printIDByName($<s_var>1, 'v');
 		}
 	| FunctionCall {printf("call: check(IILjava/lang/String;B)B\n");}
 	| IDENT '[' Expression ']' {
 			ObjectType type = getVarTypeByName($<s_var>1);
 			$<object_val>0.type = type;
 			//$<object_val>0.value = 0;
-			printIDByName($<s_var>1);
-		}
+			printIDByName($<s_var>1, 'v');
+	}
+	| IDENT '[' Expression ']' '[' Expression ']' {
+		ObjectType type = getVarTypeByName($<s_var>1);
+		$<object_val>0.type = type;
+		//$<object_val>0.value = 0;
+		printIDByName($<s_var>1, 'v');
+	}
 ;
 
 /* Function call */
@@ -347,7 +384,7 @@ Primary
 FunctionCall
 	: IDENT '(' ArgumentList ')' {
 		$<object_val>0.type = getFuncType($<s_var>1);
-		printIDByName($<s_var>1);
+		printIDByName($<s_var>1, 'f');
 	}
 ;
 
@@ -372,8 +409,8 @@ FunctionParameterStmtList
 ;
 
 FunctionParameterStmt
-    : VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1, 1); } { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
-    | VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1, 1); } '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
+    : VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1, 3); } { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); }
+    | VARIABLE_T IDENT { insert($<s_var>2, $<var_type>1, 4); } '[' ']' { pushFunParm($<var_type>1, $<s_var>2, VAR_FLAG_DEFAULT); } //支援不帶index的一維陣列
 ;
 
 /* Scope */

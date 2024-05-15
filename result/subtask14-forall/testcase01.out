@@ -14,11 +14,11 @@ IDENT (name=num, address=0)
 INT_LIT 1
 NEG
 MUL
-IDENT (name=mod, address=-1)
+IDENT (name=mod, address=1)
 DIV
 INT_LIT 1
 ADD
-IDENT (name=mod, address=-1)
+IDENT (name=mod, address=1)
 MUL
 ADD
 RETURN
@@ -26,7 +26,7 @@ RETURN
 > Dump symbol table (scope level: 2)
 Index     Name                Type      Addr      Lineno    Func_sig  
 IDENT (name=num, address=0)
-IDENT (name=mod, address=-1)
+IDENT (name=mod, address=1)
 REM
 RETURN
 
@@ -54,7 +54,132 @@ IDENT (name=mod, address=-1)
 call: check(IILjava/lang/String;B)B
 IDENT (name=endl, address=-1)
 cout int string
-/home/share/hw2/input/subtask14-forall/testcase01.cpp:9:11: error:  syntax error
-     9 |    return; 
-       |          ^
-Total lines: 9
+RETURN
+
+> Dump symbol table (scope level: 1)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         s                   string    2         5         -         
+func: main
+> Insert `main` (addr: -1) to scope level 0
+> Create symbol table (scope level 1)
+> Insert `argv` (addr: 3) to scope level 1
+STR_LIT "Hello world"
+IDENT (name=nothing_function, address=-1)
+call: check(IILjava/lang/String;B)B
+INT_LIT 99824353
+> Insert `apple` (addr: 4) to scope level 1
+STR_LIT "apple!"
+IDENT (name=nothing_function, address=-1)
+call: check(IILjava/lang/String;B)B
+IDENT (name=apple, address=4)
+INT_LIT 2
+IDENT (name=mod, address=-1)
+call: check(IILjava/lang/String;B)B
+INT_LIT 2
+REM
+INT_LIT 1
+EQL
+IF
+> Create symbol table (scope level 2)
+IDENT (name=apple, address=4)
+INT_LIT 998244353
+EQL
+IF
+> Create symbol table (scope level 3)
+FOR
+> Create symbol table (scope level 4)
+INT_LIT 0
+> Insert `i` (addr: 5) to scope level 4
+IDENT (name=i, address=5)
+INT_LIT 10
+LES
+IDENT (name=i, address=5)
+INT_LIT 1
+ADD_ASSIGN
+INT_LIT 10
+> Insert `q` (addr: 6) to scope level 4
+WHILE
+IDENT (name=q, address=6)
+INT_LIT 0
+NEQ
+> Create symbol table (scope level 5)
+IDENT (name=q, address=6)
+INT_LIT 1
+SUB_ASSIGN
+STR_LIT "OK!"
+IDENT (name=endl, address=-1)
+cout string string
+
+> Dump symbol table (scope level: 5)
+Index     Name                Type      Addr      Lineno    Func_sig  
+
+> Dump symbol table (scope level: 4)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         i                   int       5         28        -         
+1         q                   int       6         29        -         
+FOR
+> Create symbol table (scope level 4)
+INT_LIT 0
+> Insert `i` (addr: 7) to scope level 4
+IDENT (name=i, address=7)
+INT_LIT 20
+LES
+IDENT (name=i, address=7)
+INT_LIT 2
+ADD_ASSIGN
+IDENT (name=apple, address=4)
+INT_LIT 2
+IDENT (name=mod, address=-1)
+call: check(IILjava/lang/String;B)B
+> Insert `q` (addr: 8) to scope level 4
+WHILE
+IDENT (name=q, address=8)
+INT_LIT 0
+GTR
+> Create symbol table (scope level 5)
+IDENT (name=q, address=8)
+INT_LIT 1
+SUB_ASSIGN
+STR_LIT "OK!"
+IDENT (name=endl, address=-1)
+cout string string
+
+> Dump symbol table (scope level: 5)
+Index     Name                Type      Addr      Lineno    Func_sig  
+
+> Dump symbol table (scope level: 4)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         i                   int       7         36        -         
+1         q                   int       8         37        -         
+
+> Dump symbol table (scope level: 3)
+Index     Name                Type      Addr      Lineno    Func_sig  
+ELSE
+> Create symbol table (scope level 3)
+STR_LIT "something wrong"
+IDENT (name=nothing_function, address=-1)
+call: check(IILjava/lang/String;B)B
+
+> Dump symbol table (scope level: 3)
+Index     Name                Type      Addr      Lineno    Func_sig  
+
+> Dump symbol table (scope level: 2)
+Index     Name                Type      Addr      Lineno    Func_sig  
+IDENT (name=apple, address=4)
+INT_LIT 2
+IDENT (name=mod, address=-1)
+call: check(IILjava/lang/String;B)B
+IDENT (name=endl, address=-1)
+cout int string
+
+> Dump symbol table (scope level: 1)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         argv                string    3         11        -         
+1         apple               int       4         23        -         
+
+> Dump symbol table (scope level: 0)
+Index     Name                Type      Addr      Lineno    Func_sig  
+0         mod                 function  -1        1         (II)I     
+1         nothing_function    function  -1        5         (Ljava/lang/String;)V
+2         main                function  -1        11        ([Ljava/lang/String;)I
+Total lines: 61
