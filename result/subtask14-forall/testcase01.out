@@ -8,7 +8,6 @@ IDENT (name=num, address=0)
 INT_LIT 0
 LES
 IF
-> Create symbol table (scope level 2)
 IDENT (name=num, address=0)
 IDENT (name=num, address=0)
 INT_LIT 1
@@ -22,9 +21,6 @@ IDENT (name=mod, address=1)
 MUL
 ADD
 RETURN
-
-> Dump symbol table (scope level: 2)
-Index     Name                Type      Addr      Lineno    Func_sig  
 IDENT (name=num, address=0)
 IDENT (name=mod, address=1)
 REM

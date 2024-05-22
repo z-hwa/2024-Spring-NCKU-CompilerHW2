@@ -3,17 +3,18 @@
     CONTINUE
 
 
-狀態 12 衝突：1 項偏移/縮減
-狀態 19 衝突：1 項偏移/縮減
-狀態 32 衝突：1 項偏移/縮減
-狀態 51 衝突：2 項偏移/縮減
-狀態 123 衝突：15 項縮減/縮減
-狀態 129 衝突：2 項縮減/縮減
-狀態 136 衝突：1 項偏移/縮減，10 項縮減/縮減
-狀態 141 衝突：1 項偏移/縮減
-狀態 157 衝突：2 項偏移/縮減
-狀態 216 衝突：10 項縮減/縮減
-狀態 241 衝突：10 項縮減/縮減
+狀態 11 衝突：1 項偏移/縮減
+狀態 17 衝突：1 項偏移/縮減
+狀態 30 衝突：1 項偏移/縮減
+狀態 49 衝突：2 項偏移/縮減
+狀態 119 衝突：15 項縮減/縮減
+狀態 125 衝突：2 項縮減/縮減
+狀態 132 衝突：1 項偏移/縮減，10 項縮減/縮減
+狀態 137 衝突：1 項偏移/縮減
+狀態 153 衝突：2 項偏移/縮減
+狀態 204 衝突：8 項偏移/縮減
+狀態 218 衝突：10 項縮減/縮減
+狀態 247 衝突：10 項縮減/縮減
 
 
 文法
@@ -33,255 +34,263 @@
     8           | CoutStmt
     9           | ReturnStmt
    10           | AssignStmt
-   11           | CompoundStmt
-   12           | SelectionStmt
-   13           | IterationStmt
-   14           | JumpStmt
-   15           | FunctionCallStmt
+   11           | SelectionStmt
+   12           | IterationStmt
+   13           | JumpStmt
+   14           | FunctionCallStmt
 
-   16 FunctionCallStmt: FunctionCall ';'
+   15 FunctionCallStmt: FunctionCall ';'
 
-   17 JumpStmt: BREAK ';'
+   16 JumpStmt: BREAK ';'
 
-   18 $@2: ε
+   17 $@2: ε
 
-   19 $@3: ε
+   18 $@3: ε
 
-   20 IterationStmt: WHILE $@2 '(' Expression ')' $@3 GlobalStmt
+   19 IterationStmt: WHILE $@2 '(' Expression ')' $@3 CompoundStmt
 
-   21 $@4: ε
+   20 $@4: ε
 
-   22 IterationStmt: FOR $@4 '(' ForCondition ')' GlobalStmt
+   21 IterationStmt: FOR $@4 '(' ForCondition ')' CompoundStmt
 
-   23 ForCondition: ExpressionStmt ExpressionStmt ExpressionStmt
-   24             | VARIABLE_T IDENT ':' IDENT
+   22 ForCondition: ExpressionStmt ExpressionStmt ExpressionStmt
+   23             | VARIABLE_T IDENT ':' IDENT
 
-   25 ExpressionStmt: Expression ';'
-   26               | DefineVariableStmt
-   27               | AssignBody
-   28               | Expression
-   29               | ';'
+   24 ExpressionStmt: Expression ';'
+   25               | DefineVariableStmt
+   26               | AssignBody
+   27               | Expression
+   28               | ';'
 
-   30 CompoundStmt: '{' GlobalStmtList '}'
+   29 CompoundStmt: '{' GlobalStmtList '}'
+   30             | GlobalStmtList
 
    31 $@5: ε
 
-   32 SelectionStmt: IF '(' Expression ')' $@5 GlobalStmt
+   32 SelectionStmt: IF '(' Expression ')' $@5 Selection
 
    33 $@6: ε
 
-   34 SelectionStmt: SelectionStmt ELSE $@6 GlobalStmt
+   34 SelectionStmt: SelectionStmt ELSE $@6 Selection
 
-   35 AssignStmt: AssignBody ';'
+   35 Selection: GlobalStmt
 
    36 $@7: ε
 
-   37 AssignBody: IDENT $@7 Assign
+   37 $@8: ε
 
-   38 $@8: ε
+   38 Selection: '{' $@7 GlobalStmtList $@8 '}'
 
-   39 AssignBody: IDENT '[' Expression ']' $@8 Assign
+   39 AssignStmt: AssignBody ';'
 
    40 $@9: ε
 
-   41 AssignBody: IDENT '[' Expression ']' '[' Expression ']' $@9 Assign
+   41 AssignBody: IDENT $@9 Assign
 
-   42 Assign: Assignable
-   43       | VAL_ASSIGN Assign
-   44       | ADD_ASSIGN Assign
-   45       | SUB_ASSIGN Assign
-   46       | MUL_ASSIGN Assign
-   47       | DIV_ASSIGN Assign
-   48       | REM_ASSIGN Assign
-   49       | BAN_ASSIGN Assign
-   50       | BOR_ASSIGN Assign
-   51       | BXO_ASSIGN Assign
-   52       | SHR_ASSIGN Assign
-   53       | SHL_ASSIGN Assign
+   42 $@10: ε
 
-   54 Assignable: STR_LIT
-   55           | Expression
+   43 AssignBody: IDENT '[' Expression ']' $@10 Assign
 
-   56 DefineVariableStmt: VARIABLE_T DeclaratorList ';'
+   44 $@11: ε
 
-   57 DeclaratorList: Declarator
-   58               | DeclaratorList ',' Declarator
+   45 AssignBody: IDENT '[' Expression ']' '[' Expression ']' $@11 Assign
 
-   59 Declarator: IDENT
-   60           | IDENT VAL_ASSIGN Assignable
-   61           | IDENT '[' Expression ']'
-   62           | IDENT '[' Expression ']' '[' Expression ']'
-   63           | IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
+   46 Assign: Assignable
+   47       | VAL_ASSIGN Assign
+   48       | ADD_ASSIGN Assign
+   49       | SUB_ASSIGN Assign
+   50       | MUL_ASSIGN Assign
+   51       | DIV_ASSIGN Assign
+   52       | REM_ASSIGN Assign
+   53       | BAN_ASSIGN Assign
+   54       | BOR_ASSIGN Assign
+   55       | BXO_ASSIGN Assign
+   56       | SHR_ASSIGN Assign
+   57       | SHL_ASSIGN Assign
 
-   64 ArrayEles: Assignable
-   65          | ArrayEles ',' Assignable
-   66          | ε
+   58 Assignable: STR_LIT
+   59           | Expression
 
-   67 ReturnStmt: RETURN Expression ';'
-   68           | RETURN ';'
+   60 DefineVariableStmt: VARIABLE_T DeclaratorList ';'
 
-   69 $@10: ε
+   61 DeclaratorList: Declarator
+   62               | DeclaratorList ',' Declarator
 
-   70 CoutStmt: COUT $@10 SHL PrintableList ';'
+   63 Declarator: IDENT
+   64           | IDENT VAL_ASSIGN Assignable
+   65           | IDENT '[' Expression ']'
+   66           | IDENT '[' Expression ']' '[' Expression ']'
+   67           | IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
 
-   71 PrintableList: Printable
-   72              | PrintableList SHL Printable
+   68 ArrayEles: Assignable
+   69          | ArrayEles ',' Assignable
+   70          | ε
 
-   73 Printable: STR_LIT
-   74          | ENDL
-   75          | Expression
+   71 ReturnStmt: RETURN Expression ';'
+   72           | RETURN ';'
 
-   76 Expression: Or
-   77           | STR_LIT
+   73 $@12: ε
 
-   78 Or: And
-   79   | Or LOR And
+   74 CoutStmt: COUT $@12 SHL PrintableList ';'
 
-   80 And: BitwiseOr
-   81    | And LAN BitwiseOr
+   75 PrintableList: Printable
+   76              | PrintableList SHL Printable
 
-   82 BitwiseOr: BitwiseXor
-   83          | BitwiseOr BOR BitwiseXor
+   77 Printable: STR_LIT
+   78          | ENDL
+   79          | Expression
 
-   84 BitwiseXor: BitwiseAnd
-   85           | BitwiseXor BXO BitwiseAnd
+   80 Expression: Or
+   81           | STR_LIT
 
-   86 BitwiseAnd: Equality
-   87           | BitwiseAnd BAN Equality
+   82 Or: And
+   83   | Or LOR And
 
-   88 Equality: Relational
-   89         | Equality EQL Relational
-   90         | Equality NEQ Relational
+   84 And: BitwiseOr
+   85    | And LAN BitwiseOr
 
-   91 Relational: Shift
-   92           | Relational LES Shift
-   93           | Relational GTR Shift
-   94           | Relational LEQ Shift
-   95           | Relational GEQ Shift
+   86 BitwiseOr: BitwiseXor
+   87          | BitwiseOr BOR BitwiseXor
 
-   96 Shift: Additive
-   97      | Shift SHR Additive
+   88 BitwiseXor: BitwiseAnd
+   89           | BitwiseXor BXO BitwiseAnd
 
-   98 Additive: Multiplicative
-   99         | Additive ADD Multiplicative
-  100         | Additive SUB Multiplicative
+   90 BitwiseAnd: Equality
+   91           | BitwiseAnd BAN Equality
 
-  101 Multiplicative: TypeCast
-  102               | Multiplicative MUL TypeCast
-  103               | Multiplicative DIV TypeCast
-  104               | Multiplicative REM TypeCast
+   92 Equality: Relational
+   93         | Equality EQL Relational
+   94         | Equality NEQ Relational
 
-  105 TypeCast: Unary
-  106         | '(' VARIABLE_T ')' Unary
+   95 Relational: Shift
+   96           | Relational LES Shift
+   97           | Relational GTR Shift
+   98           | Relational LEQ Shift
+   99           | Relational GEQ Shift
 
-  107 Unary: BNT Unary
-  108      | ADD Unary
-  109      | SUB Unary
-  110      | NOT Unary
-  111      | Post
+  100 Shift: Additive
+  101      | Shift SHR Additive
 
-  112 Post: Primary
-  113     | Primary INC_ASSIGN
-  114     | Primary DEC_ASSIGN
+  102 Additive: Multiplicative
+  103         | Additive ADD Multiplicative
+  104         | Additive SUB Multiplicative
 
-  115 Primary: INT_LIT
-  116        | FLOAT_LIT
-  117        | '(' Expression ')'
-  118        | BOOL_LIT
-  119        | IDENT
-  120        | FunctionCall
-  121        | IDENT '[' Expression ']'
-  122        | IDENT '[' Expression ']' '[' Expression ']'
+  105 Multiplicative: TypeCast
+  106               | Multiplicative MUL TypeCast
+  107               | Multiplicative DIV TypeCast
+  108               | Multiplicative REM TypeCast
 
-  123 FunctionCall: IDENT '(' ArgumentList ')'
+  109 TypeCast: Unary
+  110         | '(' VARIABLE_T ')' Unary
 
-  124 ArgumentList: ArgumentListNonEmpty
+  111 Unary: BNT Unary
+  112      | ADD Unary
+  113      | SUB Unary
+  114      | NOT Unary
+  115      | Post
 
-  125 ArgumentListNonEmpty: Expression
-  126                     | ArgumentListNonEmpty ',' Expression
+  116 Post: Primary
+  117     | Primary INC_ASSIGN
+  118     | Primary DEC_ASSIGN
 
-  127 $@11: ε
+  119 Primary: INT_LIT
+  120        | FLOAT_LIT
+  121        | '(' Expression ')'
+  122        | BOOL_LIT
+  123        | IDENT
+  124        | FunctionCall
+  125        | IDENT '[' Expression ']'
+  126        | IDENT '[' Expression ']' '[' Expression ']'
 
-  128 $@12: ε
+  127 FunctionCall: IDENT '(' ArgumentList ')'
 
-  129 $@13: ε
+  128 ArgumentList: ArgumentListNonEmpty
 
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
+  129 ArgumentListNonEmpty: Expression
+  130                     | ArgumentListNonEmpty ',' Expression
 
-  131 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
-  132                          | FunctionParameterStmt
-  133                          | ε
+  131 $@13: ε
 
-  134 $@14: ε
+  132 $@14: ε
 
-  135 FunctionParameterStmt: VARIABLE_T IDENT $@14
+  133 $@15: ε
 
-  136 $@15: ε
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 FunctionParameterStmtList ')' $@15 '{' GlobalStmtList '}'
 
-  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 '[' ']'
+  135 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt
+  136                          | FunctionParameterStmt
+  137                          | ε
+
+  138 $@16: ε
+
+  139 FunctionParameterStmt: VARIABLE_T IDENT $@16
+
+  140 $@17: ε
+
+  141 FunctionParameterStmt: VARIABLE_T IDENT $@17 '[' ']'
 
 
 終結語詞，附有它們出現處的規則
 
     $end (0) 0
-    '(' <object_val> (40) 20 22 32 106 117 123 130
-    ')' (41) 20 22 32 106 117 123 130
-    ',' (44) 58 65 126 131
-    ':' (58) 24
-    ';' (59) 16 17 25 29 35 56 67 68 70
-    '[' (91) 39 41 61 62 63 121 122 137
-    ']' (93) 39 41 61 62 63 121 122 137
-    '{' (123) 30 63 130
-    '}' (125) 30 63 130
+    '(' <object_val> (40) 19 21 32 110 121 127 134
+    ')' (41) 19 21 32 110 121 127 134
+    ',' (44) 62 69 130 135
+    ':' (58) 23
+    ';' (59) 15 16 24 28 39 60 71 72 74
+    '[' (91) 43 45 65 66 67 125 126 141
+    ']' (93) 43 45 65 66 67 125 126 141
+    '{' (123) 29 38 67 134
+    '}' (125) 29 38 67 134
     error (256)
-    COUT (258) 70
-    SHR (259) 97
-    SHL (260) 70 72
-    BAN (261) 87
-    BOR (262) 83
-    BXO (263) 85
-    MUL (264) 102
-    DIV (265) 103
-    REM (266) 104
-    GTR (267) 93
-    LES (268) 92
-    GEQ (269) 95
-    LEQ (270) 94
-    EQL (271) 89
-    NEQ (272) 90
-    LAN (273) 81
-    LOR (274) 79
-    VAL_ASSIGN (275) 43 60 63
-    ADD_ASSIGN (276) 44
-    SUB_ASSIGN (277) 45
-    MUL_ASSIGN (278) 46
-    DIV_ASSIGN (279) 47
-    REM_ASSIGN (280) 48
-    BAN_ASSIGN (281) 49
-    BOR_ASSIGN (282) 50
-    BXO_ASSIGN (283) 51
-    SHR_ASSIGN (284) 52
-    SHL_ASSIGN (285) 53
-    INC_ASSIGN (286) 113
-    DEC_ASSIGN (287) 114
+    COUT (258) 74
+    SHR (259) 101
+    SHL (260) 74 76
+    BAN (261) 91
+    BOR (262) 87
+    BXO (263) 89
+    MUL (264) 106
+    DIV (265) 107
+    REM (266) 108
+    GTR (267) 97
+    LES (268) 96
+    GEQ (269) 99
+    LEQ (270) 98
+    EQL (271) 93
+    NEQ (272) 94
+    LAN (273) 85
+    LOR (274) 83
+    VAL_ASSIGN (275) 47 64 67
+    ADD_ASSIGN (276) 48
+    SUB_ASSIGN (277) 49
+    MUL_ASSIGN (278) 50
+    DIV_ASSIGN (279) 51
+    REM_ASSIGN (280) 52
+    BAN_ASSIGN (281) 53
+    BOR_ASSIGN (282) 54
+    BXO_ASSIGN (283) 55
+    SHR_ASSIGN (284) 56
+    SHL_ASSIGN (285) 57
+    INC_ASSIGN (286) 117
+    DEC_ASSIGN (287) 118
     IF (288) 32
     ELSE (289) 34
-    FOR (290) 22
-    WHILE (291) 20
-    RETURN (292) 67 68
-    BREAK (293) 17
+    FOR (290) 21
+    WHILE (291) 19
+    RETURN (292) 71 72
+    BREAK (293) 16
     CONTINUE (294)
-    ENDL (295) 74
-    VARIABLE_T <var_type> (296) 24 56 106 130 135 137
-    IDENT <s_val> (297) 24 37 39 41 59 60 61 62 63 119 121 122 123 130 135 137
-    BOOL_LIT <b_var> (298) 118
-    INT_LIT <i_var> (299) 115
-    FLOAT_LIT <f_var> (300) 116
-    STR_LIT <s_var> (301) 54 73 77
-    SUB <object_val> (302) 100 109
-    NOT <object_val> (303) 110
-    BNT <object_val> (304) 107
-    ADD <object_val> (305) 99 108
+    ENDL (295) 78
+    VARIABLE_T <var_type> (296) 23 60 110 134 139 141
+    IDENT <s_val> (297) 23 41 43 45 63 64 65 66 67 123 125 126 127 134 139 141
+    BOOL_LIT <b_var> (298) 122
+    INT_LIT <i_var> (299) 119
+    FLOAT_LIT <f_var> (300) 120
+    STR_LIT <s_var> (301) 58 77 81
+    SUB <object_val> (302) 104 113
+    NOT <object_val> (303) 114
+    BNT <object_val> (304) 111
+    ADD <object_val> (305) 103 112
 
 
 非終結語詞，附有它們出現處的規則
@@ -296,172 +305,181 @@
         於右側： 2
     GlobalStmtList (63)
         於左側： 4 5
-        於右側： 2 4 30 130
+        於右側： 2 4 29 30 38 134
     GlobalStmt (64)
-        於左側： 6 7 8 9 10 11 12 13 14 15
-        於右側： 4 5 20 22 32 34
+        於左側： 6 7 8 9 10 11 12 13 14
+        於右側： 4 5 35
     FunctionCallStmt (65)
-        於左側： 16
-        於右側： 15
-    JumpStmt (66)
-        於左側： 17
+        於左側： 15
         於右側： 14
-    IterationStmt (67)
-        於左側： 20 22
+    JumpStmt (66)
+        於左側： 16
         於右側： 13
+    IterationStmt (67)
+        於左側： 19 21
+        於右側： 12
     $@2 (68)
-        於左側： 18
-        於右側： 20
+        於左側： 17
+        於右側： 19
     $@3 (69)
-        於左側： 19
-        於右側： 20
+        於左側： 18
+        於右側： 19
     $@4 (70)
-        於左側： 21
-        於右側： 22
+        於左側： 20
+        於右側： 21
     ForCondition (71)
-        於左側： 23 24
-        於右側： 22
+        於左側： 22 23
+        於右側： 21
     ExpressionStmt (72)
-        於左側： 25 26 27 28 29
-        於右側： 23
+        於左側： 24 25 26 27 28
+        於右側： 22
     CompoundStmt (73)
-        於左側： 30
-        於右側： 11
+        於左側： 29 30
+        於右側： 19 21
     SelectionStmt (74)
         於左側： 32 34
-        於右側： 12 34
+        於右側： 11 34
     $@5 (75)
         於左側： 31
         於右側： 32
     $@6 (76)
         於左側： 33
         於右側： 34
-    AssignStmt (77)
-        於左側： 35
-        於右側： 10
-    AssignBody <object_val> (78)
-        於左側： 37 39 41
-        於右側： 27 35
-    $@7 (79)
+    Selection (77)
+        於左側： 35 38
+        於右側： 32 34
+    $@7 (78)
         於左側： 36
-        於右側： 37
-    $@8 (80)
-        於左側： 38
-        於右側： 39
-    $@9 (81)
+        於右側： 38
+    $@8 (79)
+        於左側： 37
+        於右側： 38
+    AssignStmt (80)
+        於左側： 39
+        於右側： 10
+    AssignBody <object_val> (81)
+        於左側： 41 43 45
+        於右側： 26 39
+    $@9 (82)
         於左側： 40
         於右側： 41
-    Assign (82)
-        於左側： 42 43 44 45 46 47 48 49 50 51 52 53
-        於右側： 37 39 41 43 44 45 46 47 48 49 50 51 52 53
-    Assignable <object_val> (83)
-        於左側： 54 55
-        於右側： 42 60 64 65
-    DefineVariableStmt (84)
-        於左側： 56
-        於右側： 6 26
-    DeclaratorList (85)
-        於左側： 57 58
-        於右側： 56 58
-    Declarator (86)
-        於左側： 59 60 61 62 63
-        於右側： 57 58
-    ArrayEles (87)
-        於左側： 64 65 66
-        於右側： 63 65
-    ReturnStmt (88)
-        於左側： 67 68
-        於右側： 9
-    CoutStmt (89)
-        於左側： 70
-        於右側： 8
-    $@10 (90)
-        於左側： 69
-        於右側： 70
-    PrintableList <object_val> (91)
+    $@10 (83)
+        於左側： 42
+        於右側： 43
+    $@11 (84)
+        於左側： 44
+        於右側： 45
+    Assign (85)
+        於左側： 46 47 48 49 50 51 52 53 54 55 56 57
+        於右側： 41 43 45 47 48 49 50 51 52 53 54 55 56 57
+    Assignable <object_val> (86)
+        於左側： 58 59
+        於右側： 46 64 68 69
+    DefineVariableStmt (87)
+        於左側： 60
+        於右側： 6 25
+    DeclaratorList (88)
+        於左側： 61 62
+        於右側： 60 62
+    Declarator (89)
+        於左側： 63 64 65 66 67
+        於右側： 61 62
+    ArrayEles (90)
+        於左側： 68 69 70
+        於右側： 67 69
+    ReturnStmt (91)
         於左側： 71 72
-        於右側： 70 72
-    Printable <object_val> (92)
-        於左側： 73 74 75
-        於右側： 71 72
-    Expression <object_val> (93)
-        於左側： 76 77
-        於右側： 20 25 28 32 39 41 55 61 62 63 67 75 117 121 122 125 126
-    Or <object_val> (94)
-        於左側： 78 79
-        於右側： 76 79
-    And <object_val> (95)
+        於右側： 9
+    CoutStmt (92)
+        於左側： 74
+        於右側： 8
+    $@12 (93)
+        於左側： 73
+        於右側： 74
+    PrintableList <object_val> (94)
+        於左側： 75 76
+        於右側： 74 76
+    Printable <object_val> (95)
+        於左側： 77 78 79
+        於右側： 75 76
+    Expression <object_val> (96)
         於左側： 80 81
-        於右側： 78 79 81
-    BitwiseOr <object_val> (96)
+        於右側： 19 24 27 32 43 45 59 65 66 67 71 79 121 125 126 129 130
+    Or <object_val> (97)
         於左側： 82 83
-        於右側： 80 81 83
-    BitwiseXor <object_val> (97)
+        於右側： 80 83
+    And <object_val> (98)
         於左側： 84 85
         於右側： 82 83 85
-    BitwiseAnd <object_val> (98)
+    BitwiseOr <object_val> (99)
         於左側： 86 87
         於右側： 84 85 87
-    Equality <object_val> (99)
-        於左側： 88 89 90
-        於右側： 86 87 89 90
-    Relational <object_val> (100)
-        於左側： 91 92 93 94 95
-        於右側： 88 89 90 92 93 94 95
-    Shift <object_val> (101)
-        於左側： 96 97
-        於右側： 91 92 93 94 95 97
-    Additive <object_val> (102)
-        於左側： 98 99 100
-        於右側： 96 97 99 100
-    Multiplicative <object_val> (103)
-        於左側： 101 102 103 104
-        於右側： 98 99 100 102 103 104
-    TypeCast <object_val> (104)
-        於左側： 105 106
-        於右側： 101 102 103 104
-    Unary <object_val> (105)
-        於左側： 107 108 109 110 111
-        於右側： 105 106 107 108 109 110
-    Post <object_val> (106)
-        於左側： 112 113 114
-        於右側： 111
-    Primary <object_val> (107)
-        於左側： 115 116 117 118 119 120 121 122
-        於右側： 112 113 114
-    FunctionCall <object_val> (108)
-        於左側： 123
-        於右側： 16 120
-    ArgumentList <object_val> (109)
-        於左側： 124
-        於右側： 123
-    ArgumentListNonEmpty <object_val> (110)
-        於左側： 125 126
-        於右側： 124 126
-    FunctionDefStmt (111)
-        於左側： 130
-        於右側： 7
-    $@11 (112)
+    BitwiseXor <object_val> (100)
+        於左側： 88 89
+        於右側： 86 87 89
+    BitwiseAnd <object_val> (101)
+        於左側： 90 91
+        於右側： 88 89 91
+    Equality <object_val> (102)
+        於左側： 92 93 94
+        於右側： 90 91 93 94
+    Relational <object_val> (103)
+        於左側： 95 96 97 98 99
+        於右側： 92 93 94 96 97 98 99
+    Shift <object_val> (104)
+        於左側： 100 101
+        於右側： 95 96 97 98 99 101
+    Additive <object_val> (105)
+        於左側： 102 103 104
+        於右側： 100 101 103 104
+    Multiplicative <object_val> (106)
+        於左側： 105 106 107 108
+        於右側： 102 103 104 106 107 108
+    TypeCast <object_val> (107)
+        於左側： 109 110
+        於右側： 105 106 107 108
+    Unary <object_val> (108)
+        於左側： 111 112 113 114 115
+        於右側： 109 110 111 112 113 114
+    Post <object_val> (109)
+        於左側： 116 117 118
+        於右側： 115
+    Primary <object_val> (110)
+        於左側： 119 120 121 122 123 124 125 126
+        於右側： 116 117 118
+    FunctionCall <object_val> (111)
         於左側： 127
-        於右側： 130
-    $@12 (113)
+        於右側： 15 124
+    ArgumentList <object_val> (112)
         於左側： 128
-        於右側： 130
-    $@13 (114)
-        於左側： 129
-        於右側： 130
-    FunctionParameterStmtList (115)
-        於左側： 131 132 133
-        於右側： 130 131
-    FunctionParameterStmt (116)
-        於左側： 135 137
-        於右側： 131 132
-    $@14 (117)
+        於右側： 127
+    ArgumentListNonEmpty <object_val> (113)
+        於左側： 129 130
+        於右側： 128 130
+    FunctionDefStmt (114)
         於左側： 134
-        於右側： 135
-    $@15 (118)
-        於左側： 136
-        於右側： 137
+        於右側： 7
+    $@13 (115)
+        於左側： 131
+        於右側： 134
+    $@14 (116)
+        於左側： 132
+        於右側： 134
+    $@15 (117)
+        於左側： 133
+        於右側： 134
+    FunctionParameterStmtList (118)
+        於左側： 135 136 137
+        於右側： 134 135
+    FunctionParameterStmt (119)
+        於左側： 139 141
+        於右側： 135 136
+    $@16 (120)
+        於左側： 138
+        於右側： 139
+    $@17 (121)
+        於左側： 140
+        於右側： 141
 
 
 狀態 0
@@ -492,24 +510,22 @@
     WHILE       偏移，並進入狀態 7
     RETURN      偏移，並進入狀態 8
     BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
 
-    GlobalStmtList      進入狀態 13
-    GlobalStmt          進入狀態 14
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
+    GlobalStmtList      進入狀態 12
+    GlobalStmt          進入狀態 13
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
 
 
 狀態 3
@@ -521,138 +537,108 @@
 
 狀態 4
 
-   70 CoutStmt: COUT • $@10 SHL PrintableList ';'
+   74 CoutStmt: COUT • $@12 SHL PrintableList ';'
 
-    $default  使用規則 69 以縮減 ($@10)
+    $default  使用規則 73 以縮減 ($@12)
 
-    $@10  進入狀態 27
+    $@12  進入狀態 25
 
 
 狀態 5
 
-   32 SelectionStmt: IF • '(' Expression ')' $@5 GlobalStmt
+   32 SelectionStmt: IF • '(' Expression ')' $@5 Selection
 
-    '('  偏移，並進入狀態 28
+    '('  偏移，並進入狀態 26
 
 
 狀態 6
 
-   22 IterationStmt: FOR • $@4 '(' ForCondition ')' GlobalStmt
+   21 IterationStmt: FOR • $@4 '(' ForCondition ')' CompoundStmt
 
-    $default  使用規則 21 以縮減 ($@4)
+    $default  使用規則 20 以縮減 ($@4)
 
-    $@4  進入狀態 29
+    $@4  進入狀態 27
 
 
 狀態 7
 
-   20 IterationStmt: WHILE • $@2 '(' Expression ')' $@3 GlobalStmt
+   19 IterationStmt: WHILE • $@2 '(' Expression ')' $@3 CompoundStmt
 
-    $default  使用規則 18 以縮減 ($@2)
+    $default  使用規則 17 以縮減 ($@2)
 
-    $@2  進入狀態 30
+    $@2  進入狀態 28
 
 
 狀態 8
 
-   67 ReturnStmt: RETURN • Expression ';'
-   68           | RETURN • ';'
+   71 ReturnStmt: RETURN • Expression ';'
+   72           | RETURN • ';'
 
-    ';'        偏移，並進入狀態 31
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    ';'        偏移，並進入狀態 29
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Expression      進入狀態 42
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Expression      進入狀態 40
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 9
 
-   17 JumpStmt: BREAK • ';'
+   16 JumpStmt: BREAK • ';'
 
-    ';'  偏移，並進入狀態 58
+    ';'  偏移，並進入狀態 56
 
 
 狀態 10
 
-   30 CompoundStmt: '{' • GlobalStmtList '}'
+   60 DefineVariableStmt: VARIABLE_T • DeclaratorList ';'
+  134 FunctionDefStmt: VARIABLE_T • IDENT $@13 '(' $@14 FunctionParameterStmtList ')' $@15 '{' GlobalStmtList '}'
 
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
+    IDENT  偏移，並進入狀態 57
 
-    GlobalStmtList      進入狀態 59
-    GlobalStmt          進入狀態 14
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
+    DeclaratorList  進入狀態 58
+    Declarator      進入狀態 59
 
 
 狀態 11
 
-   56 DefineVariableStmt: VARIABLE_T • DeclaratorList ';'
-  130 FunctionDefStmt: VARIABLE_T • IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
+   41 AssignBody: IDENT • $@9 Assign
+   43           | IDENT • '[' Expression ']' $@10 Assign
+   45           | IDENT • '[' Expression ']' '[' Expression ']' $@11 Assign
+  127 FunctionCall: IDENT • '(' ArgumentList ')'
 
-    IDENT  偏移，並進入狀態 60
+    '('  偏移，並進入狀態 60
+    '['  偏移，並進入狀態 61
 
-    DeclaratorList  進入狀態 61
-    Declarator      進入狀態 62
+    '('       [使用規則 40 以縮減 ($@9)]
+    $default  使用規則 40 以縮減 ($@9)
+
+    $@9  進入狀態 62
 
 
 狀態 12
-
-   37 AssignBody: IDENT • $@7 Assign
-   39           | IDENT • '[' Expression ']' $@8 Assign
-   41           | IDENT • '[' Expression ']' '[' Expression ']' $@9 Assign
-  123 FunctionCall: IDENT • '(' ArgumentList ')'
-
-    '('  偏移，並進入狀態 63
-    '['  偏移，並進入狀態 64
-
-    '('       [使用規則 36 以縮減 ($@7)]
-    $default  使用規則 36 以縮減 ($@7)
-
-    $@7  進入狀態 65
-
-
-狀態 13
 
     2 Program: $@1 GlobalStmtList •
     4 GlobalStmtList: GlobalStmtList • GlobalStmt
@@ -663,3699 +649,2033 @@
     WHILE       偏移，並進入狀態 7
     RETURN      偏移，並進入狀態 8
     BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
 
     $default  使用規則 2 以縮減 (Program)
 
-    GlobalStmt          進入狀態 66
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
+    GlobalStmt          進入狀態 63
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
 
 
-狀態 14
+狀態 13
 
     5 GlobalStmtList: GlobalStmt •
 
     $default  使用規則 5 以縮減 (GlobalStmtList)
 
 
-狀態 15
+狀態 14
 
-   15 GlobalStmt: FunctionCallStmt •
-
-    $default  使用規則 15 以縮減 (GlobalStmt)
-
-
-狀態 16
-
-   14 GlobalStmt: JumpStmt •
+   14 GlobalStmt: FunctionCallStmt •
 
     $default  使用規則 14 以縮減 (GlobalStmt)
 
 
-狀態 17
+狀態 15
 
-   13 GlobalStmt: IterationStmt •
+   13 GlobalStmt: JumpStmt •
 
     $default  使用規則 13 以縮減 (GlobalStmt)
 
 
-狀態 18
+狀態 16
 
-   11 GlobalStmt: CompoundStmt •
+   12 GlobalStmt: IterationStmt •
 
-    $default  使用規則 11 以縮減 (GlobalStmt)
-
-
-狀態 19
-
-   12 GlobalStmt: SelectionStmt •
-   34 SelectionStmt: SelectionStmt • ELSE $@6 GlobalStmt
-
-    ELSE  偏移，並進入狀態 67
-
-    ELSE      [使用規則 12 以縮減 (GlobalStmt)]
     $default  使用規則 12 以縮減 (GlobalStmt)
 
 
-狀態 20
+狀態 17
+
+   11 GlobalStmt: SelectionStmt •
+   34 SelectionStmt: SelectionStmt • ELSE $@6 Selection
+
+    ELSE  偏移，並進入狀態 64
+
+    ELSE      [使用規則 11 以縮減 (GlobalStmt)]
+    $default  使用規則 11 以縮減 (GlobalStmt)
+
+
+狀態 18
 
    10 GlobalStmt: AssignStmt •
 
     $default  使用規則 10 以縮減 (GlobalStmt)
 
 
-狀態 21
+狀態 19
 
-   35 AssignStmt: AssignBody • ';'
+   39 AssignStmt: AssignBody • ';'
 
-    ';'  偏移，並進入狀態 68
+    ';'  偏移，並進入狀態 65
 
 
-狀態 22
+狀態 20
 
     6 GlobalStmt: DefineVariableStmt •
 
     $default  使用規則 6 以縮減 (GlobalStmt)
 
 
-狀態 23
+狀態 21
 
     9 GlobalStmt: ReturnStmt •
 
     $default  使用規則 9 以縮減 (GlobalStmt)
 
 
-狀態 24
+狀態 22
 
     8 GlobalStmt: CoutStmt •
 
     $default  使用規則 8 以縮減 (GlobalStmt)
 
 
-狀態 25
+狀態 23
 
-   16 FunctionCallStmt: FunctionCall • ';'
+   15 FunctionCallStmt: FunctionCall • ';'
 
-    ';'  偏移，並進入狀態 69
+    ';'  偏移，並進入狀態 66
 
 
-狀態 26
+狀態 24
 
     7 GlobalStmt: FunctionDefStmt •
 
     $default  使用規則 7 以縮減 (GlobalStmt)
 
 
+狀態 25
+
+   74 CoutStmt: COUT $@12 • SHL PrintableList ';'
+
+    SHL  偏移，並進入狀態 67
+
+
+狀態 26
+
+   32 SelectionStmt: IF '(' • Expression ')' $@5 Selection
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 68
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
 狀態 27
 
-   70 CoutStmt: COUT $@10 • SHL PrintableList ';'
+   21 IterationStmt: FOR $@4 • '(' ForCondition ')' CompoundStmt
 
-    SHL  偏移，並進入狀態 70
+    '('  偏移，並進入狀態 69
 
 
 狀態 28
 
-   32 SelectionStmt: IF '(' • Expression ')' $@5 GlobalStmt
+   19 IterationStmt: WHILE $@2 • '(' Expression ')' $@3 CompoundStmt
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 71
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    '('  偏移，並進入狀態 70
 
 
 狀態 29
 
-   22 IterationStmt: FOR $@4 • '(' ForCondition ')' GlobalStmt
+   72 ReturnStmt: RETURN ';' •
 
-    '('  偏移，並進入狀態 72
+    $default  使用規則 72 以縮減 (ReturnStmt)
 
 
 狀態 30
 
-   20 IterationStmt: WHILE $@2 • '(' Expression ')' $@3 GlobalStmt
+  123 Primary: IDENT •
+  125        | IDENT • '[' Expression ']'
+  126        | IDENT • '[' Expression ']' '[' Expression ']'
+  127 FunctionCall: IDENT • '(' ArgumentList ')'
 
-    '('  偏移，並進入狀態 73
+    '('  偏移，並進入狀態 60
+    '['  偏移，並進入狀態 71
+
+    '('       [使用規則 123 以縮減 (Primary)]
+    $default  使用規則 123 以縮減 (Primary)
 
 
 狀態 31
 
-   68 ReturnStmt: RETURN ';' •
+  122 Primary: BOOL_LIT •
 
-    $default  使用規則 68 以縮減 (ReturnStmt)
+    $default  使用規則 122 以縮減 (Primary)
 
 
 狀態 32
 
-  119 Primary: IDENT •
-  121        | IDENT • '[' Expression ']'
-  122        | IDENT • '[' Expression ']' '[' Expression ']'
-  123 FunctionCall: IDENT • '(' ArgumentList ')'
+  119 Primary: INT_LIT •
 
-    '('  偏移，並進入狀態 63
-    '['  偏移，並進入狀態 74
-
-    '('       [使用規則 119 以縮減 (Primary)]
     $default  使用規則 119 以縮減 (Primary)
 
 
 狀態 33
 
-  118 Primary: BOOL_LIT •
-
-    $default  使用規則 118 以縮減 (Primary)
-
-
-狀態 34
-
-  115 Primary: INT_LIT •
-
-    $default  使用規則 115 以縮減 (Primary)
-
-
-狀態 35
-
-  116 Primary: FLOAT_LIT •
-
-    $default  使用規則 116 以縮減 (Primary)
-
-
-狀態 36
-
-   77 Expression: STR_LIT •
-
-    $default  使用規則 77 以縮減 (Expression)
-
-
-狀態 37
-
-  106 TypeCast: '(' • VARIABLE_T ')' Unary
-  117 Primary: '(' • Expression ')'
-
-    VARIABLE_T  偏移，並進入狀態 75
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 36
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Expression      進入狀態 76
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 38
-
-  109 Unary: SUB • Unary
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 77
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Unary         進入狀態 78
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
-
-
-狀態 39
-
-  110 Unary: NOT • Unary
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 77
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Unary         進入狀態 79
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
-
-
-狀態 40
-
-  107 Unary: BNT • Unary
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 77
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Unary         進入狀態 80
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
-
-
-狀態 41
-
-  108 Unary: ADD • Unary
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 77
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Unary         進入狀態 81
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
-
-
-狀態 42
-
-   67 ReturnStmt: RETURN Expression • ';'
-
-    ';'  偏移，並進入狀態 82
-
-
-狀態 43
-
-   76 Expression: Or •
-   79 Or: Or • LOR And
-
-    LOR  偏移，並進入狀態 83
-
-    $default  使用規則 76 以縮減 (Expression)
-
-
-狀態 44
-
-   78 Or: And •
-   81 And: And • LAN BitwiseOr
-
-    LAN  偏移，並進入狀態 84
-
-    $default  使用規則 78 以縮減 (Or)
-
-
-狀態 45
-
-   80 And: BitwiseOr •
-   83 BitwiseOr: BitwiseOr • BOR BitwiseXor
-
-    BOR  偏移，並進入狀態 85
-
-    $default  使用規則 80 以縮減 (And)
-
-
-狀態 46
-
-   82 BitwiseOr: BitwiseXor •
-   85 BitwiseXor: BitwiseXor • BXO BitwiseAnd
-
-    BXO  偏移，並進入狀態 86
-
-    $default  使用規則 82 以縮減 (BitwiseOr)
-
-
-狀態 47
-
-   84 BitwiseXor: BitwiseAnd •
-   87 BitwiseAnd: BitwiseAnd • BAN Equality
-
-    BAN  偏移，並進入狀態 87
-
-    $default  使用規則 84 以縮減 (BitwiseXor)
-
-
-狀態 48
-
-   86 BitwiseAnd: Equality •
-   89 Equality: Equality • EQL Relational
-   90         | Equality • NEQ Relational
-
-    EQL  偏移，並進入狀態 88
-    NEQ  偏移，並進入狀態 89
-
-    $default  使用規則 86 以縮減 (BitwiseAnd)
-
-
-狀態 49
-
-   88 Equality: Relational •
-   92 Relational: Relational • LES Shift
-   93           | Relational • GTR Shift
-   94           | Relational • LEQ Shift
-   95           | Relational • GEQ Shift
-
-    GTR  偏移，並進入狀態 90
-    LES  偏移，並進入狀態 91
-    GEQ  偏移，並進入狀態 92
-    LEQ  偏移，並進入狀態 93
-
-    $default  使用規則 88 以縮減 (Equality)
-
-
-狀態 50
-
-   91 Relational: Shift •
-   97 Shift: Shift • SHR Additive
-
-    SHR  偏移，並進入狀態 94
-
-    $default  使用規則 91 以縮減 (Relational)
-
-
-狀態 51
-
-   96 Shift: Additive •
-   99 Additive: Additive • ADD Multiplicative
-  100         | Additive • SUB Multiplicative
-
-    SUB  偏移，並進入狀態 95
-    ADD  偏移，並進入狀態 96
-
-    SUB       [使用規則 96 以縮減 (Shift)]
-    ADD       [使用規則 96 以縮減 (Shift)]
-    $default  使用規則 96 以縮減 (Shift)
-
-
-狀態 52
-
-   98 Additive: Multiplicative •
-  102 Multiplicative: Multiplicative • MUL TypeCast
-  103               | Multiplicative • DIV TypeCast
-  104               | Multiplicative • REM TypeCast
-
-    MUL  偏移，並進入狀態 97
-    DIV  偏移，並進入狀態 98
-    REM  偏移，並進入狀態 99
-
-    $default  使用規則 98 以縮減 (Additive)
-
-
-狀態 53
-
-  101 Multiplicative: TypeCast •
-
-    $default  使用規則 101 以縮減 (Multiplicative)
-
-
-狀態 54
-
-  105 TypeCast: Unary •
-
-    $default  使用規則 105 以縮減 (TypeCast)
-
-
-狀態 55
-
-  111 Unary: Post •
-
-    $default  使用規則 111 以縮減 (Unary)
-
-
-狀態 56
-
-  112 Post: Primary •
-  113     | Primary • INC_ASSIGN
-  114     | Primary • DEC_ASSIGN
-
-    INC_ASSIGN  偏移，並進入狀態 100
-    DEC_ASSIGN  偏移，並進入狀態 101
-
-    $default  使用規則 112 以縮減 (Post)
-
-
-狀態 57
-
-  120 Primary: FunctionCall •
+  120 Primary: FLOAT_LIT •
 
     $default  使用規則 120 以縮減 (Primary)
 
 
+狀態 34
+
+   81 Expression: STR_LIT •
+
+    $default  使用規則 81 以縮減 (Expression)
+
+
+狀態 35
+
+  110 TypeCast: '(' • VARIABLE_T ')' Unary
+  121 Primary: '(' • Expression ')'
+
+    VARIABLE_T  偏移，並進入狀態 72
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 34
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    Expression      進入狀態 73
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 36
+
+  113 Unary: SUB • Unary
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 74
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Unary         進入狀態 75
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
+
+
+狀態 37
+
+  114 Unary: NOT • Unary
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 74
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Unary         進入狀態 76
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
+
+
+狀態 38
+
+  111 Unary: BNT • Unary
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 74
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Unary         進入狀態 77
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
+
+
+狀態 39
+
+  112 Unary: ADD • Unary
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 74
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Unary         進入狀態 78
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
+
+
+狀態 40
+
+   71 ReturnStmt: RETURN Expression • ';'
+
+    ';'  偏移，並進入狀態 79
+
+
+狀態 41
+
+   80 Expression: Or •
+   83 Or: Or • LOR And
+
+    LOR  偏移，並進入狀態 80
+
+    $default  使用規則 80 以縮減 (Expression)
+
+
+狀態 42
+
+   82 Or: And •
+   85 And: And • LAN BitwiseOr
+
+    LAN  偏移，並進入狀態 81
+
+    $default  使用規則 82 以縮減 (Or)
+
+
+狀態 43
+
+   84 And: BitwiseOr •
+   87 BitwiseOr: BitwiseOr • BOR BitwiseXor
+
+    BOR  偏移，並進入狀態 82
+
+    $default  使用規則 84 以縮減 (And)
+
+
+狀態 44
+
+   86 BitwiseOr: BitwiseXor •
+   89 BitwiseXor: BitwiseXor • BXO BitwiseAnd
+
+    BXO  偏移，並進入狀態 83
+
+    $default  使用規則 86 以縮減 (BitwiseOr)
+
+
+狀態 45
+
+   88 BitwiseXor: BitwiseAnd •
+   91 BitwiseAnd: BitwiseAnd • BAN Equality
+
+    BAN  偏移，並進入狀態 84
+
+    $default  使用規則 88 以縮減 (BitwiseXor)
+
+
+狀態 46
+
+   90 BitwiseAnd: Equality •
+   93 Equality: Equality • EQL Relational
+   94         | Equality • NEQ Relational
+
+    EQL  偏移，並進入狀態 85
+    NEQ  偏移，並進入狀態 86
+
+    $default  使用規則 90 以縮減 (BitwiseAnd)
+
+
+狀態 47
+
+   92 Equality: Relational •
+   96 Relational: Relational • LES Shift
+   97           | Relational • GTR Shift
+   98           | Relational • LEQ Shift
+   99           | Relational • GEQ Shift
+
+    GTR  偏移，並進入狀態 87
+    LES  偏移，並進入狀態 88
+    GEQ  偏移，並進入狀態 89
+    LEQ  偏移，並進入狀態 90
+
+    $default  使用規則 92 以縮減 (Equality)
+
+
+狀態 48
+
+   95 Relational: Shift •
+  101 Shift: Shift • SHR Additive
+
+    SHR  偏移，並進入狀態 91
+
+    $default  使用規則 95 以縮減 (Relational)
+
+
+狀態 49
+
+  100 Shift: Additive •
+  103 Additive: Additive • ADD Multiplicative
+  104         | Additive • SUB Multiplicative
+
+    SUB  偏移，並進入狀態 92
+    ADD  偏移，並進入狀態 93
+
+    SUB       [使用規則 100 以縮減 (Shift)]
+    ADD       [使用規則 100 以縮減 (Shift)]
+    $default  使用規則 100 以縮減 (Shift)
+
+
+狀態 50
+
+  102 Additive: Multiplicative •
+  106 Multiplicative: Multiplicative • MUL TypeCast
+  107               | Multiplicative • DIV TypeCast
+  108               | Multiplicative • REM TypeCast
+
+    MUL  偏移，並進入狀態 94
+    DIV  偏移，並進入狀態 95
+    REM  偏移，並進入狀態 96
+
+    $default  使用規則 102 以縮減 (Additive)
+
+
+狀態 51
+
+  105 Multiplicative: TypeCast •
+
+    $default  使用規則 105 以縮減 (Multiplicative)
+
+
+狀態 52
+
+  109 TypeCast: Unary •
+
+    $default  使用規則 109 以縮減 (TypeCast)
+
+
+狀態 53
+
+  115 Unary: Post •
+
+    $default  使用規則 115 以縮減 (Unary)
+
+
+狀態 54
+
+  116 Post: Primary •
+  117     | Primary • INC_ASSIGN
+  118     | Primary • DEC_ASSIGN
+
+    INC_ASSIGN  偏移，並進入狀態 97
+    DEC_ASSIGN  偏移，並進入狀態 98
+
+    $default  使用規則 116 以縮減 (Post)
+
+
+狀態 55
+
+  124 Primary: FunctionCall •
+
+    $default  使用規則 124 以縮減 (Primary)
+
+
+狀態 56
+
+   16 JumpStmt: BREAK ';' •
+
+    $default  使用規則 16 以縮減 (JumpStmt)
+
+
+狀態 57
+
+   63 Declarator: IDENT •
+   64           | IDENT • VAL_ASSIGN Assignable
+   65           | IDENT • '[' Expression ']'
+   66           | IDENT • '[' Expression ']' '[' Expression ']'
+   67           | IDENT • '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
+  134 FunctionDefStmt: VARIABLE_T IDENT • $@13 '(' $@14 FunctionParameterStmtList ')' $@15 '{' GlobalStmtList '}'
+
+    VAL_ASSIGN  偏移，並進入狀態 99
+    '['         偏移，並進入狀態 100
+
+    '('       使用規則 131 以縮減 ($@13)
+    $default  使用規則 63 以縮減 (Declarator)
+
+    $@13  進入狀態 101
+
+
 狀態 58
 
-   17 JumpStmt: BREAK ';' •
+   60 DefineVariableStmt: VARIABLE_T DeclaratorList • ';'
+   62 DeclaratorList: DeclaratorList • ',' Declarator
 
-    $default  使用規則 17 以縮減 (JumpStmt)
+    ';'  偏移，並進入狀態 102
+    ','  偏移，並進入狀態 103
 
 
 狀態 59
 
-    4 GlobalStmtList: GlobalStmtList • GlobalStmt
-   30 CompoundStmt: '{' GlobalStmtList • '}'
+   61 DeclaratorList: Declarator •
 
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    '}'         偏移，並進入狀態 102
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
-
-    GlobalStmt          進入狀態 66
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
+    $default  使用規則 61 以縮減 (DeclaratorList)
 
 
 狀態 60
 
-   59 Declarator: IDENT •
-   60           | IDENT • VAL_ASSIGN Assignable
-   61           | IDENT • '[' Expression ']'
-   62           | IDENT • '[' Expression ']' '[' Expression ']'
-   63           | IDENT • '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
-  130 FunctionDefStmt: VARIABLE_T IDENT • $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
+  127 FunctionCall: IDENT '(' • ArgumentList ')'
 
-    VAL_ASSIGN  偏移，並進入狀態 103
-    '['         偏移，並進入狀態 104
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    '('       使用規則 127 以縮減 ($@11)
-    $default  使用規則 59 以縮減 (Declarator)
-
-    $@11  進入狀態 105
+    Expression            進入狀態 104
+    Or                    進入狀態 41
+    And                   進入狀態 42
+    BitwiseOr             進入狀態 43
+    BitwiseXor            進入狀態 44
+    BitwiseAnd            進入狀態 45
+    Equality              進入狀態 46
+    Relational            進入狀態 47
+    Shift                 進入狀態 48
+    Additive              進入狀態 49
+    Multiplicative        進入狀態 50
+    TypeCast              進入狀態 51
+    Unary                 進入狀態 52
+    Post                  進入狀態 53
+    Primary               進入狀態 54
+    FunctionCall          進入狀態 55
+    ArgumentList          進入狀態 105
+    ArgumentListNonEmpty  進入狀態 106
 
 
 狀態 61
 
-   56 DefineVariableStmt: VARIABLE_T DeclaratorList • ';'
-   58 DeclaratorList: DeclaratorList • ',' Declarator
+   43 AssignBody: IDENT '[' • Expression ']' $@10 Assign
+   45           | IDENT '[' • Expression ']' '[' Expression ']' $@11 Assign
 
-    ';'  偏移，並進入狀態 106
-    ','  偏移，並進入狀態 107
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 107
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 62
 
-   57 DeclaratorList: Declarator •
+   41 AssignBody: IDENT $@9 • Assign
 
-    $default  使用規則 57 以縮減 (DeclaratorList)
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    Assign          進入狀態 120
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 63
-
-  123 FunctionCall: IDENT '(' • ArgumentList ')'
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression            進入狀態 108
-    Or                    進入狀態 43
-    And                   進入狀態 44
-    BitwiseOr             進入狀態 45
-    BitwiseXor            進入狀態 46
-    BitwiseAnd            進入狀態 47
-    Equality              進入狀態 48
-    Relational            進入狀態 49
-    Shift                 進入狀態 50
-    Additive              進入狀態 51
-    Multiplicative        進入狀態 52
-    TypeCast              進入狀態 53
-    Unary                 進入狀態 54
-    Post                  進入狀態 55
-    Primary               進入狀態 56
-    FunctionCall          進入狀態 57
-    ArgumentList          進入狀態 109
-    ArgumentListNonEmpty  進入狀態 110
-
-
-狀態 64
-
-   39 AssignBody: IDENT '[' • Expression ']' $@8 Assign
-   41           | IDENT '[' • Expression ']' '[' Expression ']' $@9 Assign
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 111
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 65
-
-   37 AssignBody: IDENT $@7 • Assign
-
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Assign          進入狀態 124
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 66
 
     4 GlobalStmtList: GlobalStmtList GlobalStmt •
 
     $default  使用規則 4 以縮減 (GlobalStmtList)
 
 
-狀態 67
+狀態 64
 
-   34 SelectionStmt: SelectionStmt ELSE • $@6 GlobalStmt
+   34 SelectionStmt: SelectionStmt ELSE • $@6 Selection
 
     $default  使用規則 33 以縮減 ($@6)
 
-    $@6  進入狀態 127
+    $@6  進入狀態 123
+
+
+狀態 65
+
+   39 AssignStmt: AssignBody ';' •
+
+    $default  使用規則 39 以縮減 (AssignStmt)
+
+
+狀態 66
+
+   15 FunctionCallStmt: FunctionCall ';' •
+
+    $default  使用規則 15 以縮減 (FunctionCallStmt)
+
+
+狀態 67
+
+   74 CoutStmt: COUT $@12 SHL • PrintableList ';'
+
+    ENDL       偏移，並進入狀態 124
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 125
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    PrintableList   進入狀態 126
+    Printable       進入狀態 127
+    Expression      進入狀態 128
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 68
 
-   35 AssignStmt: AssignBody ';' •
+   32 SelectionStmt: IF '(' Expression • ')' $@5 Selection
 
-    $default  使用規則 35 以縮減 (AssignStmt)
+    ')'  偏移，並進入狀態 129
 
 
 狀態 69
 
-   16 FunctionCallStmt: FunctionCall ';' •
+   21 IterationStmt: FOR $@4 '(' • ForCondition ')' CompoundStmt
 
-    $default  使用規則 16 以縮減 (FunctionCallStmt)
+    ';'         偏移，並進入狀態 130
+    VARIABLE_T  偏移，並進入狀態 131
+    IDENT       偏移，並進入狀態 132
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 34
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    ForCondition        進入狀態 133
+    ExpressionStmt      進入狀態 134
+    AssignBody          進入狀態 135
+    DefineVariableStmt  進入狀態 136
+    Expression          進入狀態 137
+    Or                  進入狀態 41
+    And                 進入狀態 42
+    BitwiseOr           進入狀態 43
+    BitwiseXor          進入狀態 44
+    BitwiseAnd          進入狀態 45
+    Equality            進入狀態 46
+    Relational          進入狀態 47
+    Shift               進入狀態 48
+    Additive            進入狀態 49
+    Multiplicative      進入狀態 50
+    TypeCast            進入狀態 51
+    Unary               進入狀態 52
+    Post                進入狀態 53
+    Primary             進入狀態 54
+    FunctionCall        進入狀態 55
 
 
 狀態 70
 
-   70 CoutStmt: COUT $@10 SHL • PrintableList ';'
+   19 IterationStmt: WHILE $@2 '(' • Expression ')' $@3 CompoundStmt
 
-    ENDL       偏移，並進入狀態 128
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 129
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    PrintableList   進入狀態 130
-    Printable       進入狀態 131
-    Expression      進入狀態 132
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Expression      進入狀態 138
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 71
 
-   32 SelectionStmt: IF '(' Expression • ')' $@5 GlobalStmt
+  125 Primary: IDENT '[' • Expression ']'
+  126        | IDENT '[' • Expression ']' '[' Expression ']'
 
-    ')'  偏移，並進入狀態 133
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 139
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 72
 
-   22 IterationStmt: FOR $@4 '(' • ForCondition ')' GlobalStmt
+  110 TypeCast: '(' VARIABLE_T • ')' Unary
 
-    ';'         偏移，並進入狀態 134
-    VARIABLE_T  偏移，並進入狀態 135
-    IDENT       偏移，並進入狀態 136
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 36
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    ForCondition        進入狀態 137
-    ExpressionStmt      進入狀態 138
-    AssignBody          進入狀態 139
-    DefineVariableStmt  進入狀態 140
-    Expression          進入狀態 141
-    Or                  進入狀態 43
-    And                 進入狀態 44
-    BitwiseOr           進入狀態 45
-    BitwiseXor          進入狀態 46
-    BitwiseAnd          進入狀態 47
-    Equality            進入狀態 48
-    Relational          進入狀態 49
-    Shift               進入狀態 50
-    Additive            進入狀態 51
-    Multiplicative      進入狀態 52
-    TypeCast            進入狀態 53
-    Unary               進入狀態 54
-    Post                進入狀態 55
-    Primary             進入狀態 56
-    FunctionCall        進入狀態 57
+    ')'  偏移，並進入狀態 140
 
 
 狀態 73
 
-   20 IterationStmt: WHILE $@2 '(' • Expression ')' $@3 GlobalStmt
+  121 Primary: '(' Expression • ')'
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 142
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    ')'  偏移，並進入狀態 141
 
 
 狀態 74
 
-  121 Primary: IDENT '[' • Expression ']'
-  122        | IDENT '[' • Expression ']' '[' Expression ']'
+  121 Primary: '(' • Expression ')'
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Expression      進入狀態 143
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Expression      進入狀態 73
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 75
 
-  106 TypeCast: '(' VARIABLE_T • ')' Unary
+  113 Unary: SUB Unary •
 
-    ')'  偏移，並進入狀態 144
+    $default  使用規則 113 以縮減 (Unary)
 
 
 狀態 76
 
-  117 Primary: '(' Expression • ')'
+  114 Unary: NOT Unary •
 
-    ')'  偏移，並進入狀態 145
+    $default  使用規則 114 以縮減 (Unary)
 
 
 狀態 77
 
-  117 Primary: '(' • Expression ')'
+  111 Unary: BNT Unary •
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 76
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    $default  使用規則 111 以縮減 (Unary)
 
 
 狀態 78
 
-  109 Unary: SUB Unary •
+  112 Unary: ADD Unary •
 
-    $default  使用規則 109 以縮減 (Unary)
+    $default  使用規則 112 以縮減 (Unary)
 
 
 狀態 79
 
-  110 Unary: NOT Unary •
+   71 ReturnStmt: RETURN Expression ';' •
 
-    $default  使用規則 110 以縮減 (Unary)
+    $default  使用規則 71 以縮減 (ReturnStmt)
 
 
 狀態 80
 
-  107 Unary: BNT Unary •
+   83 Or: Or LOR • And
 
-    $default  使用規則 107 以縮減 (Unary)
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    And             進入狀態 142
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 81
 
-  108 Unary: ADD Unary •
+   85 And: And LAN • BitwiseOr
 
-    $default  使用規則 108 以縮減 (Unary)
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    BitwiseOr       進入狀態 143
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 82
 
-   67 ReturnStmt: RETURN Expression ';' •
+   87 BitwiseOr: BitwiseOr BOR • BitwiseXor
 
-    $default  使用規則 67 以縮減 (ReturnStmt)
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    BitwiseXor      進入狀態 144
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 83
 
-   79 Or: Or LOR • And
+   89 BitwiseXor: BitwiseXor BXO • BitwiseAnd
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    And             進入狀態 146
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    BitwiseAnd      進入狀態 145
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 84
 
-   81 And: And LAN • BitwiseOr
+   91 BitwiseAnd: BitwiseAnd BAN • Equality
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    BitwiseOr       進入狀態 147
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Equality        進入狀態 146
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 85
 
-   83 BitwiseOr: BitwiseOr BOR • BitwiseXor
+   93 Equality: Equality EQL • Relational
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    BitwiseXor      進入狀態 148
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Relational      進入狀態 147
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 86
 
-   85 BitwiseXor: BitwiseXor BXO • BitwiseAnd
+   94 Equality: Equality NEQ • Relational
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    BitwiseAnd      進入狀態 149
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Relational      進入狀態 148
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 87
 
-   87 BitwiseAnd: BitwiseAnd BAN • Equality
+   97 Relational: Relational GTR • Shift
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Equality        進入狀態 150
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Shift           進入狀態 149
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 88
 
-   89 Equality: Equality EQL • Relational
+   96 Relational: Relational LES • Shift
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Relational      進入狀態 151
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Shift           進入狀態 150
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 89
 
-   90 Equality: Equality NEQ • Relational
+   99 Relational: Relational GEQ • Shift
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Relational      進入狀態 152
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Shift           進入狀態 151
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 90
 
-   93 Relational: Relational GTR • Shift
+   98 Relational: Relational LEQ • Shift
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Shift           進入狀態 153
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Shift           進入狀態 152
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 91
 
-   92 Relational: Relational LES • Shift
+  101 Shift: Shift SHR • Additive
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Shift           進入狀態 154
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Additive        進入狀態 153
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 92
 
-   95 Relational: Relational GEQ • Shift
+  104 Additive: Additive SUB • Multiplicative
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Shift           進入狀態 155
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Multiplicative  進入狀態 154
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 93
 
-   94 Relational: Relational LEQ • Shift
+  103 Additive: Additive ADD • Multiplicative
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Shift           進入狀態 156
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Multiplicative  進入狀態 155
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 94
 
-   97 Shift: Shift SHR • Additive
+  106 Multiplicative: Multiplicative MUL • TypeCast
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Additive        進入狀態 157
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    TypeCast      進入狀態 156
+    Unary         進入狀態 52
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
 
 
 狀態 95
 
-  100 Additive: Additive SUB • Multiplicative
+  107 Multiplicative: Multiplicative DIV • TypeCast
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Multiplicative  進入狀態 158
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    TypeCast      進入狀態 157
+    Unary         進入狀態 52
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
 
 
 狀態 96
 
-   99 Additive: Additive ADD • Multiplicative
+  108 Multiplicative: Multiplicative REM • TypeCast
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    Multiplicative  進入狀態 159
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    TypeCast      進入狀態 158
+    Unary         進入狀態 52
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
 
 
 狀態 97
 
-  102 Multiplicative: Multiplicative MUL • TypeCast
+  117 Post: Primary INC_ASSIGN •
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    TypeCast      進入狀態 160
-    Unary         進入狀態 54
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
+    $default  使用規則 117 以縮減 (Post)
 
 
 狀態 98
 
-  103 Multiplicative: Multiplicative DIV • TypeCast
+  118 Post: Primary DEC_ASSIGN •
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    TypeCast      進入狀態 161
-    Unary         進入狀態 54
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
+    $default  使用規則 118 以縮減 (Post)
 
 
 狀態 99
 
-  104 Multiplicative: Multiplicative REM • TypeCast
+   64 Declarator: IDENT VAL_ASSIGN • Assignable
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 119
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
 
-    TypeCast      進入狀態 162
-    Unary         進入狀態 54
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
+    Assignable      進入狀態 159
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 100
 
-  113 Post: Primary INC_ASSIGN •
+   65 Declarator: IDENT '[' • Expression ']'
+   66           | IDENT '[' • Expression ']' '[' Expression ']'
+   67           | IDENT '[' • Expression ']' VAL_ASSIGN '{' ArrayEles '}'
 
-    $default  使用規則 113 以縮減 (Post)
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 160
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 101
 
-  114 Post: Primary DEC_ASSIGN •
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 • '(' $@14 FunctionParameterStmtList ')' $@15 '{' GlobalStmtList '}'
 
-    $default  使用規則 114 以縮減 (Post)
+    '('  偏移，並進入狀態 161
 
 
 狀態 102
 
-   30 CompoundStmt: '{' GlobalStmtList '}' •
+   60 DefineVariableStmt: VARIABLE_T DeclaratorList ';' •
 
-    $default  使用規則 30 以縮減 (CompoundStmt)
+    $default  使用規則 60 以縮減 (DefineVariableStmt)
 
 
 狀態 103
 
-   60 Declarator: IDENT VAL_ASSIGN • Assignable
+   62 DeclaratorList: DeclaratorList ',' • Declarator
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 123
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
+    IDENT  偏移，並進入狀態 162
 
-    Assignable      進入狀態 163
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Declarator  進入狀態 163
 
 
 狀態 104
 
-   61 Declarator: IDENT '[' • Expression ']'
-   62           | IDENT '[' • Expression ']' '[' Expression ']'
-   63           | IDENT '[' • Expression ']' VAL_ASSIGN '{' ArrayEles '}'
+  129 ArgumentListNonEmpty: Expression •
 
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 164
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    $default  使用規則 129 以縮減 (ArgumentListNonEmpty)
 
 
 狀態 105
 
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 • '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
+  127 FunctionCall: IDENT '(' ArgumentList • ')'
 
-    '('  偏移，並進入狀態 165
+    ')'  偏移，並進入狀態 164
 
 
 狀態 106
 
-   56 DefineVariableStmt: VARIABLE_T DeclaratorList ';' •
+  128 ArgumentList: ArgumentListNonEmpty •
+  130 ArgumentListNonEmpty: ArgumentListNonEmpty • ',' Expression
 
-    $default  使用規則 56 以縮減 (DefineVariableStmt)
+    ','  偏移，並進入狀態 165
+
+    $default  使用規則 128 以縮減 (ArgumentList)
 
 
 狀態 107
 
-   58 DeclaratorList: DeclaratorList ',' • Declarator
+   43 AssignBody: IDENT '[' Expression • ']' $@10 Assign
+   45           | IDENT '[' Expression • ']' '[' Expression ']' $@11 Assign
 
-    IDENT  偏移，並進入狀態 166
-
-    Declarator  進入狀態 167
+    ']'  偏移，並進入狀態 166
 
 
 狀態 108
 
-  125 ArgumentListNonEmpty: Expression •
+   47 Assign: VAL_ASSIGN • Assign
 
-    $default  使用規則 125 以縮減 (ArgumentListNonEmpty)
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    Assign          進入狀態 167
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 109
 
-  123 FunctionCall: IDENT '(' ArgumentList • ')'
+   48 Assign: ADD_ASSIGN • Assign
 
-    ')'  偏移，並進入狀態 168
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    Assign          進入狀態 168
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 110
 
-  124 ArgumentList: ArgumentListNonEmpty •
-  126 ArgumentListNonEmpty: ArgumentListNonEmpty • ',' Expression
+   49 Assign: SUB_ASSIGN • Assign
 
-    ','  偏移，並進入狀態 169
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
-    $default  使用規則 124 以縮減 (ArgumentList)
+    Assign          進入狀態 169
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 111
 
-   39 AssignBody: IDENT '[' Expression • ']' $@8 Assign
-   41           | IDENT '[' Expression • ']' '[' Expression ']' $@9 Assign
+   50 Assign: MUL_ASSIGN • Assign
 
-    ']'  偏移，並進入狀態 170
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    Assign          進入狀態 170
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 112
 
-   43 Assign: VAL_ASSIGN • Assign
+   51 Assign: DIV_ASSIGN • Assign
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
     Assign          進入狀態 171
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 113
 
-   44 Assign: ADD_ASSIGN • Assign
+   52 Assign: REM_ASSIGN • Assign
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
     Assign          進入狀態 172
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 114
 
-   45 Assign: SUB_ASSIGN • Assign
+   53 Assign: BAN_ASSIGN • Assign
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
     Assign          進入狀態 173
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 115
 
-   46 Assign: MUL_ASSIGN • Assign
+   54 Assign: BOR_ASSIGN • Assign
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
     Assign          進入狀態 174
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 116
 
-   47 Assign: DIV_ASSIGN • Assign
+   55 Assign: BXO_ASSIGN • Assign
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
     Assign          進入狀態 175
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 117
 
-   48 Assign: REM_ASSIGN • Assign
+   56 Assign: SHR_ASSIGN • Assign
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
     Assign          進入狀態 176
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 118
 
-   49 Assign: BAN_ASSIGN • Assign
+   57 Assign: SHL_ASSIGN • Assign
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
 
     Assign          進入狀態 177
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
 
 
 狀態 119
 
-   50 Assign: BOR_ASSIGN • Assign
+   58 Assignable: STR_LIT •
+   81 Expression: STR_LIT •
 
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Assign          進入狀態 178
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
+    ')'         使用規則 58 以縮減 (Assignable)
+    ')'         [使用規則 81 以縮減 (Expression)]
+    ';'         使用規則 58 以縮減 (Assignable)
+    ';'         [使用規則 81 以縮減 (Expression)]
+    '}'         使用規則 58 以縮減 (Assignable)
+    '}'         [使用規則 81 以縮減 (Expression)]
+    VARIABLE_T  使用規則 58 以縮減 (Assignable)
+    VARIABLE_T  [使用規則 81 以縮減 (Expression)]
+    IDENT       使用規則 58 以縮減 (Assignable)
+    IDENT       [使用規則 81 以縮減 (Expression)]
+    BOOL_LIT    使用規則 58 以縮減 (Assignable)
+    BOOL_LIT    [使用規則 81 以縮減 (Expression)]
+    INT_LIT     使用規則 58 以縮減 (Assignable)
+    INT_LIT     [使用規則 81 以縮減 (Expression)]
+    FLOAT_LIT   使用規則 58 以縮減 (Assignable)
+    FLOAT_LIT   [使用規則 81 以縮減 (Expression)]
+    STR_LIT     使用規則 58 以縮減 (Assignable)
+    STR_LIT     [使用規則 81 以縮減 (Expression)]
+    '('         使用規則 58 以縮減 (Assignable)
+    '('         [使用規則 81 以縮減 (Expression)]
+    SUB         使用規則 58 以縮減 (Assignable)
+    SUB         [使用規則 81 以縮減 (Expression)]
+    NOT         使用規則 58 以縮減 (Assignable)
+    NOT         [使用規則 81 以縮減 (Expression)]
+    BNT         使用規則 58 以縮減 (Assignable)
+    BNT         [使用規則 81 以縮減 (Expression)]
+    ADD         使用規則 58 以縮減 (Assignable)
+    ADD         [使用規則 81 以縮減 (Expression)]
+    ','         使用規則 58 以縮減 (Assignable)
+    ','         [使用規則 81 以縮減 (Expression)]
+    $default    使用規則 58 以縮減 (Assignable)
 
 
 狀態 120
 
-   51 Assign: BXO_ASSIGN • Assign
-
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Assign          進入狀態 179
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 121
-
-   52 Assign: SHR_ASSIGN • Assign
-
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Assign          進入狀態 180
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 122
-
-   53 Assign: SHL_ASSIGN • Assign
-
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Assign          進入狀態 181
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 123
-
-   54 Assignable: STR_LIT •
-   77 Expression: STR_LIT •
-
-    ')'         使用規則 54 以縮減 (Assignable)
-    ')'         [使用規則 77 以縮減 (Expression)]
-    ';'         使用規則 54 以縮減 (Assignable)
-    ';'         [使用規則 77 以縮減 (Expression)]
-    '}'         使用規則 54 以縮減 (Assignable)
-    '}'         [使用規則 77 以縮減 (Expression)]
-    VARIABLE_T  使用規則 54 以縮減 (Assignable)
-    VARIABLE_T  [使用規則 77 以縮減 (Expression)]
-    IDENT       使用規則 54 以縮減 (Assignable)
-    IDENT       [使用規則 77 以縮減 (Expression)]
-    BOOL_LIT    使用規則 54 以縮減 (Assignable)
-    BOOL_LIT    [使用規則 77 以縮減 (Expression)]
-    INT_LIT     使用規則 54 以縮減 (Assignable)
-    INT_LIT     [使用規則 77 以縮減 (Expression)]
-    FLOAT_LIT   使用規則 54 以縮減 (Assignable)
-    FLOAT_LIT   [使用規則 77 以縮減 (Expression)]
-    STR_LIT     使用規則 54 以縮減 (Assignable)
-    STR_LIT     [使用規則 77 以縮減 (Expression)]
-    '('         使用規則 54 以縮減 (Assignable)
-    '('         [使用規則 77 以縮減 (Expression)]
-    SUB         使用規則 54 以縮減 (Assignable)
-    SUB         [使用規則 77 以縮減 (Expression)]
-    NOT         使用規則 54 以縮減 (Assignable)
-    NOT         [使用規則 77 以縮減 (Expression)]
-    BNT         使用規則 54 以縮減 (Assignable)
-    BNT         [使用規則 77 以縮減 (Expression)]
-    ADD         使用規則 54 以縮減 (Assignable)
-    ADD         [使用規則 77 以縮減 (Expression)]
-    ','         使用規則 54 以縮減 (Assignable)
-    ','         [使用規則 77 以縮減 (Expression)]
-    $default    使用規則 54 以縮減 (Assignable)
-
-
-狀態 124
-
-   37 AssignBody: IDENT $@7 Assign •
-
-    $default  使用規則 37 以縮減 (AssignBody)
-
-
-狀態 125
-
-   42 Assign: Assignable •
-
-    $default  使用規則 42 以縮減 (Assign)
-
-
-狀態 126
-
-   55 Assignable: Expression •
-
-    $default  使用規則 55 以縮減 (Assignable)
-
-
-狀態 127
-
-   34 SelectionStmt: SelectionStmt ELSE $@6 • GlobalStmt
-
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
-
-    GlobalStmt          進入狀態 182
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
-
-
-狀態 128
-
-   74 Printable: ENDL •
-
-    $default  使用規則 74 以縮減 (Printable)
-
-
-狀態 129
-
-   73 Printable: STR_LIT •
-   77 Expression: STR_LIT •
-
-    SHL       使用規則 73 以縮減 (Printable)
-    SHL       [使用規則 77 以縮減 (Expression)]
-    ';'       使用規則 73 以縮減 (Printable)
-    ';'       [使用規則 77 以縮減 (Expression)]
-    $default  使用規則 73 以縮減 (Printable)
-
-
-狀態 130
-
-   70 CoutStmt: COUT $@10 SHL PrintableList • ';'
-   72 PrintableList: PrintableList • SHL Printable
-
-    SHL  偏移，並進入狀態 183
-    ';'  偏移，並進入狀態 184
-
-
-狀態 131
-
-   71 PrintableList: Printable •
-
-    $default  使用規則 71 以縮減 (PrintableList)
-
-
-狀態 132
-
-   75 Printable: Expression •
-
-    $default  使用規則 75 以縮減 (Printable)
-
-
-狀態 133
-
-   32 SelectionStmt: IF '(' Expression ')' • $@5 GlobalStmt
-
-    $default  使用規則 31 以縮減 ($@5)
-
-    $@5  進入狀態 185
-
-
-狀態 134
-
-   29 ExpressionStmt: ';' •
-
-    $default  使用規則 29 以縮減 (ExpressionStmt)
-
-
-狀態 135
-
-   24 ForCondition: VARIABLE_T • IDENT ':' IDENT
-   56 DefineVariableStmt: VARIABLE_T • DeclaratorList ';'
-
-    IDENT  偏移，並進入狀態 186
-
-    DeclaratorList  進入狀態 61
-    Declarator      進入狀態 62
-
-
-狀態 136
-
-   37 AssignBody: IDENT • $@7 Assign
-   39           | IDENT • '[' Expression ']' $@8 Assign
-   41           | IDENT • '[' Expression ']' '[' Expression ']' $@9 Assign
-  119 Primary: IDENT •
-  121        | IDENT • '[' Expression ']'
-  122        | IDENT • '[' Expression ']' '[' Expression ']'
-  123 FunctionCall: IDENT • '(' ArgumentList ')'
-
-    '('  偏移，並進入狀態 63
-    '['  偏移，並進入狀態 187
-
-    SHR         使用規則 119 以縮減 (Primary)
-    BAN         使用規則 119 以縮減 (Primary)
-    BOR         使用規則 119 以縮減 (Primary)
-    BXO         使用規則 119 以縮減 (Primary)
-    MUL         使用規則 119 以縮減 (Primary)
-    DIV         使用規則 119 以縮減 (Primary)
-    REM         使用規則 119 以縮減 (Primary)
-    GTR         使用規則 119 以縮減 (Primary)
-    LES         使用規則 119 以縮減 (Primary)
-    GEQ         使用規則 119 以縮減 (Primary)
-    LEQ         使用規則 119 以縮減 (Primary)
-    EQL         使用規則 119 以縮減 (Primary)
-    NEQ         使用規則 119 以縮減 (Primary)
-    LAN         使用規則 119 以縮減 (Primary)
-    LOR         使用規則 119 以縮減 (Primary)
-    INC_ASSIGN  使用規則 119 以縮減 (Primary)
-    DEC_ASSIGN  使用規則 119 以縮減 (Primary)
-    ')'         使用規則 119 以縮減 (Primary)
-    ';'         使用規則 119 以縮減 (Primary)
-    VARIABLE_T  使用規則 119 以縮減 (Primary)
-    IDENT       使用規則 36 以縮減 ($@7)
-    IDENT       [使用規則 119 以縮減 (Primary)]
-    BOOL_LIT    使用規則 36 以縮減 ($@7)
-    BOOL_LIT    [使用規則 119 以縮減 (Primary)]
-    INT_LIT     使用規則 36 以縮減 ($@7)
-    INT_LIT     [使用規則 119 以縮減 (Primary)]
-    FLOAT_LIT   使用規則 36 以縮減 ($@7)
-    FLOAT_LIT   [使用規則 119 以縮減 (Primary)]
-    STR_LIT     使用規則 36 以縮減 ($@7)
-    STR_LIT     [使用規則 119 以縮減 (Primary)]
-    '('         [使用規則 36 以縮減 ($@7)]
-    '('         [使用規則 119 以縮減 (Primary)]
-    SUB         使用規則 36 以縮減 ($@7)
-    SUB         [使用規則 119 以縮減 (Primary)]
-    NOT         使用規則 36 以縮減 ($@7)
-    NOT         [使用規則 119 以縮減 (Primary)]
-    BNT         使用規則 36 以縮減 ($@7)
-    BNT         [使用規則 119 以縮減 (Primary)]
-    ADD         使用規則 36 以縮減 ($@7)
-    ADD         [使用規則 119 以縮減 (Primary)]
-    $default    使用規則 36 以縮減 ($@7)
-
-    $@7  進入狀態 65
-
-
-狀態 137
-
-   22 IterationStmt: FOR $@4 '(' ForCondition • ')' GlobalStmt
-
-    ')'  偏移，並進入狀態 188
-
-
-狀態 138
-
-   23 ForCondition: ExpressionStmt • ExpressionStmt ExpressionStmt
-
-    ';'         偏移，並進入狀態 134
-    VARIABLE_T  偏移，並進入狀態 189
-    IDENT       偏移，並進入狀態 136
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 36
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    ExpressionStmt      進入狀態 190
-    AssignBody          進入狀態 139
-    DefineVariableStmt  進入狀態 140
-    Expression          進入狀態 141
-    Or                  進入狀態 43
-    And                 進入狀態 44
-    BitwiseOr           進入狀態 45
-    BitwiseXor          進入狀態 46
-    BitwiseAnd          進入狀態 47
-    Equality            進入狀態 48
-    Relational          進入狀態 49
-    Shift               進入狀態 50
-    Additive            進入狀態 51
-    Multiplicative      進入狀態 52
-    TypeCast            進入狀態 53
-    Unary               進入狀態 54
-    Post                進入狀態 55
-    Primary             進入狀態 56
-    FunctionCall        進入狀態 57
-
-
-狀態 139
-
-   27 ExpressionStmt: AssignBody •
-
-    $default  使用規則 27 以縮減 (ExpressionStmt)
-
-
-狀態 140
-
-   26 ExpressionStmt: DefineVariableStmt •
-
-    $default  使用規則 26 以縮減 (ExpressionStmt)
-
-
-狀態 141
-
-   25 ExpressionStmt: Expression • ';'
-   28               | Expression •
-
-    ';'  偏移，並進入狀態 191
-
-    ';'       [使用規則 28 以縮減 (ExpressionStmt)]
-    $default  使用規則 28 以縮減 (ExpressionStmt)
-
-
-狀態 142
-
-   20 IterationStmt: WHILE $@2 '(' Expression • ')' $@3 GlobalStmt
-
-    ')'  偏移，並進入狀態 192
-
-
-狀態 143
-
-  121 Primary: IDENT '[' Expression • ']'
-  122        | IDENT '[' Expression • ']' '[' Expression ']'
-
-    ']'  偏移，並進入狀態 193
-
-
-狀態 144
-
-  106 TypeCast: '(' VARIABLE_T ')' • Unary
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    '('        偏移，並進入狀態 77
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Unary         進入狀態 194
-    Post          進入狀態 55
-    Primary       進入狀態 56
-    FunctionCall  進入狀態 57
-
-
-狀態 145
-
-  117 Primary: '(' Expression ')' •
-
-    $default  使用規則 117 以縮減 (Primary)
-
-
-狀態 146
-
-   79 Or: Or LOR And •
-   81 And: And • LAN BitwiseOr
-
-    LAN  偏移，並進入狀態 84
-
-    $default  使用規則 79 以縮減 (Or)
-
-
-狀態 147
-
-   81 And: And LAN BitwiseOr •
-   83 BitwiseOr: BitwiseOr • BOR BitwiseXor
-
-    BOR  偏移，並進入狀態 85
-
-    $default  使用規則 81 以縮減 (And)
-
-
-狀態 148
-
-   83 BitwiseOr: BitwiseOr BOR BitwiseXor •
-   85 BitwiseXor: BitwiseXor • BXO BitwiseAnd
-
-    BXO  偏移，並進入狀態 86
-
-    $default  使用規則 83 以縮減 (BitwiseOr)
-
-
-狀態 149
-
-   85 BitwiseXor: BitwiseXor BXO BitwiseAnd •
-   87 BitwiseAnd: BitwiseAnd • BAN Equality
-
-    BAN  偏移，並進入狀態 87
-
-    $default  使用規則 85 以縮減 (BitwiseXor)
-
-
-狀態 150
-
-   87 BitwiseAnd: BitwiseAnd BAN Equality •
-   89 Equality: Equality • EQL Relational
-   90         | Equality • NEQ Relational
-
-    EQL  偏移，並進入狀態 88
-    NEQ  偏移，並進入狀態 89
-
-    $default  使用規則 87 以縮減 (BitwiseAnd)
-
-
-狀態 151
-
-   89 Equality: Equality EQL Relational •
-   92 Relational: Relational • LES Shift
-   93           | Relational • GTR Shift
-   94           | Relational • LEQ Shift
-   95           | Relational • GEQ Shift
-
-    GTR  偏移，並進入狀態 90
-    LES  偏移，並進入狀態 91
-    GEQ  偏移，並進入狀態 92
-    LEQ  偏移，並進入狀態 93
-
-    $default  使用規則 89 以縮減 (Equality)
-
-
-狀態 152
-
-   90 Equality: Equality NEQ Relational •
-   92 Relational: Relational • LES Shift
-   93           | Relational • GTR Shift
-   94           | Relational • LEQ Shift
-   95           | Relational • GEQ Shift
-
-    GTR  偏移，並進入狀態 90
-    LES  偏移，並進入狀態 91
-    GEQ  偏移，並進入狀態 92
-    LEQ  偏移，並進入狀態 93
-
-    $default  使用規則 90 以縮減 (Equality)
-
-
-狀態 153
-
-   93 Relational: Relational GTR Shift •
-   97 Shift: Shift • SHR Additive
-
-    SHR  偏移，並進入狀態 94
-
-    $default  使用規則 93 以縮減 (Relational)
-
-
-狀態 154
-
-   92 Relational: Relational LES Shift •
-   97 Shift: Shift • SHR Additive
-
-    SHR  偏移，並進入狀態 94
-
-    $default  使用規則 92 以縮減 (Relational)
-
-
-狀態 155
-
-   95 Relational: Relational GEQ Shift •
-   97 Shift: Shift • SHR Additive
-
-    SHR  偏移，並進入狀態 94
-
-    $default  使用規則 95 以縮減 (Relational)
-
-
-狀態 156
-
-   94 Relational: Relational LEQ Shift •
-   97 Shift: Shift • SHR Additive
-
-    SHR  偏移，並進入狀態 94
-
-    $default  使用規則 94 以縮減 (Relational)
-
-
-狀態 157
-
-   97 Shift: Shift SHR Additive •
-   99 Additive: Additive • ADD Multiplicative
-  100         | Additive • SUB Multiplicative
-
-    SUB  偏移，並進入狀態 95
-    ADD  偏移，並進入狀態 96
-
-    SUB       [使用規則 97 以縮減 (Shift)]
-    ADD       [使用規則 97 以縮減 (Shift)]
-    $default  使用規則 97 以縮減 (Shift)
-
-
-狀態 158
-
-  100 Additive: Additive SUB Multiplicative •
-  102 Multiplicative: Multiplicative • MUL TypeCast
-  103               | Multiplicative • DIV TypeCast
-  104               | Multiplicative • REM TypeCast
-
-    MUL  偏移，並進入狀態 97
-    DIV  偏移，並進入狀態 98
-    REM  偏移，並進入狀態 99
-
-    $default  使用規則 100 以縮減 (Additive)
-
-
-狀態 159
-
-   99 Additive: Additive ADD Multiplicative •
-  102 Multiplicative: Multiplicative • MUL TypeCast
-  103               | Multiplicative • DIV TypeCast
-  104               | Multiplicative • REM TypeCast
-
-    MUL  偏移，並進入狀態 97
-    DIV  偏移，並進入狀態 98
-    REM  偏移，並進入狀態 99
-
-    $default  使用規則 99 以縮減 (Additive)
-
-
-狀態 160
-
-  102 Multiplicative: Multiplicative MUL TypeCast •
-
-    $default  使用規則 102 以縮減 (Multiplicative)
-
-
-狀態 161
-
-  103 Multiplicative: Multiplicative DIV TypeCast •
-
-    $default  使用規則 103 以縮減 (Multiplicative)
-
-
-狀態 162
-
-  104 Multiplicative: Multiplicative REM TypeCast •
-
-    $default  使用規則 104 以縮減 (Multiplicative)
-
-
-狀態 163
-
-   60 Declarator: IDENT VAL_ASSIGN Assignable •
-
-    $default  使用規則 60 以縮減 (Declarator)
-
-
-狀態 164
-
-   61 Declarator: IDENT '[' Expression • ']'
-   62           | IDENT '[' Expression • ']' '[' Expression ']'
-   63           | IDENT '[' Expression • ']' VAL_ASSIGN '{' ArrayEles '}'
-
-    ']'  偏移，並進入狀態 195
-
-
-狀態 165
-
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' • $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
-
-    $default  使用規則 128 以縮減 ($@12)
-
-    $@12  進入狀態 196
-
-
-狀態 166
-
-   59 Declarator: IDENT •
-   60           | IDENT • VAL_ASSIGN Assignable
-   61           | IDENT • '[' Expression ']'
-   62           | IDENT • '[' Expression ']' '[' Expression ']'
-   63           | IDENT • '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
-
-    VAL_ASSIGN  偏移，並進入狀態 103
-    '['         偏移，並進入狀態 104
-
-    $default  使用規則 59 以縮減 (Declarator)
-
-
-狀態 167
-
-   58 DeclaratorList: DeclaratorList ',' Declarator •
-
-    $default  使用規則 58 以縮減 (DeclaratorList)
-
-
-狀態 168
-
-  123 FunctionCall: IDENT '(' ArgumentList ')' •
-
-    $default  使用規則 123 以縮減 (FunctionCall)
-
-
-狀態 169
-
-  126 ArgumentListNonEmpty: ArgumentListNonEmpty ',' • Expression
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 197
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 170
-
-   39 AssignBody: IDENT '[' Expression ']' • $@8 Assign
-   41           | IDENT '[' Expression ']' • '[' Expression ']' $@9 Assign
-
-    '['  偏移，並進入狀態 198
-
-    $default  使用規則 38 以縮減 ($@8)
-
-    $@8  進入狀態 199
-
-
-狀態 171
-
-   43 Assign: VAL_ASSIGN Assign •
-
-    $default  使用規則 43 以縮減 (Assign)
-
-
-狀態 172
-
-   44 Assign: ADD_ASSIGN Assign •
-
-    $default  使用規則 44 以縮減 (Assign)
-
-
-狀態 173
-
-   45 Assign: SUB_ASSIGN Assign •
-
-    $default  使用規則 45 以縮減 (Assign)
-
-
-狀態 174
-
-   46 Assign: MUL_ASSIGN Assign •
-
-    $default  使用規則 46 以縮減 (Assign)
-
-
-狀態 175
-
-   47 Assign: DIV_ASSIGN Assign •
-
-    $default  使用規則 47 以縮減 (Assign)
-
-
-狀態 176
-
-   48 Assign: REM_ASSIGN Assign •
-
-    $default  使用規則 48 以縮減 (Assign)
-
-
-狀態 177
-
-   49 Assign: BAN_ASSIGN Assign •
-
-    $default  使用規則 49 以縮減 (Assign)
-
-
-狀態 178
-
-   50 Assign: BOR_ASSIGN Assign •
-
-    $default  使用規則 50 以縮減 (Assign)
-
-
-狀態 179
-
-   51 Assign: BXO_ASSIGN Assign •
-
-    $default  使用規則 51 以縮減 (Assign)
-
-
-狀態 180
-
-   52 Assign: SHR_ASSIGN Assign •
-
-    $default  使用規則 52 以縮減 (Assign)
-
-
-狀態 181
-
-   53 Assign: SHL_ASSIGN Assign •
-
-    $default  使用規則 53 以縮減 (Assign)
-
-
-狀態 182
-
-   34 SelectionStmt: SelectionStmt ELSE $@6 GlobalStmt •
-
-    $default  使用規則 34 以縮減 (SelectionStmt)
-
-
-狀態 183
-
-   72 PrintableList: PrintableList SHL • Printable
-
-    ENDL       偏移，並進入狀態 128
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 129
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Printable       進入狀態 200
-    Expression      進入狀態 132
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 184
-
-   70 CoutStmt: COUT $@10 SHL PrintableList ';' •
-
-    $default  使用規則 70 以縮減 (CoutStmt)
-
-
-狀態 185
-
-   32 SelectionStmt: IF '(' Expression ')' $@5 • GlobalStmt
-
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
-
-    GlobalStmt          進入狀態 201
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
-
-
-狀態 186
-
-   24 ForCondition: VARIABLE_T IDENT • ':' IDENT
-   59 Declarator: IDENT •
-   60           | IDENT • VAL_ASSIGN Assignable
-   61           | IDENT • '[' Expression ']'
-   62           | IDENT • '[' Expression ']' '[' Expression ']'
-   63           | IDENT • '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
-
-    VAL_ASSIGN  偏移，並進入狀態 103
-    ':'         偏移，並進入狀態 202
-    '['         偏移，並進入狀態 104
-
-    $default  使用規則 59 以縮減 (Declarator)
-
-
-狀態 187
-
-   39 AssignBody: IDENT '[' • Expression ']' $@8 Assign
-   41           | IDENT '[' • Expression ']' '[' Expression ']' $@9 Assign
-  121 Primary: IDENT '[' • Expression ']'
-  122        | IDENT '[' • Expression ']' '[' Expression ']'
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 203
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 188
-
-   22 IterationStmt: FOR $@4 '(' ForCondition ')' • GlobalStmt
-
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
-
-    GlobalStmt          進入狀態 204
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
-
-
-狀態 189
-
-   56 DefineVariableStmt: VARIABLE_T • DeclaratorList ';'
-
-    IDENT  偏移，並進入狀態 166
-
-    DeclaratorList  進入狀態 61
-    Declarator      進入狀態 62
-
-
-狀態 190
-
-   23 ForCondition: ExpressionStmt ExpressionStmt • ExpressionStmt
-
-    ';'         偏移，並進入狀態 134
-    VARIABLE_T  偏移，並進入狀態 189
-    IDENT       偏移，並進入狀態 136
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 36
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    ExpressionStmt      進入狀態 205
-    AssignBody          進入狀態 139
-    DefineVariableStmt  進入狀態 140
-    Expression          進入狀態 141
-    Or                  進入狀態 43
-    And                 進入狀態 44
-    BitwiseOr           進入狀態 45
-    BitwiseXor          進入狀態 46
-    BitwiseAnd          進入狀態 47
-    Equality            進入狀態 48
-    Relational          進入狀態 49
-    Shift               進入狀態 50
-    Additive            進入狀態 51
-    Multiplicative      進入狀態 52
-    TypeCast            進入狀態 53
-    Unary               進入狀態 54
-    Post                進入狀態 55
-    Primary             進入狀態 56
-    FunctionCall        進入狀態 57
-
-
-狀態 191
-
-   25 ExpressionStmt: Expression ';' •
-
-    $default  使用規則 25 以縮減 (ExpressionStmt)
-
-
-狀態 192
-
-   20 IterationStmt: WHILE $@2 '(' Expression ')' • $@3 GlobalStmt
-
-    $default  使用規則 19 以縮減 ($@3)
-
-    $@3  進入狀態 206
-
-
-狀態 193
-
-  121 Primary: IDENT '[' Expression ']' •
-  122        | IDENT '[' Expression ']' • '[' Expression ']'
-
-    '['  偏移，並進入狀態 207
-
-    $default  使用規則 121 以縮減 (Primary)
-
-
-狀態 194
-
-  106 TypeCast: '(' VARIABLE_T ')' Unary •
-
-    $default  使用規則 106 以縮減 (TypeCast)
-
-
-狀態 195
-
-   61 Declarator: IDENT '[' Expression ']' •
-   62           | IDENT '[' Expression ']' • '[' Expression ']'
-   63           | IDENT '[' Expression ']' • VAL_ASSIGN '{' ArrayEles '}'
-
-    VAL_ASSIGN  偏移，並進入狀態 208
-    '['         偏移，並進入狀態 209
-
-    $default  使用規則 61 以縮減 (Declarator)
-
-
-狀態 196
-
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 • FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}'
-
-    VARIABLE_T  偏移，並進入狀態 210
-
-    $default  使用規則 133 以縮減 (FunctionParameterStmtList)
-
-    FunctionParameterStmtList  進入狀態 211
-    FunctionParameterStmt      進入狀態 212
-
-
-狀態 197
-
-  126 ArgumentListNonEmpty: ArgumentListNonEmpty ',' Expression •
-
-    $default  使用規則 126 以縮減 (ArgumentListNonEmpty)
-
-
-狀態 198
-
-   41 AssignBody: IDENT '[' Expression ']' '[' • Expression ']' $@9 Assign
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 213
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 199
-
-   39 AssignBody: IDENT '[' Expression ']' $@8 • Assign
-
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Assign          進入狀態 214
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 200
-
-   72 PrintableList: PrintableList SHL Printable •
-
-    $default  使用規則 72 以縮減 (PrintableList)
-
-
-狀態 201
-
-   32 SelectionStmt: IF '(' Expression ')' $@5 GlobalStmt •
-
-    $default  使用規則 32 以縮減 (SelectionStmt)
-
-
-狀態 202
-
-   24 ForCondition: VARIABLE_T IDENT ':' • IDENT
-
-    IDENT  偏移，並進入狀態 215
-
-
-狀態 203
-
-   39 AssignBody: IDENT '[' Expression • ']' $@8 Assign
-   41           | IDENT '[' Expression • ']' '[' Expression ']' $@9 Assign
-  121 Primary: IDENT '[' Expression • ']'
-  122        | IDENT '[' Expression • ']' '[' Expression ']'
-
-    ']'  偏移，並進入狀態 216
-
-
-狀態 204
-
-   22 IterationStmt: FOR $@4 '(' ForCondition ')' GlobalStmt •
-
-    $default  使用規則 22 以縮減 (IterationStmt)
-
-
-狀態 205
-
-   23 ForCondition: ExpressionStmt ExpressionStmt ExpressionStmt •
-
-    $default  使用規則 23 以縮減 (ForCondition)
-
-
-狀態 206
-
-   20 IterationStmt: WHILE $@2 '(' Expression ')' $@3 • GlobalStmt
-
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
-
-    GlobalStmt          進入狀態 217
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
-
-
-狀態 207
-
-  122 Primary: IDENT '[' Expression ']' '[' • Expression ']'
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 218
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 208
-
-   63 Declarator: IDENT '[' Expression ']' VAL_ASSIGN • '{' ArrayEles '}'
-
-    '{'  偏移，並進入狀態 219
-
-
-狀態 209
-
-   62 Declarator: IDENT '[' Expression ']' '[' • Expression ']'
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 220
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 210
-
-  135 FunctionParameterStmt: VARIABLE_T • IDENT $@14
-  137                      | VARIABLE_T • IDENT $@15 '[' ']'
-
-    IDENT  偏移，並進入狀態 221
-
-
-狀態 211
-
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList • ')' $@13 '{' GlobalStmtList '}'
-  131 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
-
-    ')'  偏移，並進入狀態 222
-    ','  偏移，並進入狀態 223
-
-
-狀態 212
-
-  132 FunctionParameterStmtList: FunctionParameterStmt •
-
-    $default  使用規則 132 以縮減 (FunctionParameterStmtList)
-
-
-狀態 213
-
-   41 AssignBody: IDENT '[' Expression ']' '[' Expression • ']' $@9 Assign
-
-    ']'  偏移，並進入狀態 224
-
-
-狀態 214
-
-   39 AssignBody: IDENT '[' Expression ']' $@8 Assign •
-
-    $default  使用規則 39 以縮減 (AssignBody)
-
-
-狀態 215
-
-   24 ForCondition: VARIABLE_T IDENT ':' IDENT •
-
-    $default  使用規則 24 以縮減 (ForCondition)
-
-
-狀態 216
-
-   39 AssignBody: IDENT '[' Expression ']' • $@8 Assign
-   41           | IDENT '[' Expression ']' • '[' Expression ']' $@9 Assign
-  121 Primary: IDENT '[' Expression ']' •
-  122        | IDENT '[' Expression ']' • '[' Expression ']'
-
-    '['  偏移，並進入狀態 225
-
-    SHR         使用規則 121 以縮減 (Primary)
-    BAN         使用規則 121 以縮減 (Primary)
-    BOR         使用規則 121 以縮減 (Primary)
-    BXO         使用規則 121 以縮減 (Primary)
-    MUL         使用規則 121 以縮減 (Primary)
-    DIV         使用規則 121 以縮減 (Primary)
-    REM         使用規則 121 以縮減 (Primary)
-    GTR         使用規則 121 以縮減 (Primary)
-    LES         使用規則 121 以縮減 (Primary)
-    GEQ         使用規則 121 以縮減 (Primary)
-    LEQ         使用規則 121 以縮減 (Primary)
-    EQL         使用規則 121 以縮減 (Primary)
-    NEQ         使用規則 121 以縮減 (Primary)
-    LAN         使用規則 121 以縮減 (Primary)
-    LOR         使用規則 121 以縮減 (Primary)
-    INC_ASSIGN  使用規則 121 以縮減 (Primary)
-    DEC_ASSIGN  使用規則 121 以縮減 (Primary)
-    ')'         使用規則 121 以縮減 (Primary)
-    ';'         使用規則 121 以縮減 (Primary)
-    VARIABLE_T  使用規則 121 以縮減 (Primary)
-    IDENT       使用規則 38 以縮減 ($@8)
-    IDENT       [使用規則 121 以縮減 (Primary)]
-    BOOL_LIT    使用規則 38 以縮減 ($@8)
-    BOOL_LIT    [使用規則 121 以縮減 (Primary)]
-    INT_LIT     使用規則 38 以縮減 ($@8)
-    INT_LIT     [使用規則 121 以縮減 (Primary)]
-    FLOAT_LIT   使用規則 38 以縮減 ($@8)
-    FLOAT_LIT   [使用規則 121 以縮減 (Primary)]
-    STR_LIT     使用規則 38 以縮減 ($@8)
-    STR_LIT     [使用規則 121 以縮減 (Primary)]
-    '('         使用規則 38 以縮減 ($@8)
-    '('         [使用規則 121 以縮減 (Primary)]
-    SUB         使用規則 38 以縮減 ($@8)
-    SUB         [使用規則 121 以縮減 (Primary)]
-    NOT         使用規則 38 以縮減 ($@8)
-    NOT         [使用規則 121 以縮減 (Primary)]
-    BNT         使用規則 38 以縮減 ($@8)
-    BNT         [使用規則 121 以縮減 (Primary)]
-    ADD         使用規則 38 以縮減 ($@8)
-    ADD         [使用規則 121 以縮減 (Primary)]
-    $default    使用規則 38 以縮減 ($@8)
-
-    $@8  進入狀態 199
-
-
-狀態 217
-
-   20 IterationStmt: WHILE $@2 '(' Expression ')' $@3 GlobalStmt •
-
-    $default  使用規則 20 以縮減 (IterationStmt)
-
-
-狀態 218
-
-  122 Primary: IDENT '[' Expression ']' '[' Expression • ']'
-
-    ']'  偏移，並進入狀態 226
-
-
-狀態 219
-
-   63 Declarator: IDENT '[' Expression ']' VAL_ASSIGN '{' • ArrayEles '}'
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 123
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    $default  使用規則 66 以縮減 (ArrayEles)
-
-    Assignable      進入狀態 227
-    ArrayEles       進入狀態 228
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 220
-
-   62 Declarator: IDENT '[' Expression ']' '[' Expression • ']'
-
-    ']'  偏移，並進入狀態 229
-
-
-狀態 221
-
-  135 FunctionParameterStmt: VARIABLE_T IDENT • $@14
-  137                      | VARIABLE_T IDENT • $@15 '[' ']'
-
-    '['       使用規則 136 以縮減 ($@15)
-    $default  使用規則 134 以縮減 ($@14)
-
-    $@14  進入狀態 230
-    $@15  進入狀態 231
-
-
-狀態 222
-
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' • $@13 '{' GlobalStmtList '}'
-
-    $default  使用規則 129 以縮減 ($@13)
-
-    $@13  進入狀態 232
-
-
-狀態 223
-
-  131 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
-
-    VARIABLE_T  偏移，並進入狀態 210
-
-    FunctionParameterStmt  進入狀態 233
-
-
-狀態 224
-
-   41 AssignBody: IDENT '[' Expression ']' '[' Expression ']' • $@9 Assign
-
-    $default  使用規則 40 以縮減 ($@9)
-
-    $@9  進入狀態 234
-
-
-狀態 225
-
-   41 AssignBody: IDENT '[' Expression ']' '[' • Expression ']' $@9 Assign
-  122 Primary: IDENT '[' Expression ']' '[' • Expression ']'
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 36
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Expression      進入狀態 235
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 226
-
-  122 Primary: IDENT '[' Expression ']' '[' Expression ']' •
-
-    $default  使用規則 122 以縮減 (Primary)
-
-
-狀態 227
-
-   64 ArrayEles: Assignable •
-
-    $default  使用規則 64 以縮減 (ArrayEles)
-
-
-狀態 228
-
-   63 Declarator: IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles • '}'
-   65 ArrayEles: ArrayEles • ',' Assignable
-
-    '}'  偏移，並進入狀態 236
-    ','  偏移，並進入狀態 237
-
-
-狀態 229
-
-   62 Declarator: IDENT '[' Expression ']' '[' Expression ']' •
-
-    $default  使用規則 62 以縮減 (Declarator)
-
-
-狀態 230
-
-  135 FunctionParameterStmt: VARIABLE_T IDENT $@14 •
-
-    $default  使用規則 135 以縮減 (FunctionParameterStmt)
-
-
-狀態 231
-
-  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 • '[' ']'
-
-    '['  偏移，並進入狀態 238
-
-
-狀態 232
-
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 • '{' GlobalStmtList '}'
-
-    '{'  偏移，並進入狀態 239
-
-
-狀態 233
-
-  131 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
-
-    $default  使用規則 131 以縮減 (FunctionParameterStmtList)
-
-
-狀態 234
-
-   41 AssignBody: IDENT '[' Expression ']' '[' Expression ']' $@9 • Assign
-
-    VAL_ASSIGN  偏移，並進入狀態 112
-    ADD_ASSIGN  偏移，並進入狀態 113
-    SUB_ASSIGN  偏移，並進入狀態 114
-    MUL_ASSIGN  偏移，並進入狀態 115
-    DIV_ASSIGN  偏移，並進入狀態 116
-    REM_ASSIGN  偏移，並進入狀態 117
-    BAN_ASSIGN  偏移，並進入狀態 118
-    BOR_ASSIGN  偏移，並進入狀態 119
-    BXO_ASSIGN  偏移，並進入狀態 120
-    SHR_ASSIGN  偏移，並進入狀態 121
-    SHL_ASSIGN  偏移，並進入狀態 122
-    IDENT       偏移，並進入狀態 32
-    BOOL_LIT    偏移，並進入狀態 33
-    INT_LIT     偏移，並進入狀態 34
-    FLOAT_LIT   偏移，並進入狀態 35
-    STR_LIT     偏移，並進入狀態 123
-    '('         偏移，並進入狀態 37
-    SUB         偏移，並進入狀態 38
-    NOT         偏移，並進入狀態 39
-    BNT         偏移，並進入狀態 40
-    ADD         偏移，並進入狀態 41
-
-    Assign          進入狀態 240
-    Assignable      進入狀態 125
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 235
-
-   41 AssignBody: IDENT '[' Expression ']' '[' Expression • ']' $@9 Assign
-  122 Primary: IDENT '[' Expression ']' '[' Expression • ']'
-
-    ']'  偏移，並進入狀態 241
-
-
-狀態 236
-
-   63 Declarator: IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}' •
-
-    $default  使用規則 63 以縮減 (Declarator)
-
-
-狀態 237
-
-   65 ArrayEles: ArrayEles ',' • Assignable
-
-    IDENT      偏移，並進入狀態 32
-    BOOL_LIT   偏移，並進入狀態 33
-    INT_LIT    偏移，並進入狀態 34
-    FLOAT_LIT  偏移，並進入狀態 35
-    STR_LIT    偏移，並進入狀態 123
-    '('        偏移，並進入狀態 37
-    SUB        偏移，並進入狀態 38
-    NOT        偏移，並進入狀態 39
-    BNT        偏移，並進入狀態 40
-    ADD        偏移，並進入狀態 41
-
-    Assignable      進入狀態 242
-    Expression      進入狀態 126
-    Or              進入狀態 43
-    And             進入狀態 44
-    BitwiseOr       進入狀態 45
-    BitwiseXor      進入狀態 46
-    BitwiseAnd      進入狀態 47
-    Equality        進入狀態 48
-    Relational      進入狀態 49
-    Shift           進入狀態 50
-    Additive        進入狀態 51
-    Multiplicative  進入狀態 52
-    TypeCast        進入狀態 53
-    Unary           進入狀態 54
-    Post            進入狀態 55
-    Primary         進入狀態 56
-    FunctionCall    進入狀態 57
-
-
-狀態 238
-
-  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 '[' • ']'
-
-    ']'  偏移，並進入狀態 243
-
-
-狀態 239
-
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' • GlobalStmtList '}'
-
-    COUT        偏移，並進入狀態 4
-    IF          偏移，並進入狀態 5
-    FOR         偏移，並進入狀態 6
-    WHILE       偏移，並進入狀態 7
-    RETURN      偏移，並進入狀態 8
-    BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
-
-    GlobalStmtList      進入狀態 244
-    GlobalStmt          進入狀態 14
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
-
-
-狀態 240
-
-   41 AssignBody: IDENT '[' Expression ']' '[' Expression ']' $@9 Assign •
+   41 AssignBody: IDENT $@9 Assign •
 
     $default  使用規則 41 以縮減 (AssignBody)
 
 
-狀態 241
+狀態 121
 
-   41 AssignBody: IDENT '[' Expression ']' '[' Expression ']' • $@9 Assign
-  122 Primary: IDENT '[' Expression ']' '[' Expression ']' •
+   46 Assign: Assignable •
 
-    SHR         使用規則 122 以縮減 (Primary)
-    BAN         使用規則 122 以縮減 (Primary)
-    BOR         使用規則 122 以縮減 (Primary)
-    BXO         使用規則 122 以縮減 (Primary)
-    MUL         使用規則 122 以縮減 (Primary)
-    DIV         使用規則 122 以縮減 (Primary)
-    REM         使用規則 122 以縮減 (Primary)
-    GTR         使用規則 122 以縮減 (Primary)
-    LES         使用規則 122 以縮減 (Primary)
-    GEQ         使用規則 122 以縮減 (Primary)
-    LEQ         使用規則 122 以縮減 (Primary)
-    EQL         使用規則 122 以縮減 (Primary)
-    NEQ         使用規則 122 以縮減 (Primary)
-    LAN         使用規則 122 以縮減 (Primary)
-    LOR         使用規則 122 以縮減 (Primary)
-    INC_ASSIGN  使用規則 122 以縮減 (Primary)
-    DEC_ASSIGN  使用規則 122 以縮減 (Primary)
-    ')'         使用規則 122 以縮減 (Primary)
-    ';'         使用規則 122 以縮減 (Primary)
-    VARIABLE_T  使用規則 122 以縮減 (Primary)
-    IDENT       使用規則 40 以縮減 ($@9)
-    IDENT       [使用規則 122 以縮減 (Primary)]
-    BOOL_LIT    使用規則 40 以縮減 ($@9)
-    BOOL_LIT    [使用規則 122 以縮減 (Primary)]
-    INT_LIT     使用規則 40 以縮減 ($@9)
-    INT_LIT     [使用規則 122 以縮減 (Primary)]
-    FLOAT_LIT   使用規則 40 以縮減 ($@9)
-    FLOAT_LIT   [使用規則 122 以縮減 (Primary)]
-    STR_LIT     使用規則 40 以縮減 ($@9)
-    STR_LIT     [使用規則 122 以縮減 (Primary)]
-    '('         使用規則 40 以縮減 ($@9)
-    '('         [使用規則 122 以縮減 (Primary)]
-    SUB         使用規則 40 以縮減 ($@9)
-    SUB         [使用規則 122 以縮減 (Primary)]
-    NOT         使用規則 40 以縮減 ($@9)
-    NOT         [使用規則 122 以縮減 (Primary)]
-    BNT         使用規則 40 以縮減 ($@9)
-    BNT         [使用規則 122 以縮減 (Primary)]
-    ADD         使用規則 40 以縮減 ($@9)
-    ADD         [使用規則 122 以縮減 (Primary)]
-    $default    使用規則 40 以縮減 ($@9)
-
-    $@9  進入狀態 234
+    $default  使用規則 46 以縮減 (Assign)
 
 
-狀態 242
+狀態 122
 
-   65 ArrayEles: ArrayEles ',' Assignable •
+   59 Assignable: Expression •
 
-    $default  使用規則 65 以縮減 (ArrayEles)
-
-
-狀態 243
-
-  137 FunctionParameterStmt: VARIABLE_T IDENT $@15 '[' ']' •
-
-    $default  使用規則 137 以縮減 (FunctionParameterStmt)
+    $default  使用規則 59 以縮減 (Assignable)
 
 
-狀態 244
+狀態 123
 
-    4 GlobalStmtList: GlobalStmtList • GlobalStmt
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList • '}'
+   34 SelectionStmt: SelectionStmt ELSE $@6 • Selection
 
     COUT        偏移，並進入狀態 4
     IF          偏移，並進入狀態 5
@@ -4363,28 +2683,1836 @@
     WHILE       偏移，並進入狀態 7
     RETURN      偏移，並進入狀態 8
     BREAK       偏移，並進入狀態 9
-    '{'         偏移，並進入狀態 10
-    '}'         偏移，並進入狀態 245
-    VARIABLE_T  偏移，並進入狀態 11
-    IDENT       偏移，並進入狀態 12
+    '{'         偏移，並進入狀態 178
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
 
-    GlobalStmt          進入狀態 66
-    FunctionCallStmt    進入狀態 15
-    JumpStmt            進入狀態 16
-    IterationStmt       進入狀態 17
-    CompoundStmt        進入狀態 18
-    SelectionStmt       進入狀態 19
-    AssignStmt          進入狀態 20
-    AssignBody          進入狀態 21
-    DefineVariableStmt  進入狀態 22
-    ReturnStmt          進入狀態 23
-    CoutStmt            進入狀態 24
-    FunctionCall        進入狀態 25
-    FunctionDefStmt     進入狀態 26
+    GlobalStmt          進入狀態 179
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    Selection           進入狀態 180
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 124
+
+   78 Printable: ENDL •
+
+    $default  使用規則 78 以縮減 (Printable)
+
+
+狀態 125
+
+   77 Printable: STR_LIT •
+   81 Expression: STR_LIT •
+
+    SHL       使用規則 77 以縮減 (Printable)
+    SHL       [使用規則 81 以縮減 (Expression)]
+    ';'       使用規則 77 以縮減 (Printable)
+    ';'       [使用規則 81 以縮減 (Expression)]
+    $default  使用規則 77 以縮減 (Printable)
+
+
+狀態 126
+
+   74 CoutStmt: COUT $@12 SHL PrintableList • ';'
+   76 PrintableList: PrintableList • SHL Printable
+
+    SHL  偏移，並進入狀態 181
+    ';'  偏移，並進入狀態 182
+
+
+狀態 127
+
+   75 PrintableList: Printable •
+
+    $default  使用規則 75 以縮減 (PrintableList)
+
+
+狀態 128
+
+   79 Printable: Expression •
+
+    $default  使用規則 79 以縮減 (Printable)
+
+
+狀態 129
+
+   32 SelectionStmt: IF '(' Expression ')' • $@5 Selection
+
+    $default  使用規則 31 以縮減 ($@5)
+
+    $@5  進入狀態 183
+
+
+狀態 130
+
+   28 ExpressionStmt: ';' •
+
+    $default  使用規則 28 以縮減 (ExpressionStmt)
+
+
+狀態 131
+
+   23 ForCondition: VARIABLE_T • IDENT ':' IDENT
+   60 DefineVariableStmt: VARIABLE_T • DeclaratorList ';'
+
+    IDENT  偏移，並進入狀態 184
+
+    DeclaratorList  進入狀態 58
+    Declarator      進入狀態 59
+
+
+狀態 132
+
+   41 AssignBody: IDENT • $@9 Assign
+   43           | IDENT • '[' Expression ']' $@10 Assign
+   45           | IDENT • '[' Expression ']' '[' Expression ']' $@11 Assign
+  123 Primary: IDENT •
+  125        | IDENT • '[' Expression ']'
+  126        | IDENT • '[' Expression ']' '[' Expression ']'
+  127 FunctionCall: IDENT • '(' ArgumentList ')'
+
+    '('  偏移，並進入狀態 60
+    '['  偏移，並進入狀態 185
+
+    SHR         使用規則 123 以縮減 (Primary)
+    BAN         使用規則 123 以縮減 (Primary)
+    BOR         使用規則 123 以縮減 (Primary)
+    BXO         使用規則 123 以縮減 (Primary)
+    MUL         使用規則 123 以縮減 (Primary)
+    DIV         使用規則 123 以縮減 (Primary)
+    REM         使用規則 123 以縮減 (Primary)
+    GTR         使用規則 123 以縮減 (Primary)
+    LES         使用規則 123 以縮減 (Primary)
+    GEQ         使用規則 123 以縮減 (Primary)
+    LEQ         使用規則 123 以縮減 (Primary)
+    EQL         使用規則 123 以縮減 (Primary)
+    NEQ         使用規則 123 以縮減 (Primary)
+    LAN         使用規則 123 以縮減 (Primary)
+    LOR         使用規則 123 以縮減 (Primary)
+    INC_ASSIGN  使用規則 123 以縮減 (Primary)
+    DEC_ASSIGN  使用規則 123 以縮減 (Primary)
+    ')'         使用規則 123 以縮減 (Primary)
+    ';'         使用規則 123 以縮減 (Primary)
+    VARIABLE_T  使用規則 123 以縮減 (Primary)
+    IDENT       使用規則 40 以縮減 ($@9)
+    IDENT       [使用規則 123 以縮減 (Primary)]
+    BOOL_LIT    使用規則 40 以縮減 ($@9)
+    BOOL_LIT    [使用規則 123 以縮減 (Primary)]
+    INT_LIT     使用規則 40 以縮減 ($@9)
+    INT_LIT     [使用規則 123 以縮減 (Primary)]
+    FLOAT_LIT   使用規則 40 以縮減 ($@9)
+    FLOAT_LIT   [使用規則 123 以縮減 (Primary)]
+    STR_LIT     使用規則 40 以縮減 ($@9)
+    STR_LIT     [使用規則 123 以縮減 (Primary)]
+    '('         [使用規則 40 以縮減 ($@9)]
+    '('         [使用規則 123 以縮減 (Primary)]
+    SUB         使用規則 40 以縮減 ($@9)
+    SUB         [使用規則 123 以縮減 (Primary)]
+    NOT         使用規則 40 以縮減 ($@9)
+    NOT         [使用規則 123 以縮減 (Primary)]
+    BNT         使用規則 40 以縮減 ($@9)
+    BNT         [使用規則 123 以縮減 (Primary)]
+    ADD         使用規則 40 以縮減 ($@9)
+    ADD         [使用規則 123 以縮減 (Primary)]
+    $default    使用規則 40 以縮減 ($@9)
+
+    $@9  進入狀態 62
+
+
+狀態 133
+
+   21 IterationStmt: FOR $@4 '(' ForCondition • ')' CompoundStmt
+
+    ')'  偏移，並進入狀態 186
+
+
+狀態 134
+
+   22 ForCondition: ExpressionStmt • ExpressionStmt ExpressionStmt
+
+    ';'         偏移，並進入狀態 130
+    VARIABLE_T  偏移，並進入狀態 187
+    IDENT       偏移，並進入狀態 132
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 34
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    ExpressionStmt      進入狀態 188
+    AssignBody          進入狀態 135
+    DefineVariableStmt  進入狀態 136
+    Expression          進入狀態 137
+    Or                  進入狀態 41
+    And                 進入狀態 42
+    BitwiseOr           進入狀態 43
+    BitwiseXor          進入狀態 44
+    BitwiseAnd          進入狀態 45
+    Equality            進入狀態 46
+    Relational          進入狀態 47
+    Shift               進入狀態 48
+    Additive            進入狀態 49
+    Multiplicative      進入狀態 50
+    TypeCast            進入狀態 51
+    Unary               進入狀態 52
+    Post                進入狀態 53
+    Primary             進入狀態 54
+    FunctionCall        進入狀態 55
+
+
+狀態 135
+
+   26 ExpressionStmt: AssignBody •
+
+    $default  使用規則 26 以縮減 (ExpressionStmt)
+
+
+狀態 136
+
+   25 ExpressionStmt: DefineVariableStmt •
+
+    $default  使用規則 25 以縮減 (ExpressionStmt)
+
+
+狀態 137
+
+   24 ExpressionStmt: Expression • ';'
+   27               | Expression •
+
+    ';'  偏移，並進入狀態 189
+
+    ';'       [使用規則 27 以縮減 (ExpressionStmt)]
+    $default  使用規則 27 以縮減 (ExpressionStmt)
+
+
+狀態 138
+
+   19 IterationStmt: WHILE $@2 '(' Expression • ')' $@3 CompoundStmt
+
+    ')'  偏移，並進入狀態 190
+
+
+狀態 139
+
+  125 Primary: IDENT '[' Expression • ']'
+  126        | IDENT '[' Expression • ']' '[' Expression ']'
+
+    ']'  偏移，並進入狀態 191
+
+
+狀態 140
+
+  110 TypeCast: '(' VARIABLE_T ')' • Unary
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    '('        偏移，並進入狀態 74
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Unary         進入狀態 192
+    Post          進入狀態 53
+    Primary       進入狀態 54
+    FunctionCall  進入狀態 55
+
+
+狀態 141
+
+  121 Primary: '(' Expression ')' •
+
+    $default  使用規則 121 以縮減 (Primary)
+
+
+狀態 142
+
+   83 Or: Or LOR And •
+   85 And: And • LAN BitwiseOr
+
+    LAN  偏移，並進入狀態 81
+
+    $default  使用規則 83 以縮減 (Or)
+
+
+狀態 143
+
+   85 And: And LAN BitwiseOr •
+   87 BitwiseOr: BitwiseOr • BOR BitwiseXor
+
+    BOR  偏移，並進入狀態 82
+
+    $default  使用規則 85 以縮減 (And)
+
+
+狀態 144
+
+   87 BitwiseOr: BitwiseOr BOR BitwiseXor •
+   89 BitwiseXor: BitwiseXor • BXO BitwiseAnd
+
+    BXO  偏移，並進入狀態 83
+
+    $default  使用規則 87 以縮減 (BitwiseOr)
+
+
+狀態 145
+
+   89 BitwiseXor: BitwiseXor BXO BitwiseAnd •
+   91 BitwiseAnd: BitwiseAnd • BAN Equality
+
+    BAN  偏移，並進入狀態 84
+
+    $default  使用規則 89 以縮減 (BitwiseXor)
+
+
+狀態 146
+
+   91 BitwiseAnd: BitwiseAnd BAN Equality •
+   93 Equality: Equality • EQL Relational
+   94         | Equality • NEQ Relational
+
+    EQL  偏移，並進入狀態 85
+    NEQ  偏移，並進入狀態 86
+
+    $default  使用規則 91 以縮減 (BitwiseAnd)
+
+
+狀態 147
+
+   93 Equality: Equality EQL Relational •
+   96 Relational: Relational • LES Shift
+   97           | Relational • GTR Shift
+   98           | Relational • LEQ Shift
+   99           | Relational • GEQ Shift
+
+    GTR  偏移，並進入狀態 87
+    LES  偏移，並進入狀態 88
+    GEQ  偏移，並進入狀態 89
+    LEQ  偏移，並進入狀態 90
+
+    $default  使用規則 93 以縮減 (Equality)
+
+
+狀態 148
+
+   94 Equality: Equality NEQ Relational •
+   96 Relational: Relational • LES Shift
+   97           | Relational • GTR Shift
+   98           | Relational • LEQ Shift
+   99           | Relational • GEQ Shift
+
+    GTR  偏移，並進入狀態 87
+    LES  偏移，並進入狀態 88
+    GEQ  偏移，並進入狀態 89
+    LEQ  偏移，並進入狀態 90
+
+    $default  使用規則 94 以縮減 (Equality)
+
+
+狀態 149
+
+   97 Relational: Relational GTR Shift •
+  101 Shift: Shift • SHR Additive
+
+    SHR  偏移，並進入狀態 91
+
+    $default  使用規則 97 以縮減 (Relational)
+
+
+狀態 150
+
+   96 Relational: Relational LES Shift •
+  101 Shift: Shift • SHR Additive
+
+    SHR  偏移，並進入狀態 91
+
+    $default  使用規則 96 以縮減 (Relational)
+
+
+狀態 151
+
+   99 Relational: Relational GEQ Shift •
+  101 Shift: Shift • SHR Additive
+
+    SHR  偏移，並進入狀態 91
+
+    $default  使用規則 99 以縮減 (Relational)
+
+
+狀態 152
+
+   98 Relational: Relational LEQ Shift •
+  101 Shift: Shift • SHR Additive
+
+    SHR  偏移，並進入狀態 91
+
+    $default  使用規則 98 以縮減 (Relational)
+
+
+狀態 153
+
+  101 Shift: Shift SHR Additive •
+  103 Additive: Additive • ADD Multiplicative
+  104         | Additive • SUB Multiplicative
+
+    SUB  偏移，並進入狀態 92
+    ADD  偏移，並進入狀態 93
+
+    SUB       [使用規則 101 以縮減 (Shift)]
+    ADD       [使用規則 101 以縮減 (Shift)]
+    $default  使用規則 101 以縮減 (Shift)
+
+
+狀態 154
+
+  104 Additive: Additive SUB Multiplicative •
+  106 Multiplicative: Multiplicative • MUL TypeCast
+  107               | Multiplicative • DIV TypeCast
+  108               | Multiplicative • REM TypeCast
+
+    MUL  偏移，並進入狀態 94
+    DIV  偏移，並進入狀態 95
+    REM  偏移，並進入狀態 96
+
+    $default  使用規則 104 以縮減 (Additive)
+
+
+狀態 155
+
+  103 Additive: Additive ADD Multiplicative •
+  106 Multiplicative: Multiplicative • MUL TypeCast
+  107               | Multiplicative • DIV TypeCast
+  108               | Multiplicative • REM TypeCast
+
+    MUL  偏移，並進入狀態 94
+    DIV  偏移，並進入狀態 95
+    REM  偏移，並進入狀態 96
+
+    $default  使用規則 103 以縮減 (Additive)
+
+
+狀態 156
+
+  106 Multiplicative: Multiplicative MUL TypeCast •
+
+    $default  使用規則 106 以縮減 (Multiplicative)
+
+
+狀態 157
+
+  107 Multiplicative: Multiplicative DIV TypeCast •
+
+    $default  使用規則 107 以縮減 (Multiplicative)
+
+
+狀態 158
+
+  108 Multiplicative: Multiplicative REM TypeCast •
+
+    $default  使用規則 108 以縮減 (Multiplicative)
+
+
+狀態 159
+
+   64 Declarator: IDENT VAL_ASSIGN Assignable •
+
+    $default  使用規則 64 以縮減 (Declarator)
+
+
+狀態 160
+
+   65 Declarator: IDENT '[' Expression • ']'
+   66           | IDENT '[' Expression • ']' '[' Expression ']'
+   67           | IDENT '[' Expression • ']' VAL_ASSIGN '{' ArrayEles '}'
+
+    ']'  偏移，並進入狀態 193
+
+
+狀態 161
+
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' • $@14 FunctionParameterStmtList ')' $@15 '{' GlobalStmtList '}'
+
+    $default  使用規則 132 以縮減 ($@14)
+
+    $@14  進入狀態 194
+
+
+狀態 162
+
+   63 Declarator: IDENT •
+   64           | IDENT • VAL_ASSIGN Assignable
+   65           | IDENT • '[' Expression ']'
+   66           | IDENT • '[' Expression ']' '[' Expression ']'
+   67           | IDENT • '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
+
+    VAL_ASSIGN  偏移，並進入狀態 99
+    '['         偏移，並進入狀態 100
+
+    $default  使用規則 63 以縮減 (Declarator)
+
+
+狀態 163
+
+   62 DeclaratorList: DeclaratorList ',' Declarator •
+
+    $default  使用規則 62 以縮減 (DeclaratorList)
+
+
+狀態 164
+
+  127 FunctionCall: IDENT '(' ArgumentList ')' •
+
+    $default  使用規則 127 以縮減 (FunctionCall)
+
+
+狀態 165
+
+  130 ArgumentListNonEmpty: ArgumentListNonEmpty ',' • Expression
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 195
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 166
+
+   43 AssignBody: IDENT '[' Expression ']' • $@10 Assign
+   45           | IDENT '[' Expression ']' • '[' Expression ']' $@11 Assign
+
+    '['  偏移，並進入狀態 196
+
+    $default  使用規則 42 以縮減 ($@10)
+
+    $@10  進入狀態 197
+
+
+狀態 167
+
+   47 Assign: VAL_ASSIGN Assign •
+
+    $default  使用規則 47 以縮減 (Assign)
+
+
+狀態 168
+
+   48 Assign: ADD_ASSIGN Assign •
+
+    $default  使用規則 48 以縮減 (Assign)
+
+
+狀態 169
+
+   49 Assign: SUB_ASSIGN Assign •
+
+    $default  使用規則 49 以縮減 (Assign)
+
+
+狀態 170
+
+   50 Assign: MUL_ASSIGN Assign •
+
+    $default  使用規則 50 以縮減 (Assign)
+
+
+狀態 171
+
+   51 Assign: DIV_ASSIGN Assign •
+
+    $default  使用規則 51 以縮減 (Assign)
+
+
+狀態 172
+
+   52 Assign: REM_ASSIGN Assign •
+
+    $default  使用規則 52 以縮減 (Assign)
+
+
+狀態 173
+
+   53 Assign: BAN_ASSIGN Assign •
+
+    $default  使用規則 53 以縮減 (Assign)
+
+
+狀態 174
+
+   54 Assign: BOR_ASSIGN Assign •
+
+    $default  使用規則 54 以縮減 (Assign)
+
+
+狀態 175
+
+   55 Assign: BXO_ASSIGN Assign •
+
+    $default  使用規則 55 以縮減 (Assign)
+
+
+狀態 176
+
+   56 Assign: SHR_ASSIGN Assign •
+
+    $default  使用規則 56 以縮減 (Assign)
+
+
+狀態 177
+
+   57 Assign: SHL_ASSIGN Assign •
+
+    $default  使用規則 57 以縮減 (Assign)
+
+
+狀態 178
+
+   38 Selection: '{' • $@7 GlobalStmtList $@8 '}'
+
+    $default  使用規則 36 以縮減 ($@7)
+
+    $@7  進入狀態 198
+
+
+狀態 179
+
+   35 Selection: GlobalStmt •
+
+    $default  使用規則 35 以縮減 (Selection)
+
+
+狀態 180
+
+   34 SelectionStmt: SelectionStmt ELSE $@6 Selection •
+
+    $default  使用規則 34 以縮減 (SelectionStmt)
+
+
+狀態 181
+
+   76 PrintableList: PrintableList SHL • Printable
+
+    ENDL       偏移，並進入狀態 124
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 125
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Printable       進入狀態 199
+    Expression      進入狀態 128
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 182
+
+   74 CoutStmt: COUT $@12 SHL PrintableList ';' •
+
+    $default  使用規則 74 以縮減 (CoutStmt)
+
+
+狀態 183
+
+   32 SelectionStmt: IF '(' Expression ')' $@5 • Selection
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    '{'         偏移，並進入狀態 178
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmt          進入狀態 179
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    Selection           進入狀態 200
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 184
+
+   23 ForCondition: VARIABLE_T IDENT • ':' IDENT
+   63 Declarator: IDENT •
+   64           | IDENT • VAL_ASSIGN Assignable
+   65           | IDENT • '[' Expression ']'
+   66           | IDENT • '[' Expression ']' '[' Expression ']'
+   67           | IDENT • '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}'
+
+    VAL_ASSIGN  偏移，並進入狀態 99
+    ':'         偏移，並進入狀態 201
+    '['         偏移，並進入狀態 100
+
+    $default  使用規則 63 以縮減 (Declarator)
+
+
+狀態 185
+
+   43 AssignBody: IDENT '[' • Expression ']' $@10 Assign
+   45           | IDENT '[' • Expression ']' '[' Expression ']' $@11 Assign
+  125 Primary: IDENT '[' • Expression ']'
+  126        | IDENT '[' • Expression ']' '[' Expression ']'
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 202
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 186
+
+   21 IterationStmt: FOR $@4 '(' ForCondition ')' • CompoundStmt
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    '{'         偏移，並進入狀態 203
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmtList      進入狀態 204
+    GlobalStmt          進入狀態 13
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    CompoundStmt        進入狀態 205
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 187
+
+   60 DefineVariableStmt: VARIABLE_T • DeclaratorList ';'
+
+    IDENT  偏移，並進入狀態 162
+
+    DeclaratorList  進入狀態 58
+    Declarator      進入狀態 59
+
+
+狀態 188
+
+   22 ForCondition: ExpressionStmt ExpressionStmt • ExpressionStmt
+
+    ';'         偏移，並進入狀態 130
+    VARIABLE_T  偏移，並進入狀態 187
+    IDENT       偏移，並進入狀態 132
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 34
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    ExpressionStmt      進入狀態 206
+    AssignBody          進入狀態 135
+    DefineVariableStmt  進入狀態 136
+    Expression          進入狀態 137
+    Or                  進入狀態 41
+    And                 進入狀態 42
+    BitwiseOr           進入狀態 43
+    BitwiseXor          進入狀態 44
+    BitwiseAnd          進入狀態 45
+    Equality            進入狀態 46
+    Relational          進入狀態 47
+    Shift               進入狀態 48
+    Additive            進入狀態 49
+    Multiplicative      進入狀態 50
+    TypeCast            進入狀態 51
+    Unary               進入狀態 52
+    Post                進入狀態 53
+    Primary             進入狀態 54
+    FunctionCall        進入狀態 55
+
+
+狀態 189
+
+   24 ExpressionStmt: Expression ';' •
+
+    $default  使用規則 24 以縮減 (ExpressionStmt)
+
+
+狀態 190
+
+   19 IterationStmt: WHILE $@2 '(' Expression ')' • $@3 CompoundStmt
+
+    $default  使用規則 18 以縮減 ($@3)
+
+    $@3  進入狀態 207
+
+
+狀態 191
+
+  125 Primary: IDENT '[' Expression ']' •
+  126        | IDENT '[' Expression ']' • '[' Expression ']'
+
+    '['  偏移，並進入狀態 208
+
+    $default  使用規則 125 以縮減 (Primary)
+
+
+狀態 192
+
+  110 TypeCast: '(' VARIABLE_T ')' Unary •
+
+    $default  使用規則 110 以縮減 (TypeCast)
+
+
+狀態 193
+
+   65 Declarator: IDENT '[' Expression ']' •
+   66           | IDENT '[' Expression ']' • '[' Expression ']'
+   67           | IDENT '[' Expression ']' • VAL_ASSIGN '{' ArrayEles '}'
+
+    VAL_ASSIGN  偏移，並進入狀態 209
+    '['         偏移，並進入狀態 210
+
+    $default  使用規則 65 以縮減 (Declarator)
+
+
+狀態 194
+
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 • FunctionParameterStmtList ')' $@15 '{' GlobalStmtList '}'
+
+    VARIABLE_T  偏移，並進入狀態 211
+
+    $default  使用規則 137 以縮減 (FunctionParameterStmtList)
+
+    FunctionParameterStmtList  進入狀態 212
+    FunctionParameterStmt      進入狀態 213
+
+
+狀態 195
+
+  130 ArgumentListNonEmpty: ArgumentListNonEmpty ',' Expression •
+
+    $default  使用規則 130 以縮減 (ArgumentListNonEmpty)
+
+
+狀態 196
+
+   45 AssignBody: IDENT '[' Expression ']' '[' • Expression ']' $@11 Assign
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 214
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 197
+
+   43 AssignBody: IDENT '[' Expression ']' $@10 • Assign
+
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    Assign          進入狀態 215
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 198
+
+   38 Selection: '{' $@7 • GlobalStmtList $@8 '}'
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmtList      進入狀態 216
+    GlobalStmt          進入狀態 13
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 199
+
+   76 PrintableList: PrintableList SHL Printable •
+
+    $default  使用規則 76 以縮減 (PrintableList)
+
+
+狀態 200
+
+   32 SelectionStmt: IF '(' Expression ')' $@5 Selection •
+
+    $default  使用規則 32 以縮減 (SelectionStmt)
+
+
+狀態 201
+
+   23 ForCondition: VARIABLE_T IDENT ':' • IDENT
+
+    IDENT  偏移，並進入狀態 217
+
+
+狀態 202
+
+   43 AssignBody: IDENT '[' Expression • ']' $@10 Assign
+   45           | IDENT '[' Expression • ']' '[' Expression ']' $@11 Assign
+  125 Primary: IDENT '[' Expression • ']'
+  126        | IDENT '[' Expression • ']' '[' Expression ']'
+
+    ']'  偏移，並進入狀態 218
+
+
+狀態 203
+
+   29 CompoundStmt: '{' • GlobalStmtList '}'
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmtList      進入狀態 219
+    GlobalStmt          進入狀態 13
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 204
+
+    4 GlobalStmtList: GlobalStmtList • GlobalStmt
+   30 CompoundStmt: GlobalStmtList •
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    COUT        [使用規則 30 以縮減 (CompoundStmt)]
+    IF          [使用規則 30 以縮減 (CompoundStmt)]
+    FOR         [使用規則 30 以縮減 (CompoundStmt)]
+    WHILE       [使用規則 30 以縮減 (CompoundStmt)]
+    RETURN      [使用規則 30 以縮減 (CompoundStmt)]
+    BREAK       [使用規則 30 以縮減 (CompoundStmt)]
+    VARIABLE_T  [使用規則 30 以縮減 (CompoundStmt)]
+    IDENT       [使用規則 30 以縮減 (CompoundStmt)]
+    $default    使用規則 30 以縮減 (CompoundStmt)
+
+    GlobalStmt          進入狀態 63
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 205
+
+   21 IterationStmt: FOR $@4 '(' ForCondition ')' CompoundStmt •
+
+    $default  使用規則 21 以縮減 (IterationStmt)
+
+
+狀態 206
+
+   22 ForCondition: ExpressionStmt ExpressionStmt ExpressionStmt •
+
+    $default  使用規則 22 以縮減 (ForCondition)
+
+
+狀態 207
+
+   19 IterationStmt: WHILE $@2 '(' Expression ')' $@3 • CompoundStmt
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    '{'         偏移，並進入狀態 203
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmtList      進入狀態 204
+    GlobalStmt          進入狀態 13
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    CompoundStmt        進入狀態 220
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 208
+
+  126 Primary: IDENT '[' Expression ']' '[' • Expression ']'
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 221
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 209
+
+   67 Declarator: IDENT '[' Expression ']' VAL_ASSIGN • '{' ArrayEles '}'
+
+    '{'  偏移，並進入狀態 222
+
+
+狀態 210
+
+   66 Declarator: IDENT '[' Expression ']' '[' • Expression ']'
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 223
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 211
+
+  139 FunctionParameterStmt: VARIABLE_T • IDENT $@16
+  141                      | VARIABLE_T • IDENT $@17 '[' ']'
+
+    IDENT  偏移，並進入狀態 224
+
+
+狀態 212
+
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 FunctionParameterStmtList • ')' $@15 '{' GlobalStmtList '}'
+  135 FunctionParameterStmtList: FunctionParameterStmtList • ',' FunctionParameterStmt
+
+    ')'  偏移，並進入狀態 225
+    ','  偏移，並進入狀態 226
+
+
+狀態 213
+
+  136 FunctionParameterStmtList: FunctionParameterStmt •
+
+    $default  使用規則 136 以縮減 (FunctionParameterStmtList)
+
+
+狀態 214
+
+   45 AssignBody: IDENT '[' Expression ']' '[' Expression • ']' $@11 Assign
+
+    ']'  偏移，並進入狀態 227
+
+
+狀態 215
+
+   43 AssignBody: IDENT '[' Expression ']' $@10 Assign •
+
+    $default  使用規則 43 以縮減 (AssignBody)
+
+
+狀態 216
+
+    4 GlobalStmtList: GlobalStmtList • GlobalStmt
+   38 Selection: '{' $@7 GlobalStmtList • $@8 '}'
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    $default  使用規則 37 以縮減 ($@8)
+
+    GlobalStmt          進入狀態 63
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    $@8                 進入狀態 228
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 217
+
+   23 ForCondition: VARIABLE_T IDENT ':' IDENT •
+
+    $default  使用規則 23 以縮減 (ForCondition)
+
+
+狀態 218
+
+   43 AssignBody: IDENT '[' Expression ']' • $@10 Assign
+   45           | IDENT '[' Expression ']' • '[' Expression ']' $@11 Assign
+  125 Primary: IDENT '[' Expression ']' •
+  126        | IDENT '[' Expression ']' • '[' Expression ']'
+
+    '['  偏移，並進入狀態 229
+
+    SHR         使用規則 125 以縮減 (Primary)
+    BAN         使用規則 125 以縮減 (Primary)
+    BOR         使用規則 125 以縮減 (Primary)
+    BXO         使用規則 125 以縮減 (Primary)
+    MUL         使用規則 125 以縮減 (Primary)
+    DIV         使用規則 125 以縮減 (Primary)
+    REM         使用規則 125 以縮減 (Primary)
+    GTR         使用規則 125 以縮減 (Primary)
+    LES         使用規則 125 以縮減 (Primary)
+    GEQ         使用規則 125 以縮減 (Primary)
+    LEQ         使用規則 125 以縮減 (Primary)
+    EQL         使用規則 125 以縮減 (Primary)
+    NEQ         使用規則 125 以縮減 (Primary)
+    LAN         使用規則 125 以縮減 (Primary)
+    LOR         使用規則 125 以縮減 (Primary)
+    INC_ASSIGN  使用規則 125 以縮減 (Primary)
+    DEC_ASSIGN  使用規則 125 以縮減 (Primary)
+    ')'         使用規則 125 以縮減 (Primary)
+    ';'         使用規則 125 以縮減 (Primary)
+    VARIABLE_T  使用規則 125 以縮減 (Primary)
+    IDENT       使用規則 42 以縮減 ($@10)
+    IDENT       [使用規則 125 以縮減 (Primary)]
+    BOOL_LIT    使用規則 42 以縮減 ($@10)
+    BOOL_LIT    [使用規則 125 以縮減 (Primary)]
+    INT_LIT     使用規則 42 以縮減 ($@10)
+    INT_LIT     [使用規則 125 以縮減 (Primary)]
+    FLOAT_LIT   使用規則 42 以縮減 ($@10)
+    FLOAT_LIT   [使用規則 125 以縮減 (Primary)]
+    STR_LIT     使用規則 42 以縮減 ($@10)
+    STR_LIT     [使用規則 125 以縮減 (Primary)]
+    '('         使用規則 42 以縮減 ($@10)
+    '('         [使用規則 125 以縮減 (Primary)]
+    SUB         使用規則 42 以縮減 ($@10)
+    SUB         [使用規則 125 以縮減 (Primary)]
+    NOT         使用規則 42 以縮減 ($@10)
+    NOT         [使用規則 125 以縮減 (Primary)]
+    BNT         使用規則 42 以縮減 ($@10)
+    BNT         [使用規則 125 以縮減 (Primary)]
+    ADD         使用規則 42 以縮減 ($@10)
+    ADD         [使用規則 125 以縮減 (Primary)]
+    $default    使用規則 42 以縮減 ($@10)
+
+    $@10  進入狀態 197
+
+
+狀態 219
+
+    4 GlobalStmtList: GlobalStmtList • GlobalStmt
+   29 CompoundStmt: '{' GlobalStmtList • '}'
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    '}'         偏移，並進入狀態 230
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmt          進入狀態 63
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 220
+
+   19 IterationStmt: WHILE $@2 '(' Expression ')' $@3 CompoundStmt •
+
+    $default  使用規則 19 以縮減 (IterationStmt)
+
+
+狀態 221
+
+  126 Primary: IDENT '[' Expression ']' '[' Expression • ']'
+
+    ']'  偏移，並進入狀態 231
+
+
+狀態 222
+
+   67 Declarator: IDENT '[' Expression ']' VAL_ASSIGN '{' • ArrayEles '}'
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 119
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    $default  使用規則 70 以縮減 (ArrayEles)
+
+    Assignable      進入狀態 232
+    ArrayEles       進入狀態 233
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 223
+
+   66 Declarator: IDENT '[' Expression ']' '[' Expression • ']'
+
+    ']'  偏移，並進入狀態 234
+
+
+狀態 224
+
+  139 FunctionParameterStmt: VARIABLE_T IDENT • $@16
+  141                      | VARIABLE_T IDENT • $@17 '[' ']'
+
+    '['       使用規則 140 以縮減 ($@17)
+    $default  使用規則 138 以縮減 ($@16)
+
+    $@16  進入狀態 235
+    $@17  進入狀態 236
+
+
+狀態 225
+
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 FunctionParameterStmtList ')' • $@15 '{' GlobalStmtList '}'
+
+    $default  使用規則 133 以縮減 ($@15)
+
+    $@15  進入狀態 237
+
+
+狀態 226
+
+  135 FunctionParameterStmtList: FunctionParameterStmtList ',' • FunctionParameterStmt
+
+    VARIABLE_T  偏移，並進入狀態 211
+
+    FunctionParameterStmt  進入狀態 238
+
+
+狀態 227
+
+   45 AssignBody: IDENT '[' Expression ']' '[' Expression ']' • $@11 Assign
+
+    $default  使用規則 44 以縮減 ($@11)
+
+    $@11  進入狀態 239
+
+
+狀態 228
+
+   38 Selection: '{' $@7 GlobalStmtList $@8 • '}'
+
+    '}'  偏移，並進入狀態 240
+
+
+狀態 229
+
+   45 AssignBody: IDENT '[' Expression ']' '[' • Expression ']' $@11 Assign
+  126 Primary: IDENT '[' Expression ']' '[' • Expression ']'
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 34
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Expression      進入狀態 241
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 230
+
+   29 CompoundStmt: '{' GlobalStmtList '}' •
+
+    $default  使用規則 29 以縮減 (CompoundStmt)
+
+
+狀態 231
+
+  126 Primary: IDENT '[' Expression ']' '[' Expression ']' •
+
+    $default  使用規則 126 以縮減 (Primary)
+
+
+狀態 232
+
+   68 ArrayEles: Assignable •
+
+    $default  使用規則 68 以縮減 (ArrayEles)
+
+
+狀態 233
+
+   67 Declarator: IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles • '}'
+   69 ArrayEles: ArrayEles • ',' Assignable
+
+    '}'  偏移，並進入狀態 242
+    ','  偏移，並進入狀態 243
+
+
+狀態 234
+
+   66 Declarator: IDENT '[' Expression ']' '[' Expression ']' •
+
+    $default  使用規則 66 以縮減 (Declarator)
+
+
+狀態 235
+
+  139 FunctionParameterStmt: VARIABLE_T IDENT $@16 •
+
+    $default  使用規則 139 以縮減 (FunctionParameterStmt)
+
+
+狀態 236
+
+  141 FunctionParameterStmt: VARIABLE_T IDENT $@17 • '[' ']'
+
+    '['  偏移，並進入狀態 244
+
+
+狀態 237
+
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 FunctionParameterStmtList ')' $@15 • '{' GlobalStmtList '}'
+
+    '{'  偏移，並進入狀態 245
+
+
+狀態 238
+
+  135 FunctionParameterStmtList: FunctionParameterStmtList ',' FunctionParameterStmt •
+
+    $default  使用規則 135 以縮減 (FunctionParameterStmtList)
+
+
+狀態 239
+
+   45 AssignBody: IDENT '[' Expression ']' '[' Expression ']' $@11 • Assign
+
+    VAL_ASSIGN  偏移，並進入狀態 108
+    ADD_ASSIGN  偏移，並進入狀態 109
+    SUB_ASSIGN  偏移，並進入狀態 110
+    MUL_ASSIGN  偏移，並進入狀態 111
+    DIV_ASSIGN  偏移，並進入狀態 112
+    REM_ASSIGN  偏移，並進入狀態 113
+    BAN_ASSIGN  偏移，並進入狀態 114
+    BOR_ASSIGN  偏移，並進入狀態 115
+    BXO_ASSIGN  偏移，並進入狀態 116
+    SHR_ASSIGN  偏移，並進入狀態 117
+    SHL_ASSIGN  偏移，並進入狀態 118
+    IDENT       偏移，並進入狀態 30
+    BOOL_LIT    偏移，並進入狀態 31
+    INT_LIT     偏移，並進入狀態 32
+    FLOAT_LIT   偏移，並進入狀態 33
+    STR_LIT     偏移，並進入狀態 119
+    '('         偏移，並進入狀態 35
+    SUB         偏移，並進入狀態 36
+    NOT         偏移，並進入狀態 37
+    BNT         偏移，並進入狀態 38
+    ADD         偏移，並進入狀態 39
+
+    Assign          進入狀態 246
+    Assignable      進入狀態 121
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 240
+
+   38 Selection: '{' $@7 GlobalStmtList $@8 '}' •
+
+    $default  使用規則 38 以縮減 (Selection)
+
+
+狀態 241
+
+   45 AssignBody: IDENT '[' Expression ']' '[' Expression • ']' $@11 Assign
+  126 Primary: IDENT '[' Expression ']' '[' Expression • ']'
+
+    ']'  偏移，並進入狀態 247
+
+
+狀態 242
+
+   67 Declarator: IDENT '[' Expression ']' VAL_ASSIGN '{' ArrayEles '}' •
+
+    $default  使用規則 67 以縮減 (Declarator)
+
+
+狀態 243
+
+   69 ArrayEles: ArrayEles ',' • Assignable
+
+    IDENT      偏移，並進入狀態 30
+    BOOL_LIT   偏移，並進入狀態 31
+    INT_LIT    偏移，並進入狀態 32
+    FLOAT_LIT  偏移，並進入狀態 33
+    STR_LIT    偏移，並進入狀態 119
+    '('        偏移，並進入狀態 35
+    SUB        偏移，並進入狀態 36
+    NOT        偏移，並進入狀態 37
+    BNT        偏移，並進入狀態 38
+    ADD        偏移，並進入狀態 39
+
+    Assignable      進入狀態 248
+    Expression      進入狀態 122
+    Or              進入狀態 41
+    And             進入狀態 42
+    BitwiseOr       進入狀態 43
+    BitwiseXor      進入狀態 44
+    BitwiseAnd      進入狀態 45
+    Equality        進入狀態 46
+    Relational      進入狀態 47
+    Shift           進入狀態 48
+    Additive        進入狀態 49
+    Multiplicative  進入狀態 50
+    TypeCast        進入狀態 51
+    Unary           進入狀態 52
+    Post            進入狀態 53
+    Primary         進入狀態 54
+    FunctionCall    進入狀態 55
+
+
+狀態 244
+
+  141 FunctionParameterStmt: VARIABLE_T IDENT $@17 '[' • ']'
+
+    ']'  偏移，並進入狀態 249
 
 
 狀態 245
 
-  130 FunctionDefStmt: VARIABLE_T IDENT $@11 '(' $@12 FunctionParameterStmtList ')' $@13 '{' GlobalStmtList '}' •
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 FunctionParameterStmtList ')' $@15 '{' • GlobalStmtList '}'
 
-    $default  使用規則 130 以縮減 (FunctionDefStmt)
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmtList      進入狀態 250
+    GlobalStmt          進入狀態 13
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 246
+
+   45 AssignBody: IDENT '[' Expression ']' '[' Expression ']' $@11 Assign •
+
+    $default  使用規則 45 以縮減 (AssignBody)
+
+
+狀態 247
+
+   45 AssignBody: IDENT '[' Expression ']' '[' Expression ']' • $@11 Assign
+  126 Primary: IDENT '[' Expression ']' '[' Expression ']' •
+
+    SHR         使用規則 126 以縮減 (Primary)
+    BAN         使用規則 126 以縮減 (Primary)
+    BOR         使用規則 126 以縮減 (Primary)
+    BXO         使用規則 126 以縮減 (Primary)
+    MUL         使用規則 126 以縮減 (Primary)
+    DIV         使用規則 126 以縮減 (Primary)
+    REM         使用規則 126 以縮減 (Primary)
+    GTR         使用規則 126 以縮減 (Primary)
+    LES         使用規則 126 以縮減 (Primary)
+    GEQ         使用規則 126 以縮減 (Primary)
+    LEQ         使用規則 126 以縮減 (Primary)
+    EQL         使用規則 126 以縮減 (Primary)
+    NEQ         使用規則 126 以縮減 (Primary)
+    LAN         使用規則 126 以縮減 (Primary)
+    LOR         使用規則 126 以縮減 (Primary)
+    INC_ASSIGN  使用規則 126 以縮減 (Primary)
+    DEC_ASSIGN  使用規則 126 以縮減 (Primary)
+    ')'         使用規則 126 以縮減 (Primary)
+    ';'         使用規則 126 以縮減 (Primary)
+    VARIABLE_T  使用規則 126 以縮減 (Primary)
+    IDENT       使用規則 44 以縮減 ($@11)
+    IDENT       [使用規則 126 以縮減 (Primary)]
+    BOOL_LIT    使用規則 44 以縮減 ($@11)
+    BOOL_LIT    [使用規則 126 以縮減 (Primary)]
+    INT_LIT     使用規則 44 以縮減 ($@11)
+    INT_LIT     [使用規則 126 以縮減 (Primary)]
+    FLOAT_LIT   使用規則 44 以縮減 ($@11)
+    FLOAT_LIT   [使用規則 126 以縮減 (Primary)]
+    STR_LIT     使用規則 44 以縮減 ($@11)
+    STR_LIT     [使用規則 126 以縮減 (Primary)]
+    '('         使用規則 44 以縮減 ($@11)
+    '('         [使用規則 126 以縮減 (Primary)]
+    SUB         使用規則 44 以縮減 ($@11)
+    SUB         [使用規則 126 以縮減 (Primary)]
+    NOT         使用規則 44 以縮減 ($@11)
+    NOT         [使用規則 126 以縮減 (Primary)]
+    BNT         使用規則 44 以縮減 ($@11)
+    BNT         [使用規則 126 以縮減 (Primary)]
+    ADD         使用規則 44 以縮減 ($@11)
+    ADD         [使用規則 126 以縮減 (Primary)]
+    $default    使用規則 44 以縮減 ($@11)
+
+    $@11  進入狀態 239
+
+
+狀態 248
+
+   69 ArrayEles: ArrayEles ',' Assignable •
+
+    $default  使用規則 69 以縮減 (ArrayEles)
+
+
+狀態 249
+
+  141 FunctionParameterStmt: VARIABLE_T IDENT $@17 '[' ']' •
+
+    $default  使用規則 141 以縮減 (FunctionParameterStmt)
+
+
+狀態 250
+
+    4 GlobalStmtList: GlobalStmtList • GlobalStmt
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 FunctionParameterStmtList ')' $@15 '{' GlobalStmtList • '}'
+
+    COUT        偏移，並進入狀態 4
+    IF          偏移，並進入狀態 5
+    FOR         偏移，並進入狀態 6
+    WHILE       偏移，並進入狀態 7
+    RETURN      偏移，並進入狀態 8
+    BREAK       偏移，並進入狀態 9
+    '}'         偏移，並進入狀態 251
+    VARIABLE_T  偏移，並進入狀態 10
+    IDENT       偏移，並進入狀態 11
+
+    GlobalStmt          進入狀態 63
+    FunctionCallStmt    進入狀態 14
+    JumpStmt            進入狀態 15
+    IterationStmt       進入狀態 16
+    SelectionStmt       進入狀態 17
+    AssignStmt          進入狀態 18
+    AssignBody          進入狀態 19
+    DefineVariableStmt  進入狀態 20
+    ReturnStmt          進入狀態 21
+    CoutStmt            進入狀態 22
+    FunctionCall        進入狀態 23
+    FunctionDefStmt     進入狀態 24
+
+
+狀態 251
+
+  134 FunctionDefStmt: VARIABLE_T IDENT $@13 '(' $@14 FunctionParameterStmtList ')' $@15 '{' GlobalStmtList '}' •
+
+    $default  使用規則 134 以縮減 (FunctionDefStmt)

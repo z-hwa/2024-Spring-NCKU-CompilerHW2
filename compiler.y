@@ -72,7 +72,7 @@ GlobalStmt
 	| CoutStmt
     | ReturnStmt
 	| AssignStmt
-	| CompoundStmt
+	//| CompoundStmt
 	| SelectionStmt
 	| IterationStmt
 	| JumpStmt
@@ -93,8 +93,8 @@ JumpStmt
 
 /*while and for*/
 IterationStmt
-	: WHILE {printf("WHILE\n");} '(' Expression ')' {pushScope();} GlobalStmt {dumpScope();}
-	| FOR {printf("FOR\n"); pushScope();} '(' ForCondition ')' GlobalStmt {dumpScope();}
+	: WHILE {printf("WHILE\n");} '(' Expression ')' {pushScope();} CompoundStmt {dumpScope();}
+	| FOR {printf("FOR\n"); pushScope();} '(' ForCondition ')' CompoundStmt {dumpScope();}
 ;
 
 ForCondition
@@ -118,13 +118,19 @@ ExpressionStmt
 /*複合敘述*/
 CompoundStmt
 	: '{' GlobalStmtList '}'
+	| GlobalStmtList
 ;
 
 
 /*if else*/
 SelectionStmt
-	: IF '(' Expression ')'{ printf("IF\n"); pushScope(); } GlobalStmt {dumpScope();}
-	| SelectionStmt ELSE {printf("ELSE\n"); pushScope();} GlobalStmt {dumpScope();}
+	: IF '(' Expression ')'{ printf("IF\n");} Selection
+	| SelectionStmt ELSE {printf("ELSE\n"); } Selection
+;
+
+Selection
+	: GlobalStmt
+	| '{' {pushScope();} GlobalStmtList {dumpScope();} '}';
 ;
 
 /*define and 設值敘述*/
